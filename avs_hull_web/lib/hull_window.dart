@@ -144,7 +144,7 @@ class HullWindow extends StatelessWidget {
           _myHull.selectedBulkhead,
           x,
           y,
-          _nearnessDistance / _painter.scale() / 2);
+          _nearnessDistance / _painter.scale() / 1.5);
       if (_drawDetails.selectedBulkheadPoint >= 0) {
         _myHull.movingHandle = true;
         _myHull.movingHandleX = x;

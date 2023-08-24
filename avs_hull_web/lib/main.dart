@@ -46,7 +46,7 @@ class MainApp extends StatelessWidget {
               children: [
                 Center(child: DesignScreen(mainHull: _mainHull)),
                 const Text('Layout view: TBA'),
-                Center(child: WaterlineScreen(mHull: _mainHull)),
+                Center(child: WaterlineScreen(_mainHull)),
               ],
             )),
       ),
