@@ -1,0 +1,11 @@
+TODO.text
+Implement transoms
+Implement proper rotation
+
+refactor Bulkhead to have rotate and getOffset methods like Spline
+    have getOffsets return List<Point3D>?
+refactor to make instance variables _x instead of mX.
+
+CONCEPT IS DONE. Implement Waterlines tab with dialog-like fields in a panel on the left.
+
+Finish HullWindow tap handlers to select/edit bulkheads
