@@ -161,12 +161,10 @@ class HullWindow extends StatelessWidget {
 
     if (_myHull.isEditable() && _myHull.movingHandle) {
       (x, y) = _painter.toHullCoords(details.localPosition);
-      print('PanUpdate handle ${details.localPosition}');
       _myHull.movingHandleX = x;
       _myHull.movingHandleY = y;
       _painter.redraw();
     } else if (_drawDetails.rotatable) {
-      print('PanUpdate ${details.localPosition}');
       _myHull.rotateBy(2, 1, 0.5);
       _painter.redraw();
     }
@@ -175,7 +173,6 @@ class HullWindow extends StatelessWidget {
   void _panEnd(DragEndDetails details) {
     double startX, startY;
 
-    print('panEnd');
     if (_myHull.movingHandle) {
       (startX, startY) = _painter.toHullCoords(_drawDetails.dragStart);
 
@@ -186,7 +183,6 @@ class HullWindow extends StatelessWidget {
           startY - _myHull.movingHandleY);
 
       _myHull.movingHandle = false;
-      print('panEnd $_updateScreen $_selector');
       _updateScreen!();
       //_painter.redraw();
     }

@@ -10,13 +10,14 @@ import 'hull_window.dart';
 import 'rotated_hull.dart';
 
 class WaterlineScreen extends StatelessWidget {
-  WaterlineScreen({super.key, required this.mHull}) {
-    _hullWindow = HullWindow(mHull, HullView.rotated, null, null);
+  WaterlineScreen(this._hull, {super.key}) {
+    _hullWindow = HullWindow(_hull, HullView.rotated, null, null);
     _hullWindow.setRotatable();
 
     resetScreen();
   }
-  final Hull mHull;
+
+  final Hull _hull;
   late final HullWindow _hullWindow;
 
   @override
@@ -27,9 +28,9 @@ class WaterlineScreen extends StatelessWidget {
           //_MainMenu(mHull, context),
           Column(
             children: [
-              Text('this is row 1'),
-              Text('this is row 2'),
-              Text('this is row 3'),
+              const Text('this is row 1'),
+              const Text('this is row 2'),
+              const Text('this is row 3'),
               TextButton(
                 onPressed: () {
                   _hullWindow.setView(HullView.front);

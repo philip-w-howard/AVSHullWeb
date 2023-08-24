@@ -5,7 +5,6 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
-import 'main.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:html' as html;
@@ -15,235 +14,220 @@ import 'rotated_hull.dart';
 import 'resize_dialog.dart';
 
 class DesignScreen extends StatelessWidget {
-  DesignScreen({super.key, required this.mainHull}) {
-    frontWindow = HullWindow(mainHull, HullView.front, _selectFront, null);
-    sideWindow = HullWindow(mainHull, HullView.side, _selectSide, null);
-    topWindow = HullWindow(mainHull, HullView.top, _selectTop, null);
-    mainWindow =
-        HullWindow(mainHull, HullView.rotated, _selectTop, resetScreen);
-    mainWindow.setRotatable();
-    mainWindow.setEditable();
+  DesignScreen({super.key, required Hull mainHull}) : _myHull = mainHull {
+    _frontWindow = HullWindow(_myHull, HullView.front, _selectFront, null);
+    _sideWindow = HullWindow(_myHull, HullView.side, _selectSide, null);
+    _topWindow = HullWindow(_myHull, HullView.top, _selectTop, null);
+    _editWindow =
+        HullWindow(_myHull, HullView.rotated, _selectTop, resetScreen);
+    _editWindow.setRotatable();
+    _editWindow.setEditable();
   }
 
   //final Hull myHull = Hull(length: 200, width: 50, height:20, numBulkheads:5 numChines:5);
-  final Hull mainHull;
-  late final HullWindow frontWindow;
-  late final HullWindow sideWindow;
-  late final HullWindow topWindow;
-  late final HullWindow mainWindow;
+  final Hull _myHull;
+  late final HullWindow _frontWindow;
+  late final HullWindow _sideWindow;
+  late final HullWindow _topWindow;
+  late final HullWindow _editWindow;
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
-    frontWindow.setHeight(0.3 * screenHeight);
-    sideWindow.setHeight(0.3 * screenHeight);
-    topWindow.setHeight(0.3 * screenHeight);
+    _frontWindow.setHeight(0.3 * screenHeight);
+    _sideWindow.setHeight(0.3 * screenHeight);
+    _topWindow.setHeight(0.3 * screenHeight);
 
     return Scaffold(
       body: Column(
         children: [
-          _MainMenu(mainHull, context),
           Row(
             children: [
-              frontWindow,
-              sideWindow,
-              topWindow,
+              PopupMenuButton<String>(
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'File',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                onSelected: (String choice) {
+                  // Handle menu item selection
+                  if (choice == 'Save') {
+                    _selectAndSaveFile();
+                  } else if (choice == 'Open') {
+                    _selectAndReadFile();
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    const PopupMenuItem<String>(
+                      value: 'Open',
+                      child: Text('Open'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'Save',
+                      child: Text('Save'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'Create',
+                      child: Text('Create'),
+                    ),
+                  ];
+                },
+              ),
+              PopupMenuButton<String>(
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Edit',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                onSelected: (String choice) async {
+                  // Handle menu item selection
+                  if (choice == 'Resize') {
+                    _processResize(context);
+                  } else if (choice == 'Chines') {
+                    _processChines(context);
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return [
+                    const PopupMenuItem<String>(
+                      value: 'Resize',
+                      child: Text('Resize'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'Chines',
+                      child: Text('Chines'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'Bulkheads',
+                      child: Text('Bulkheads'),
+                    ),
+                  ];
+                },
+              ),
             ],
           ),
-          mainWindow,
+//          _MainMenu(mainHull, context),
+          Row(
+            children: [
+              _frontWindow,
+              _sideWindow,
+              _topWindow,
+            ],
+          ),
+          _editWindow,
         ],
       ),
     );
   }
 
   void resetScreen() {
-    print('reset screen');
-    frontWindow.resetView();
-    sideWindow.resetView();
-    topWindow.resetView();
-    mainWindow.resetView();
+    _frontWindow.resetView();
+    _sideWindow.resetView();
+    _topWindow.resetView();
+    _editWindow.resetView();
   }
 
   void _selectFront() {
-    mainWindow.setView(HullView.front);
+    _editWindow.setView(HullView.front);
   }
 
   void _selectSide() {
-    mainWindow.setView(HullView.side);
+    _editWindow.setView(HullView.side);
   }
 
   void _selectTop() {
-    mainWindow.setView(HullView.top);
-  }
-}
-
-class _MainMenu extends Row {
-  final Hull _hull;
-  final BuildContext _context;
-  _MainMenu(this._hull, this._context)
-      : super(
-          children: [
-            PopupMenuButton<String>(
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'File',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              onSelected: (String choice) {
-                // Handle menu item selection
-                if (choice == 'Save') {
-                  selectAndSaveFile(_hull);
-                } else if (choice == 'Open') {
-                  selectAndReadFile(_hull);
-                } else {
-                  print('File: $choice');
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return [
-                  const PopupMenuItem<String>(
-                    value: 'Open',
-                    child: Text('Open'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'Save',
-                    child: Text('Save'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'Create',
-                    child: Text('Create'),
-                  ),
-                ];
-              },
-            ),
-            PopupMenuButton<String>(
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
-                  'Edit',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              onSelected: (String choice) async {
-                // Handle menu item selection
-                if (choice == 'Resize') {
-                  processResize(_context, _hull);
-                } else if (choice == 'Chines') {
-                  processChines(_context, _hull);
-                } else {
-                  print('Edit: $choice');
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return [
-                  const PopupMenuItem<String>(
-                    value: 'Resize',
-                    child: Text('Resize'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'Chines',
-                    child: Text('Chines'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'Bulkheads',
-                    child: Text('Bulkheads'),
-                  ),
-                ];
-              },
-            ),
-          ],
-        );
-}
-
-Future processResize(BuildContext context, Hull hull) async {
-  var size = hull.size();
-  double xSize = size.x;
-  double ySize = size.y;
-  double zSize = size.z;
-
-  bool result = await showDialog(
-    builder: (BuildContext context) {
-      return ResizeDialog(
-          xValue: size.x,
-          yValue: size.y,
-          zValue: size.z,
-          onSubmit: (x, y, z) {
-            xSize = x;
-            ySize = y;
-            zSize = z;
-          });
-    },
-    context: context,
-  );
-  if (result) {
-    hull.resize(xSize, ySize, zSize);
-    print('Results: $xSize, $ySize, $zSize');
-    mainScreen.resetScreen();
-  } else {
-    print('Cancel');
+    _editWindow.setView(HullView.top);
   }
 
-  return result;
-}
+  Future _processResize(BuildContext context) async {
+    var size = _myHull.size();
+    double xSize = size.x;
+    double ySize = size.y;
+    double zSize = size.z;
 
-Future processChines(BuildContext context, Hull hull) async {
-  return processResize(context, hull);
-}
+    bool result = await showDialog(
+      builder: (BuildContext context) {
+        return ResizeDialog(
+            xValue: size.x,
+            yValue: size.y,
+            zValue: size.z,
+            onSubmit: (x, y, z) {
+              xSize = x;
+              ySize = y;
+              zSize = z;
+            });
+      },
+      context: context,
+    );
 
-void selectAndReadFile(Hull hull) async {
-  String? contents = await _readFile();
-  if (contents != null) {
-    Map<String, dynamic> jsonData = json.decode(contents);
-    hull.updateFromJson(jsonData);
-    mainScreen.resetScreen();
-  } else {
-    print('Did not open file');
+    if (result) {
+      _myHull.resize(xSize, ySize, zSize);
+      resetScreen();
+    }
+
+    return result;
   }
-}
 
-void selectAndSaveFile(Hull hull) async {
-  final String jsonStr = json.encode(hull.toJson());
-  await _saveFile(jsonStr);
-}
-
-// **********************************************
-// Does not indicate failure when "cancel" is hit
-Future<String?> _readFile() async {
-  final completer = Completer<String>();
-  try {
-    html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
-    uploadInput.click();
-
-    await uploadInput.onChange.first;
-
-    final file = uploadInput.files!.first;
-    final reader = html.FileReader();
-
-    reader.onLoadEnd.listen((event) {
-      final fileContents = reader.result as String;
-      completer.complete(fileContents);
-    });
-
-    reader.readAsText(file);
-
-    return completer.future;
-  } catch (e) {
-    print('caught exception');
+  Future _processChines(BuildContext context) async {
+    return _processResize(context);
   }
-  return null;
-}
 
-// **********************************************
-// Need some way to return success/failure
-Future<void> _saveFile(String contents) async {
-  final encodedContent = base64.encode(utf8.encode(contents));
+  void _selectAndReadFile() async {
+    String? contents = await _readFile();
+    if (contents != null) {
+      Map<String, dynamic> jsonData = json.decode(contents);
+      _myHull.updateFromJson(jsonData);
+      resetScreen();
+    }
+  }
 
-  final anchor = html.AnchorElement(
-    href: 'data:text/plain;charset=utf-8;base64,$encodedContent',
-  );
-  anchor.download = 'saved_hull.avsh';
-  anchor.click();
+  void _selectAndSaveFile() async {
+    final String jsonStr = json.encode(_myHull.toJson());
+    await _saveFile(jsonStr);
+  }
+
+  // **********************************************
+  // Need some way to return success/failure
+  Future<void> _saveFile(String contents) async {
+    final encodedContent = base64.encode(utf8.encode(contents));
+
+    final anchor = html.AnchorElement(
+      href: 'data:text/plain;charset=utf-8;base64,$encodedContent',
+    );
+    anchor.download = 'saved_hull.avsh';
+    anchor.click();
+  }
+
+  // **********************************************
+  // Does not indicate failure when "cancel" is hit
+  Future<String?> _readFile() async {
+    final completer = Completer<String>();
+    try {
+      html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
+      uploadInput.click();
+
+      await uploadInput.onChange.first;
+
+      final file = uploadInput.files!.first;
+      final reader = html.FileReader();
+
+      reader.onLoadEnd.listen((event) {
+        final fileContents = reader.result as String;
+        completer.complete(fileContents);
+      });
+
+      reader.readAsText(file);
+
+      return completer.future;
+    } catch (e) {
+      //print('caught exception');
+    }
+    return null;
+  }
 }

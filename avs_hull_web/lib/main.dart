@@ -10,14 +10,13 @@ import 'waterline_screen.dart';
 import 'hull.dart';
 
 void main() {
-  runApp(const MainApp());
+  runApp(MainApp());
 }
 
-final mainHull = Hull.create(200, 50, 20, 5, 4);
-DesignScreen mainScreen = DesignScreen(mainHull: mainHull);
-
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  MainApp({super.key});
+
+  final _mainHull = Hull.create(200, 50, 20, 5, 4);
 
   @override
   Widget build(BuildContext context) {
@@ -45,9 +44,9 @@ class MainApp extends StatelessWidget {
                         )))),
             body: TabBarView(
               children: [
-                Center(child: mainScreen),
+                Center(child: DesignScreen(mainHull: _mainHull)),
                 const Text('Layout view: TBA'),
-                Center(child: WaterlineScreen(mHull: mainHull)),
+                Center(child: WaterlineScreen(mHull: _mainHull)),
               ],
             )),
       ),

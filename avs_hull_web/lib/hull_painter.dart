@@ -15,16 +15,16 @@ import 'spline.dart';
 class HullPainter extends CustomPainter {
   static const double _nearnessDistance = 5;
 
-  final RotatedHull mHull;
-  BuildContext? mContext;
+  final RotatedHull _myHull;
+  BuildContext? _context;
   double _scale = 1.0;
   double _translateX = 0.0;
   double _translateY = 0.0;
 
-  HullPainter(this.mHull);
+  HullPainter(this._myHull);
 
   void setContext(BuildContext context) {
-    mContext = context;
+    _context = context;
   }
 
   @override
@@ -34,17 +34,17 @@ class HullPainter extends CustomPainter {
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
-    if (mHull.isEditable()) paint.color = const Color.fromARGB(255, 0, 0, 0);
+    if (_myHull.isEditable()) paint.color = const Color.fromARGB(255, 0, 0, 0);
 
-    Point3D hullSize = mHull.size();
+    Point3D hullSize = _myHull.size();
     Path path = Path();
 
     // Scale to fit using the 'size' parameter
-    for (Bulkhead bulkhead in mHull.mBulkheads) {
+    for (Bulkhead bulkhead in _myHull.mBulkheads) {
       path.addPolygon(bulkhead.getOffsets(), false);
     }
 
-    for (Spline chine in mHull.mChines) {
+    for (Spline chine in _myHull.mChines) {
       path.addPolygon(chine.getOffsets(), false);
     }
 
@@ -59,11 +59,11 @@ class HullPainter extends CustomPainter {
         Quaternion.identity(), Vector3(_scale, _scale, _scale));
 
     // Add handles after computing the xform, so they don't impact scale.
-    if (mHull.bulkheadIsSelected && mHull.isEditable()) {
+    if (_myHull.bulkheadIsSelected && _myHull.isEditable()) {
       for (int index = 0;
-          index < mHull.mBulkheads[mHull.selectedBulkhead].numPoints();
+          index < _myHull.mBulkheads[_myHull.selectedBulkhead].numPoints();
           index++) {
-        Point3D p = mHull.mBulkheads[mHull.selectedBulkhead].point(index);
+        Point3D p = _myHull.mBulkheads[_myHull.selectedBulkhead].point(index);
         Offset handleCenter = Offset(p.x, p.y);
         Rect handle = Rect.fromCenter(
             center: handleCenter,
@@ -72,8 +72,9 @@ class HullPainter extends CustomPainter {
         path.addRect(handle);
       }
 
-      if (mHull.movingHandle) {
-        Offset handleCenter = Offset(mHull.movingHandleX, mHull.movingHandleY);
+      if (_myHull.movingHandle) {
+        Offset handleCenter =
+            Offset(_myHull.movingHandleX, _myHull.movingHandleY);
         Rect handle = Rect.fromCenter(
             center: handleCenter,
             width: _nearnessDistance / _scale,
@@ -100,14 +101,8 @@ class HullPainter extends CustomPainter {
   }
 
   void redraw() {
-    final RenderBox? renderBox = mContext?.findRenderObject() as RenderBox?;
+    final RenderBox? renderBox = _context?.findRenderObject() as RenderBox?;
     renderBox?.markNeedsPaint();
-  }
-
-  void setView(HullView view) {
-    mHull.setView(view);
-
-    redraw();
   }
 
   double scale() {

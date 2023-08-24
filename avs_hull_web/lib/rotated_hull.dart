@@ -13,7 +13,7 @@ import 'hull.dart';
 enum HullView { front, side, top, rotated }
 
 class RotatedHull extends Hull {
-  final Hull mBaseHull;
+  final Hull _baseHull;
   HullView _mView = HullView.rotated;
   bool _static = false;
   double _rotateX = 0;
@@ -28,16 +28,16 @@ class RotatedHull extends Hull {
   int selectedBulkhead = -1;
 
   // move code to createFromBase() method
-  RotatedHull(this.mBaseHull) {
+  RotatedHull(this._baseHull) {
     _createFromBase();
   }
 
   void _createFromBase() {
-    mBulkheads = List<Bulkhead>.from(mBaseHull.mBulkheads);
+    mBulkheads = List<Bulkhead>.from(_baseHull.mBulkheads);
 
     // force a deep copy of chines.
     mChines = [];
-    for (Spline spline in mBaseHull.mChines) {
+    for (Spline spline in _baseHull.mChines) {
       mChines.add(Spline.copy(spline));
     }
   }
@@ -101,7 +101,6 @@ class RotatedHull extends Hull {
         _mView = view;
         break;
       default:
-        print('rotate to $_rotateX, $_rotateY, $_rotateZ');
         rotateTo(_rotateX, _rotateY, _rotateZ);
         break;
     }
@@ -132,8 +131,6 @@ class RotatedHull extends Hull {
     double newY = 0;
     double newZ = 0;
 
-    print('updateBaseHull $bulk, $chine, $deltaX, $deltaY');
-
     switch (_mView) {
       case HullView.front:
         newX = deltaX;
@@ -154,10 +151,10 @@ class RotatedHull extends Hull {
         // Can't update a rotated hull
         break;
     }
-    newX += mBaseHull.mBulkheads[bulk].mPoints[chine].x;
-    newY += mBaseHull.mBulkheads[bulk].mPoints[chine].y;
-    newZ += mBaseHull.mBulkheads[bulk].mPoints[chine].z;
+    newX += _baseHull.mBulkheads[bulk].mPoints[chine].x;
+    newY += _baseHull.mBulkheads[bulk].mPoints[chine].y;
+    newZ += _baseHull.mBulkheads[bulk].mPoints[chine].z;
 
-    mBaseHull.updateBulkhead(bulk, chine, newX, newY, newZ);
+    _baseHull.updateBulkhead(bulk, chine, newX, newY, newZ);
   }
 }
