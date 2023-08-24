@@ -19,10 +19,10 @@ class DesignScreen extends StatelessWidget {
     frontWindow = HullWindow(mainHull, HullView.front, _selectFront, null);
     sideWindow = HullWindow(mainHull, HullView.side, _selectSide, null);
     topWindow = HullWindow(mainHull, HullView.top, _selectTop, null);
-    mainWindow = HullWindow(mainHull, HullView.rotated, _selectTop, resetAll);
+    mainWindow =
+        HullWindow(mainHull, HullView.rotated, _selectTop, resetScreen);
     mainWindow.setRotatable();
     mainWindow.setEditable();
-    //resetScreen();
   }
 
   //final Hull myHull = Hull(length: 200, width: 50, height:20, numBulkheads:5 numChines:5);
@@ -57,8 +57,8 @@ class DesignScreen extends StatelessWidget {
     );
   }
 
-  void resetAll() {
-    print('reset all');
+  void resetScreen() {
+    print('reset screen');
     frontWindow.resetView();
     sideWindow.resetView();
     topWindow.resetView();
@@ -75,14 +75,6 @@ class DesignScreen extends StatelessWidget {
 
   void _selectTop() {
     mainWindow.setView(HullView.top);
-  }
-
-  void resetScreen() {
-    print('resetScreen');
-    frontWindow.resetView();
-    sideWindow.resetView();
-    topWindow.resetView();
-    mainWindow.setView(HullView.rotated);
   }
 }
 

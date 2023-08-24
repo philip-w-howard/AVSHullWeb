@@ -18,11 +18,11 @@ class DrawDetails {
 }
 
 class HullWindow extends StatelessWidget {
-  HullWindow(Hull hull, this._view, this._selector, this._updateScreen,
+  HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
       {super.key}) {
     _myHull = RotatedHull(hull);
-    _myHull.setView(_view);
-    if (_view == HullView.rotated) {
+    _myHull.setView(view);
+    if (view == HullView.rotated) {
       _myHull.setView(HullView.front);
       _myHull.rotateBy(10, 50, 10);
       _myHull.setDynamic();
@@ -33,7 +33,6 @@ class HullWindow extends StatelessWidget {
   }
 
   static const double _nearnessDistance = 10;
-  final HullView _view;
   late final HullPainter _painter;
   late final RotatedHull _myHull;
   final void Function()? _selector;
@@ -54,9 +53,9 @@ class HullWindow extends StatelessWidget {
 
   void resetView() {
     bool static = _myHull.isStatic();
-    _myHull.setDynamic();
-    _myHull.setView(_view);
 
+    _myHull.setDynamic();
+    _myHull.setView(_myHull.getView());
     if (static) _myHull.setStatic();
 
     _painter.redraw();
@@ -80,7 +79,6 @@ class HullWindow extends StatelessWidget {
       child: Container(
           height: _drawDetails.height,
           color: Colors.yellow,
-          // wrap CustomPaint in a GestureDetector to catch onDoubleTap
           child: GestureDetector(
             onDoubleTap: _selector,
             onTapDown: _tapDown,
@@ -97,39 +95,14 @@ class HullWindow extends StatelessWidget {
   }
 
   void _tapDown(TapDownDetails details) {
-    print('tapDown');
     _drawDetails.dragStart = details.localPosition;
-
-    // _drawDetails.movingHandle = false;
-    // _drawDetails.selectedBulkheadPoint = -1;
-    // if (_drawDetails.editable && .isEditable()) {
-    //   _drawDetails.dragStart = details.localPosition;
-    // }
-
-    // if (_drawDetails.bulkheadIsSelected) {
-    //   double x;
-    //   double y;
-    //   (x, y) = toHullCoords(_mouseX, _mouseY);
-    //   _selectedBulkheadPoint = mHull.isNearBulkheadPoint(
-    //       _selectedBulkhead, x, y, _nearnessDistance / _scale / 2);
-    //   if (_selectedBulkheadPoint >= 0) {
-    //     _movingHandle = true;
-    //     _handleX = x;
-    //     _handleY = y;
-    //   }
-    // } else {
-    //   _selectedBulkheadPoint = -1;
-    //   _movingHandle = false;
-    // }
   }
 
   void _tapUp(TapUpDetails details) {
-    print('tapUp ${_drawDetails.editable} ${_myHull.isEditable()}');
     bool needsRedraw = false;
     double x, y;
     double startX, startY;
     if (_drawDetails.editable && _myHull.isEditable()) {
-      print('checking bulkheads');
       if (_drawDetails.dragStart.dx == details.localPosition.dx &&
           _drawDetails.dragStart.dy == details.localPosition.dy) {
         (x, y) = _painter.toHullCoords(_drawDetails.dragStart);
@@ -141,18 +114,15 @@ class HullWindow extends StatelessWidget {
             _myHull.bulkheadIsSelected = true;
             _myHull.selectedBulkhead = ii;
             _painter.redraw();
-            print('selected bulkhead');
             break;
           }
         }
-        print('done checking bulkheads');
       } else if (_myHull.movingHandle) {
         (startX, startY) = _painter.toHullCoords(_drawDetails.dragStart);
         (x, y) = _painter.toHullCoords(details.localPosition);
         _myHull.updateBaseHull(_myHull.selectedBulkhead,
             _drawDetails.selectedBulkheadPoint, startX - x, startY - y);
         needsRedraw = true;
-        print('moving handle');
       }
     }
 
@@ -162,8 +132,6 @@ class HullWindow extends StatelessWidget {
   }
 
   void _panStart(DragStartDetails details) {
-    print('PanStart ${details.localPosition}');
-
     _myHull.movingHandle = false;
     _drawDetails.selectedBulkheadPoint = -1;
     _drawDetails.dragStart = details.localPosition;
@@ -190,20 +158,6 @@ class HullWindow extends StatelessWidget {
 
   void _panUpdate(DragUpdateDetails details) {
     double x, y;
-    //   if (mouse.down) {
-    //     if (_movingHandle) {
-    //       double x, y;
-    //       (x, y) = toHullCoords(mouse.localPosition.dx, mouse.localPosition.dy);
-    //       _handleX = x;
-    //       _handleY = y;
-    //       //mHull.updateBulkhead(
-    //       //    _selectedBulkhead, _selectedBulkheadPoint, x, y, 0);
-    //     } else {
-    //       mHull.rotateBy(2, 1, 0.5);
-    //     }
-    //     //if (!needsRepaint) updatePainter();
-    //     updatePainter();
-    //   }
 
     if (_myHull.isEditable() && _myHull.movingHandle) {
       (x, y) = _painter.toHullCoords(details.localPosition);
