@@ -18,8 +18,7 @@ class DesignScreen extends StatelessWidget {
     _frontWindow = HullWindow(_myHull, HullView.front, _selectFront, null);
     _sideWindow = HullWindow(_myHull, HullView.side, _selectSide, null);
     _topWindow = HullWindow(_myHull, HullView.top, _selectTop, null);
-    _editWindow =
-        HullWindow(_myHull, HullView.rotated, _selectTop, resetScreen);
+    _editWindow = HullWindow(_myHull, HullView.rotated, null, resetScreen);
     _editWindow.setRotatable();
     _editWindow.setEditable();
   }

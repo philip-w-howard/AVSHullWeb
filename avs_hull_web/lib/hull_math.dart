@@ -139,6 +139,16 @@ bool isNearPoint(double p1x, double p1y, double p2x, double p2y, double range) {
 
 // **************************************************************************
 // Determine if the point (p3_x,p3_y) is near the line defined by (p1_x, p1_y) and (p2_x, p2_y)
+double distanceToPoint(double p1x, double p1y, double p2x, double p2y) {
+  double deltaX = p1x - p2x;
+  double deltaY = p1y - p2y;
+  double distance = math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+  return distance;
+}
+
+// **************************************************************************
+// Determine if the point (p3_x,p3_y) is near the line defined by (p1_x, p1_y) and (p2_x, p2_y)
 bool isNearLine(double line1x, double line1y, double line2x, double line2y,
     double pointX, double pointY, double range) {
   if (line1x == line2x) // vertical line

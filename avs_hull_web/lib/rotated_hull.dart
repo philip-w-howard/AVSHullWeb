@@ -70,11 +70,28 @@ class RotatedHull extends Hull {
   }
 
   void rotateBy(double x, double y, double z) {
-    _rotateX += x;
-    _rotateY += y;
-    _rotateZ += z;
+    if (!_static) {
+      _rotateX = x;
+      _rotateY = y;
+      _rotateZ = z;
 
-    rotateTo(_rotateX, _rotateY, _rotateZ);
+      List<List<double>> rotate = makeRotator(x, y, z);
+      List<Point3D> points = [];
+
+      _mView = HullView.rotated;
+
+      for (int ii = 0; ii < numBulkheads(); ii++) {
+        points = rotatePoints(getBulkhead(ii).mPoints, rotate);
+
+        mBulkheads[ii] =
+            Bulkhead.fromPoints(points, mBulkheads[ii].mBulkheadType);
+      }
+
+      for (int ii = 0; ii < mChines.length; ii++) {
+        mChines[ii].rotate(rotate);
+      }
+      _zero();
+    }
   }
 
   void _zero() {

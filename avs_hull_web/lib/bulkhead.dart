@@ -104,14 +104,22 @@ class Bulkhead {
     return false;
   }
 
-  int isNearBulkheadPoint(double x, double y, double distance) {
+  int isNearBulkheadPoint(double x, double y, double maxDistance) {
+    double minDistance = 2 * maxDistance;
+    int selectedPoint = -1;
+
     for (int ii = 0; ii < numPoints(); ii++) {
       double bulkX = mPoints[ii].x;
       double bulkY = mPoints[ii].y;
-      if (isNearPoint(bulkX, bulkY, x, y, distance)) return ii;
+      double distance = distanceToPoint(bulkX, bulkY, x, y);
+
+      if (distance < minDistance && distance < maxDistance) {
+        minDistance = distance;
+        selectedPoint = ii;
+      }
     }
 
-    return -1;
+    return selectedPoint;
   }
 
   void updatePoint(int chine, double x, double y, double z) {

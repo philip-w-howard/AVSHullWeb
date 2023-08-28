@@ -15,16 +15,20 @@ class DrawDetails {
   bool rotatable = false;
   bool editable = false;
   int selectedBulkheadPoint = -1;
+  bool rotateModeA = true;
+  Size size = Size.infinite;
 }
 
 class HullWindow extends StatelessWidget {
+  static const double _rotateScale = 0.05;
+  static const double _nearnessDistance = 20;
+
   HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
       {super.key}) {
     _myHull = RotatedHull(hull);
     _myHull.setView(view);
     if (view == HullView.rotated) {
-      _myHull.setView(HullView.front);
-      _myHull.rotateBy(10, 50, 10);
+      _myHull.rotateTo(10, 50, 190);
       _myHull.setDynamic();
     } else {
       _myHull.setStatic();
@@ -32,7 +36,6 @@ class HullWindow extends StatelessWidget {
     _painter = HullPainter(_myHull);
   }
 
-  static const double _nearnessDistance = 10;
   late final HullPainter _painter;
   late final RotatedHull _myHull;
   final void Function()? _selector;
@@ -64,8 +67,7 @@ class HullWindow extends StatelessWidget {
   void setView(HullView view) {
     _myHull.setDynamic();
     if (view == HullView.rotated) {
-      _myHull.setView(HullView.front);
-      _myHull.rotateBy(10, 50, 10);
+      _myHull.rotateTo(10, 50, 190);
     } else {
       _myHull.setView(view);
     }
@@ -76,21 +78,31 @@ class HullWindow extends StatelessWidget {
   Widget build(BuildContext context) {
     _painter.setContext(context);
     return Expanded(
-      child: Container(
-          height: _drawDetails.height,
-          color: Colors.yellow,
-          child: GestureDetector(
-            onDoubleTap: _selector,
-            onTapDown: _tapDown,
-            onTapUp: _tapUp,
-            onPanStart: _panStart,
-            onPanUpdate: _panUpdate,
-            onPanEnd: _panEnd,
-            child: CustomPaint(
-              painter: _painter,
-              size: Size.infinite,
+      child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        _drawDetails.size = constraints.biggest;
+        return Container(
+            height: _drawDetails.height,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black, // Border color
+                width: 1.0, // Border width
+              ),
+              color: Colors.yellow,
             ),
-          )),
+            child: GestureDetector(
+              onDoubleTap: _selector,
+              onTapDown: _tapDown,
+              onTapUp: _tapUp,
+              onPanStart: _panStart,
+              onPanUpdate: _panUpdate,
+              onPanEnd: _panEnd,
+              child: CustomPaint(
+                painter: _painter,
+                size: Size.infinite,
+              ),
+            ));
+      }),
     );
   }
 
@@ -132,7 +144,6 @@ class HullWindow extends StatelessWidget {
   }
 
   void _panStart(DragStartDetails details) {
-    _myHull.movingHandle = false;
     _drawDetails.selectedBulkheadPoint = -1;
     _drawDetails.dragStart = details.localPosition;
 
@@ -149,10 +160,19 @@ class HullWindow extends StatelessWidget {
         _myHull.movingHandle = true;
         _myHull.movingHandleX = x;
         _myHull.movingHandleY = y;
+      } else {
+        _myHull.movingHandle = false;
       }
     } else {
       _drawDetails.selectedBulkheadPoint = -1;
       _myHull.movingHandle = false;
+
+      // determine rotation style
+      double width = _drawDetails.size.width;
+      if (width == 0) width = details.localPosition.dx * 2;
+      double locRatio = details.localPosition.dx / _drawDetails.size.width;
+
+      _drawDetails.rotateModeA = (locRatio < 0.25 || locRatio > .75);
     }
   }
 
@@ -165,7 +185,16 @@ class HullWindow extends StatelessWidget {
       _myHull.movingHandleY = y;
       _painter.redraw();
     } else if (_drawDetails.rotatable) {
-      _myHull.rotateBy(2, 1, 0.5);
+      double rotateX = details.delta.dx * _rotateScale;
+      double rotateY = details.delta.dy * _rotateScale;
+      if (_drawDetails.rotateModeA) {
+        if (details.localPosition.dx < _drawDetails.size.width / 2) {
+          rotateY = -rotateY;
+        }
+        _myHull.rotateBy(0, rotateX, rotateY);
+      } else {
+        _myHull.rotateBy(rotateY, rotateX, 0);
+      }
       _painter.redraw();
     }
   }
@@ -184,7 +213,6 @@ class HullWindow extends StatelessWidget {
 
       _myHull.movingHandle = false;
       _updateScreen!();
-      //_painter.redraw();
     }
   }
 
