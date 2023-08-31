@@ -21,22 +21,7 @@ class LayoutData {
 
 class PanelsScreen extends StatelessWidget {
   PanelsScreen(this._hull, {super.key}) {
-    _basePanels.clear();
-
-    // for (int ii = 0; ii < _hull.mChines.length / 2; ii++) {
-    //   basePanels
-    //       .add(Panel.fromChines(_hull.mChines[ii], _hull.mChines[ii + 1]));
-    // }
-
-    for (Bulkhead bulk in _hull.mBulkheads) {
-      if (bulk.mBulkheadType != BulkheadType.bow) {
-        _basePanels.add(Panel.fromBulkhead(bulk));
-      }
-    }
-
-    for (Panel panel in _basePanels) {
-      _displayedPanels.add(panel);
-    }
+    createPanels();
 
     _panelsWindow = PanelsWindow(_displayedPanels);
 
@@ -77,7 +62,7 @@ class PanelsScreen extends StatelessWidget {
       body: Row(
         children: [
           Container(
-            //color: Colors.blue,
+            color: Colors.yellow,
             width: 125,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -119,18 +104,6 @@ class PanelsScreen extends StatelessWidget {
                   },
                   child: const Text('Redraw'),
                 ),
-                // TextButton(
-                //   onPressed: () {
-                //     _hullWindow.setView(HullView.side);
-                //   },
-                //   child: const Text('Show Side'),
-                // ),
-                // TextButton(
-                //   onPressed: () {
-                //     _hullWindow.setView(HullView.top);
-                //   },
-                //   child: const Text('Show Top'),
-                // ),
               ],
             ),
           ),
@@ -181,6 +154,25 @@ class PanelsScreen extends StatelessWidget {
       // Note: this causes a redraw
       _panelsWindow.updateLayout(_layout.panelsX, _layout.panelsY,
           _layout.panelSizeX, _layout.panelSizeY);
+    }
+  }
+
+  void createPanels() {
+    _basePanels.clear();
+
+    // for (int ii = 0; ii < _hull.mChines.length / 2; ii++) {
+    //   basePanels
+    //       .add(Panel.fromChines(_hull.mChines[ii], _hull.mChines[ii + 1]));
+    // }
+
+    for (Bulkhead bulk in _hull.mBulkheads) {
+      if (bulk.mBulkheadType != BulkheadType.bow) {
+        _basePanels.add(Panel.fromBulkhead(bulk));
+      }
+    }
+
+    for (Panel panel in _basePanels) {
+      _displayedPanels.add(panel);
     }
   }
 }
