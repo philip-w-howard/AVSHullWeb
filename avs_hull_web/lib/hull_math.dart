@@ -4,6 +4,8 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 import 'dart:math' as math;
 import 'point_3d.dart';
 
@@ -67,6 +69,40 @@ List<List<double>> makeRotator(double x, double y, double z) {
   rotate_1[0][2] = -math.sin(angle);
 
   result = matrixMultiply(result, rotate_1);
+
+  return result;
+}
+
+// ********************************************************************
+List<List<double>> makeRotator2D(double angle) {
+  List<List<double>> rotate =
+      List.generate(2, (_) => List<double>.filled(2, 0.0));
+
+  rotate[0][0] = math.cos(angle);
+  rotate[1][1] = math.cos(angle);
+  rotate[0][1] = math.sin(angle);
+  rotate[1][0] = -math.sin(angle);
+
+  return rotate;
+}
+
+// ********************************************************************
+List<Offset> rotate2D(List<Offset> points, double angle) {
+  List<List<double>> rotate =
+      List.generate(2, (_) => List<double>.filled(2, 0.0));
+  List<Offset> result = [];
+  double x, y;
+
+  rotate[0][0] = math.cos(angle);
+  rotate[1][1] = math.cos(angle);
+  rotate[0][1] = math.sin(angle);
+  rotate[1][0] = -math.sin(angle);
+
+  for (Offset point in points) {
+    x = point.dx * rotate[0][0] + point.dy * rotate[0][1];
+    y = point.dx * rotate[1][0] + point.dy * rotate[1][1];
+    result.add(Offset(x, y));
+  }
 
   return result;
 }
@@ -207,4 +243,130 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
 
     return false;
   }
+}
+
+// ********************************************************************
+(Offset, Offset) intersection(Offset p1, double r1, Offset p2, double r2) {
+  Offset intersection1 = Offset.zero;
+  Offset intersection2 = Offset.zero;
+
+  if (p1.dx != p2.dx) {
+    double A = (r1 * r1 -
+            r2 * r2 -
+            p1.dx * p1.dx +
+            p2.dx * p2.dx -
+            p1.dy * p1.dy +
+            p2.dy * p2.dy) /
+        (2 * p2.dx - 2 * p1.dx);
+    double B = (p1.dy - p2.dy) / (p2.dx - p1.dx);
+    double a = B * B + 1;
+    double b = 2 * A * B - 2 * p1.dx * B - 2 * p1.dy;
+    double c = A * A - 2 * p1.dx * A + p1.dx * p1.dx + p1.dy * p1.dy - r1 * r1;
+
+    double y1, y2;
+
+    Tuple2<double, double> result = Tuple2(0.0, 0.0);
+    y1 = result.item1;
+    y2 = result.item2;
+
+    double x = math.sqrt(y2);
+    if (x.isNaN) (y1, y2) = quadradicSolution(a, b, c);
+    if (y1.isNaN || y2.isNaN) {
+      return (Offset.infinite, Offset.infinite); // <<<<<<<<<<<<<<<<<<<<<<
+    }
+
+    intersection1 = Offset(A + B * intersection1.dy, y1);
+    intersection2 = Offset(A + B * intersection2.dy, y2);
+  } else {
+    double A = (r1 * r1 -
+            r2 * r2 -
+            p1.dy * p1.dy +
+            p2.dy * p2.dy -
+            p1.dx * p1.dx +
+            p2.dx * p2.dx) /
+        (2 * p2.dy - 2 * p1.dy);
+    double B = (p1.dx - p2.dx) / (p2.dy - p1.dy);
+    double a = B * B + 1;
+    double b = 2 * A * B - 2 * p1.dy * B - 2 * p1.dx;
+    double c = A * A - 2 * p1.dy * A + p1.dy * p1.dy + p1.dx * p1.dx - r1 * r1;
+
+    double x1, x2;
+    (x1, x2) = quadradicSolution(a, b, c);
+
+    intersection1 = Offset(x1, A + B * intersection1.dx);
+    intersection2 = Offset(x2, A + B * intersection2.dx);
+  }
+
+  return (intersection1, intersection2);
+}
+
+// Compute the two solutions to the quadradic forumula.
+// a,b,c have the normal meaning for the quadradic formula.
+(double, double) quadradicSolution(double a, double b, double c) {
+  double x1 = double.nan;
+  double x2 = double.nan;
+  double base = b * b - 4 * a * c;
+  if (base < 0) {
+    return (double.nan, double.nan);
+  }
+
+  double root = math.sqrt(base);
+  x1 = (-b + root) / (2 * a);
+  x2 = (-b - root) / (2 * a);
+
+  return (x1, x2);
+}
+
+// ********************************************************************
+Offset computeMidpoint(List<Offset> points) {
+  Offset min = Offset.zero;
+  Offset max = Offset.zero;
+
+  (min, max) = getMinMax(points);
+
+  return Offset((min.dx + max.dx) / 2, (min.dy + max.dy) / 2);
+}
+
+(Offset, Offset) getMinMax(List<Offset> points) {
+  double maxX = double.negativeInfinity;
+  double maxY = double.negativeInfinity;
+  double minX = double.maxFinite;
+  double minY = double.maxFinite;
+
+  for (Offset point in points) {
+    if (point.dx < minX) minX = point.dx;
+    if (point.dy < minY) minY = point.dy;
+    if (point.dx > maxX) maxX = point.dx;
+    if (point.dy > maxY) maxY = point.dy;
+  }
+
+  return (Offset(minX, minY), Offset(maxX, maxY));
+}
+
+List<Offset> translateShape(
+    List<Offset> points, double xOffset, double yOffset) {
+  List<Offset> result = [];
+
+  for (Offset point in points) {
+    result.add(Offset(point.dx + xOffset, point.dy + yOffset));
+  }
+
+  return result;
+}
+
+// *******************************************************************
+double angleBetween(Offset vector1, Offset vector2) {
+  double x1 = vector1.dx;
+  double y1 = vector1.dy;
+  double x2 = vector2.dx;
+  double y2 = vector2.dy;
+
+  double dotProduct = (x1 * (x2 - x1)) + (y1 * (y2 - y1));
+  double magnitude1 = math.sqrt(x1 * x1 + y1 * y1);
+  double magnitude2 = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+
+  double cosine = dotProduct / (magnitude1 * magnitude2);
+  double angleRadians = math.acos(cosine);
+
+  return angleRadians;
 }
