@@ -9,7 +9,7 @@ import 'hull.dart';
 import 'rotated_hull.dart';
 import 'hull_painter.dart';
 
-class DrawDetails {
+class HullDrawDetails {
   double? height;
   Offset dragStart = Offset.zero;
   bool rotatable = false;
@@ -40,7 +40,7 @@ class HullWindow extends StatelessWidget {
   late final RotatedHull _myHull;
   final void Function()? _selector;
   final void Function()? _updateScreen;
-  final DrawDetails _drawDetails = DrawDetails();
+  final HullDrawDetails _drawDetails = HullDrawDetails();
 
   void setHeight(double height) {
     _drawDetails.height = height;

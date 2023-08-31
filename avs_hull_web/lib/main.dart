@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'design_screen.dart';
 import 'waterline_screen.dart';
+import 'panels_screen.dart';
 import 'hull.dart';
 
 void main() {
@@ -45,7 +46,7 @@ class MainApp extends StatelessWidget {
             body: TabBarView(
               children: [
                 Center(child: DesignScreen(mainHull: _mainHull)),
-                const Text('Layout view: TBA'),
+                Center(child: PanelsScreen(_mainHull)),
                 Center(child: WaterlineScreen(_mainHull)),
               ],
             )),
