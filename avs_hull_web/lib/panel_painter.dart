@@ -81,6 +81,7 @@ class PanelPainter extends CustomPainter {
         screenMax = Offset(screenMax.dx, panelMax.dy);
       }
 
+      print('added panel $panelMin $panelMax: $screenMin $screenMax');
       path.addPolygon(panel.getOffsets(), false);
     }
 
@@ -90,6 +91,10 @@ class PanelPainter extends CustomPainter {
     _scale = math.min(scaleX, scaleY);
     _translateX = 0.05 * size.width;
     _translateY = 0.05 * size.height;
+    if (screenMin.dx < 0) _translateX -= _scale * screenMin.dx;
+    if (screenMin.dy < 0) _translateY -= _scale * screenMin.dy;
+
+    print('drawing with size: $size scale: $_scale');
 
     Matrix4 xform = Matrix4.compose(Vector3(_translateX, _translateY, 0),
         Quaternion.identity(), Vector3(_scale, _scale, _scale));

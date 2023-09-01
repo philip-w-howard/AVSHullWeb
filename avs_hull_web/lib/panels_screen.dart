@@ -104,6 +104,7 @@ class PanelsScreen extends StatelessWidget {
                   },
                   child: const Text('Redraw'),
                 ),
+                const Spacer(flex: 1),
               ],
             ),
           ),

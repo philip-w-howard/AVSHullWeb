@@ -1,10 +1,16 @@
 TODO.text
 Features:
+    panel layouts
+        sizes don't look right.
+        Positioning of drawing in window isn't right
+        position each panel in a different location 
+        Get non-bulkhead panels to work
+        allow moving of panels
+        
     "better" initial hull
     transoms
     flat-bottomed 
     closed-top 
-    panel layouts
     SaveAs formats
     waterlines
     Allow Save to specify filename
