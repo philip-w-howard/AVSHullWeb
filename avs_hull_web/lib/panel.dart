@@ -214,6 +214,12 @@ class Panel {
       offsets.add(Offset(point.dx + _origin.dx, point.dy + _origin.dy));
     }
 
+    print('panel offsets: $_origin, $offsets, $mPoints');
     return offsets;
+  }
+
+  void moveBy(double x, double y) {
+    _origin = Offset(_origin.dx + x, _origin.dy + y);
+    print('new origin $_origin');
   }
 }

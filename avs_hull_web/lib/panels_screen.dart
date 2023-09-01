@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/hull_math.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -172,8 +173,23 @@ class PanelsScreen extends StatelessWidget {
       }
     }
 
+    double xOffset = 0;
+    double yOffset = 0;
+
+    Offset min = Offset.zero;
+    Offset max = Offset.zero;
+
     for (Panel panel in _basePanels) {
+      (min, max) = getMinMax2D(panel.getOffsets());
+
       _displayedPanels.add(panel);
+
+      xOffset = min.dx + 5;
+      _displayedPanels[_displayedPanels.length - 1]
+          .moveBy(-min.dx + 5, yOffset);
+      yOffset += max.dy + 5;
+
+      print('panel offsets $min, $max, ($xOffset, $yOffset)');
     }
   }
 }

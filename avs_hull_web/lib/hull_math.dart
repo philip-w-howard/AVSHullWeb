@@ -363,6 +363,18 @@ Offset computeMidpoint(List<Offset> points) {
   return (Offset(minX, minY), Offset(maxX, maxY));
 }
 
+Offset getMin2D(List<Offset> points) {
+  double minX = double.maxFinite;
+  double minY = double.maxFinite;
+
+  for (Offset point in points) {
+    if (point.dx < minX) minX = point.dx;
+    if (point.dy < minY) minY = point.dy;
+  }
+
+  return Offset(minX, minY);
+}
+
 Point3D min3D(Point3D p1, Point3D p2) {
   return Point3D(
       math.min(p1.x, p2.x), math.min(p1.y, p2.y), math.min(p1.z, p2.z));

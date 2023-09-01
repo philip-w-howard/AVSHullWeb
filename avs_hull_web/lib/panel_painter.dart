@@ -63,7 +63,7 @@ class PanelPainter extends CustomPainter {
       Offset panelMin = Offset.zero;
       Offset panelMax = Offset.zero;
 
-      (panelMin, panelMax) = getMinMax2D(panel.mPoints);
+      (panelMin, panelMax) = getMinMax2D(panel.getOffsets());
 
       if (panelMin.dx < screenMin.dx) {
         screenMin = Offset(panelMin.dx, screenMin.dy);
