@@ -19,6 +19,12 @@ class Point3D {
     z = json['z'] ?? 0;
   }
 
+  Point3D.zero() {
+    x = 0;
+    y = 0;
+    z = 0;
+  }
+
   Point3D operator -(Point3D operand) {
     return Point3D(x - operand.x, y - operand.y, z - operand.z);
   }

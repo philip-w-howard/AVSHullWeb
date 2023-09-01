@@ -5,6 +5,8 @@
 // ***************************************************************
 
 import 'dart:math' as math;
+import 'package:avs_hull_web/hull_math.dart';
+
 import 'point_3d.dart';
 import 'bulkhead.dart';
 import 'spline.dart';
@@ -113,18 +115,20 @@ class Hull {
   }
 
   Point3D size() {
-    Point3D size = Point3D(double.negativeInfinity, double.negativeInfinity,
-        double.negativeInfinity);
+    Point3D min = Point3D.zero();
+    Point3D max = Point3D.zero();
+    Point3D sizeMin = Point3D.zero();
+    Point3D sizeMax = Point3D.zero();
 
     for (Bulkhead bulkhead in mBulkheads) {
-      for (Point3D point in bulkhead.mPoints) {
-        size.x = math.max(size.x, point.x);
-        size.y = math.max(size.y, point.y);
-        size.z = math.max(size.z, point.z);
-      }
+      (min, max) = getMinMax(bulkhead.mPoints);
+
+      sizeMin = min3D(min, sizeMin);
+      sizeMax = max3D(max, sizeMax);
     }
 
-    return size;
+    return Point3D(
+        sizeMax.x - sizeMin.x, sizeMax.y - sizeMin.y, sizeMax.z - sizeMin.z);
   }
 
   void resize(double xSize, double ySize, double zSize) {

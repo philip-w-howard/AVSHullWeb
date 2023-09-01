@@ -322,12 +322,32 @@ Offset computeMidpoint(List<Offset> points) {
   Offset min = Offset.zero;
   Offset max = Offset.zero;
 
-  (min, max) = getMinMax(points);
+  (min, max) = getMinMax2D(points);
 
   return Offset((min.dx + max.dx) / 2, (min.dy + max.dy) / 2);
 }
 
-(Offset, Offset) getMinMax(List<Offset> points) {
+(Point3D, Point3D) getMinMax(List<Point3D> points) {
+  double maxX = double.negativeInfinity;
+  double maxY = double.negativeInfinity;
+  double maxZ = double.negativeInfinity;
+  double minX = double.maxFinite;
+  double minY = double.maxFinite;
+  double minZ = double.maxFinite;
+
+  for (Point3D point in points) {
+    if (point.x < minX) minX = point.x;
+    if (point.y < minY) minY = point.y;
+    if (point.z < minZ) minZ = point.z;
+    if (point.x > maxX) maxX = point.x;
+    if (point.y > maxY) maxY = point.y;
+    if (point.z > maxZ) maxZ = point.z;
+  }
+
+  return (Point3D(minX, minY, minZ), Point3D(maxX, maxY, minZ));
+}
+
+(Offset, Offset) getMinMax2D(List<Offset> points) {
   double maxX = double.negativeInfinity;
   double maxY = double.negativeInfinity;
   double minX = double.maxFinite;
@@ -341,6 +361,16 @@ Offset computeMidpoint(List<Offset> points) {
   }
 
   return (Offset(minX, minY), Offset(maxX, maxY));
+}
+
+Point3D min3D(Point3D p1, Point3D p2) {
+  return Point3D(
+      math.min(p1.x, p2.x), math.min(p1.y, p2.y), math.min(p1.z, p2.z));
+}
+
+Point3D max3D(Point3D p1, Point3D p2) {
+  return Point3D(
+      math.max(p1.x, p2.x), math.max(p1.y, p2.y), math.max(p1.z, p2.z));
 }
 
 List<Offset> translateShape(

@@ -63,7 +63,7 @@ class PanelPainter extends CustomPainter {
       Offset panelMin = Offset.zero;
       Offset panelMax = Offset.zero;
 
-      (panelMin, panelMax) = getMinMax(panel.mPoints);
+      (panelMin, panelMax) = getMinMax2D(panel.mPoints);
 
       if (panelMin.dx < screenMin.dx) {
         screenMin = Offset(panelMin.dx, screenMin.dy);
@@ -93,8 +93,6 @@ class PanelPainter extends CustomPainter {
     _translateY = 0.05 * size.height;
     if (screenMin.dx < 0) _translateX -= _scale * screenMin.dx;
     if (screenMin.dy < 0) _translateY -= _scale * screenMin.dy;
-
-    print('drawing with size: $size scale: $_scale');
 
     Matrix4 xform = Matrix4.compose(Vector3(_translateX, _translateY, 0),
         Quaternion.identity(), Vector3(_scale, _scale, _scale));
