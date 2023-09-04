@@ -21,11 +21,9 @@ class PanelsWindow extends StatelessWidget {
   late final PanelPainter _painter;
   final List<Panel> _panels;
   final PanelsDrawDetails _drawDetails = PanelsDrawDetails();
-  late final BuildContext _context;
 
   @override
   Widget build(BuildContext context) {
-    _context = context;
     _painter.setContext(context);
     return Expanded(
         child: Container(
@@ -40,7 +38,9 @@ class PanelsWindow extends StatelessWidget {
               //onDoubleTap: _selector,
               onTapDown: _tapDown,
               onTapUp: _tapUp,
-              onLongPressStart: _longPress,
+              onLongPressStart: (LongPressStartDetails details) {
+                _longPress(details, context);
+              },
               onPanStart: _panStart,
               onPanUpdate: _panUpdate,
               onPanEnd: _panEnd,
@@ -59,19 +59,19 @@ class PanelsWindow extends StatelessWidget {
     _painter.redraw();
   }
 
-  void _longPress(LongPressStartDetails details) {
+  void _longPress(LongPressStartDetails details, BuildContext context) {
     int selectedPanel = _painter.clickInPanel(details.localPosition);
 
     if (selectedPanel >= 0) {
       final RenderBox overlay =
-          Overlay.of(_context).context.findRenderObject() as RenderBox;
+          Overlay.of(context).context.findRenderObject() as RenderBox;
 
       // Calculate the position for the context menu
       final Offset position = overlay.localToGlobal(details.globalPosition);
 
       // Show the context menu
       showMenu<String>(
-        context: _context,
+        context: context,
         position: RelativeRect.fromLTRB(
           position.dx,
           position.dy,
