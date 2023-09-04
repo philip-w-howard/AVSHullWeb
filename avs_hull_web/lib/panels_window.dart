@@ -9,6 +9,7 @@ import 'panel_painter.dart';
 import 'panel.dart';
 
 class PanelsDrawDetails {
+  int panelIndex = -1; // -1 means "none"
   double? height;
   Offset dragStart = Offset.zero;
   bool rotatable = false;
@@ -99,6 +100,9 @@ class PanelsWindow extends StatelessWidget {
   }
 
   void _panStart(DragStartDetails details) {
+    int panelIndex = _painter.clickInPanel(details.localPosition);
+
+    _drawDetails.panelIndex = panelIndex;
     // _drawDetails.selectedBulkheadPoint = -1;
     // _drawDetails.dragStart = details.localPosition;
 
@@ -132,6 +136,12 @@ class PanelsWindow extends StatelessWidget {
   }
 
   void _panUpdate(DragUpdateDetails details) {
+    if (_drawDetails.panelIndex >= 0) {
+      _panels[_drawDetails.panelIndex].moveBy(
+          details.delta.dx / _painter.scale(),
+          details.delta.dy / _painter.scale());
+      _painter.redraw();
+    }
     // double x, y;
 
     // if (_myHull.isEditable() && _myHull.movingHandle) {

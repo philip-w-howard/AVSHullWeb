@@ -81,7 +81,6 @@ class PanelPainter extends CustomPainter {
         screenMax = Offset(screenMax.dx, panelMax.dy);
       }
 
-      print('added panel $panelMin $panelMax: $screenMin $screenMax');
       path.addPolygon(panel.getOffsets(), false);
     }
 
@@ -114,5 +113,15 @@ class PanelPainter extends CustomPainter {
 
   double scale() {
     return _scale;
+  }
+
+  int clickInPanel(Offset click) {
+    Offset location = Offset(click.dx / _scale, click.dy / _scale);
+    for (int ii = 0; ii < _panelList.length; ii++) {
+      final Path path = Path();
+      path.addPolygon(_panelList[ii].getOffsets(), false);
+      if (path.contains(location)) return ii;
+    }
+    return -1;
   }
 }

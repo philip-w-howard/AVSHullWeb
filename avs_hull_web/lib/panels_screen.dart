@@ -161,6 +161,7 @@ class PanelsScreen extends StatelessWidget {
 
   void createPanels() {
     _basePanels.clear();
+    _displayedPanels.clear();
 
     // for (int ii = 0; ii < _hull.mChines.length / 2; ii++) {
     //   basePanels
@@ -184,12 +185,9 @@ class PanelsScreen extends StatelessWidget {
 
       _displayedPanels.add(panel);
 
-      xOffset = min.dx + 5;
-      _displayedPanels[_displayedPanels.length - 1]
-          .moveBy(-min.dx + 5, yOffset);
+      xOffset = -min.dx + 5;
+      _displayedPanels[_displayedPanels.length - 1].moveBy(xOffset, yOffset);
       yOffset += max.dy + 5;
-
-      print('panel offsets $min, $max, ($xOffset, $yOffset)');
     }
   }
 }

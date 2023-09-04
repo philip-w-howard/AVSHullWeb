@@ -1,11 +1,11 @@
 TODO.text
 Features:
     panel layouts
-        sizes don't look right.
-        Positioning of drawing in window isn't right
-        position each panel in a different location 
-        Get non-bulkhead panels to work
         allow moving of panels
+        Get non-bulkhead panels to work
+        user control of adding panels
+        Only replace panels if underlying hull changed
+            implies hull timestamps
         
     "better" initial hull
     transoms
