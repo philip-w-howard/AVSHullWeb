@@ -10,13 +10,6 @@ import 'panel.dart';
 
 class PanelsDrawDetails {
   int panelIndex = -1; // -1 means "none"
-  double? height;
-  Offset dragStart = Offset.zero;
-  bool rotatable = false;
-  bool editable = false;
-  int selectedBulkheadPoint = -1;
-  bool rotateModeA = true;
-  Size size = Size.infinite;
 }
 
 class PanelsWindow extends StatelessWidget {
@@ -27,20 +20,14 @@ class PanelsWindow extends StatelessWidget {
   late final PanelPainter _painter;
   final List<Panel> _panels;
   final PanelsDrawDetails _drawDetails = PanelsDrawDetails();
-
-  void setHeight(double height) {
-    _drawDetails.height = height;
-  }
+  late final _context;
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
     _painter.setContext(context);
     return Expanded(
-      child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-        _drawDetails.size = constraints.biggest;
-        return Container(
-            height: _drawDetails.height,
+        child: Container(
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.black, // Border color
@@ -52,6 +39,7 @@ class PanelsWindow extends StatelessWidget {
               //onDoubleTap: _selector,
               onTapDown: _tapDown,
               onTapUp: _tapUp,
+              onLongPressStart: _longPress,
               onPanStart: _panStart,
               onPanUpdate: _panUpdate,
               onPanEnd: _panEnd,
@@ -59,13 +47,12 @@ class PanelsWindow extends StatelessWidget {
                 painter: _painter,
                 size: Size.infinite,
               ),
-            ));
-      }),
-    );
+            )));
+    ;
   }
 
   void _tapDown(TapDownDetails details) {
-    _drawDetails.dragStart = details.localPosition;
+    // print('tapDown');
   }
 
   void _tapUp(TapUpDetails details) {
@@ -99,40 +86,68 @@ class PanelsWindow extends StatelessWidget {
     // if (needsRedraw) _painter.redraw();
   }
 
+  void _longPress(LongPressStartDetails details) {
+    print('LongPress');
+    int selectedPanel = _painter.clickInPanel(details.localPosition);
+
+    if (selectedPanel >= 0) {
+      final RenderBox overlay =
+          Overlay.of(_context).context.findRenderObject() as RenderBox;
+
+      // Calculate the position for the context menu
+      final Offset position = overlay.localToGlobal(details.globalPosition);
+
+      // Show the context menu
+      showMenu<String>(
+        context: _context,
+        position: RelativeRect.fromLTRB(
+          position.dx,
+          position.dy,
+          position.dx + 1.0,
+          position.dy + 1.0,
+        ),
+        items: [
+          const PopupMenuItem<String>(
+            value: 'Duplicate',
+            child: Text('Duplicate'),
+          ),
+          const PopupMenuItem<String>(
+            value: 'Horizontal',
+            child: Text('Flip Horizontally'),
+          ),
+          const PopupMenuItem<String>(
+            value: 'Veritcal',
+            child: Text('Flip Vertically'),
+          ),
+        ],
+      ).then((value) {
+        if (value != null) {
+          // Handle the selected item
+          print('Selected: $value');
+
+          if (value == 'Veritcal') {
+            print('flipping vertically');
+            _panels[selectedPanel].flipVertically();
+            _painter.redraw();
+          } else if (value == 'Horizontal') {
+            print('flipping horizontally');
+            _panels[selectedPanel].flipHorizontally();
+            _painter.redraw();
+          } else if (value == 'Duplicate') {
+            print('Duplicating');
+            _panels.add(Panel.copy(_panels[selectedPanel]));
+            _painter.redraw();
+            print('There are ${_panels.length} panels');
+          }
+        }
+      });
+    }
+  }
+
   void _panStart(DragStartDetails details) {
     int panelIndex = _painter.clickInPanel(details.localPosition);
 
     _drawDetails.panelIndex = panelIndex;
-    // _drawDetails.selectedBulkheadPoint = -1;
-    // _drawDetails.dragStart = details.localPosition;
-
-    // if (_myHull.bulkheadIsSelected) {
-    //   double x;
-    //   double y;
-    //   (x, y) = _painter.toHullCoords(_drawDetails.dragStart);
-    //   _drawDetails.selectedBulkheadPoint = _myHull.isNearBulkheadPoint(
-    //       _myHull.selectedBulkhead,
-    //       x,
-    //       y,
-    //       _nearnessDistance / _painter.scale() / 1.5);
-    //   if (_drawDetails.selectedBulkheadPoint >= 0) {
-    //     _myHull.movingHandle = true;
-    //     _myHull.movingHandleX = x;
-    //     _myHull.movingHandleY = y;
-    //   } else {
-    //     _myHull.movingHandle = false;
-    //   }
-    // } else {
-    //   _drawDetails.selectedBulkheadPoint = -1;
-    //   _myHull.movingHandle = false;
-
-    //   // determine rotation style
-    //   double width = _drawDetails.size.width;
-    //   if (width == 0) width = details.localPosition.dx * 2;
-    //   double locRatio = details.localPosition.dx / _drawDetails.size.width;
-
-    //   _drawDetails.rotateModeA = (locRatio < 0.25 || locRatio > .75);
-    // }
   }
 
   void _panUpdate(DragUpdateDetails details) {
@@ -142,26 +157,6 @@ class PanelsWindow extends StatelessWidget {
           details.delta.dy / _painter.scale());
       _painter.redraw();
     }
-    // double x, y;
-
-    // if (_myHull.isEditable() && _myHull.movingHandle) {
-    //   (x, y) = _painter.toHullCoords(details.localPosition);
-    //   _myHull.movingHandleX = x;
-    //   _myHull.movingHandleY = y;
-    //   _painter.redraw();
-    // } else if (_drawDetails.rotatable) {
-    //   double rotateX = details.delta.dx * _rotateScale;
-    //   double rotateY = details.delta.dy * _rotateScale;
-    //   if (_drawDetails.rotateModeA) {
-    //     if (details.localPosition.dx < _drawDetails.size.width / 2) {
-    //       rotateY = -rotateY;
-    //     }
-    //     _myHull.rotateBy(0, rotateX, rotateY);
-    //   } else {
-    //     _myHull.rotateBy(rotateY, rotateX, 0);
-    //   }
-    //   _painter.redraw();
-    // }
   }
 
   void _panEnd(DragEndDetails details) {

@@ -15,6 +15,11 @@ class Panel {
     mPoints.clear();
   }
 
+  Panel.copy(Panel source) {
+    _origin = Offset(source._origin.dx, source._origin.dy);
+    mPoints = List.from(source.mPoints);
+  }
+
   Panel.fromBulkhead(Bulkhead bulk) {
     double scaleFactor = 1;
 
@@ -219,5 +224,17 @@ class Panel {
 
   void moveBy(double x, double y) {
     _origin = Offset(_origin.dx + x, _origin.dy + y);
+  }
+
+  void flipVertically() {
+    for (int ii = 0; ii < mPoints.length; ii++) {
+      mPoints[ii] = Offset(mPoints[ii].dx, -mPoints[ii].dy);
+    }
+  }
+
+  void flipHorizontally() {
+    for (int ii = 0; ii < mPoints.length; ii++) {
+      mPoints[ii] = Offset(-mPoints[ii].dx, mPoints[ii].dy);
+    }
   }
 }
