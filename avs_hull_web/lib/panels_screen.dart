@@ -168,8 +168,11 @@ class PanelsScreen extends StatelessWidget {
     //       .add(Panel.fromChines(_hull.mChines[ii], _hull.mChines[ii + 1]));
     // }
 
-    for (Bulkhead bulk in _hull.mBulkheads) {
+    for (int ii = 0; ii < _hull.mBulkheads.length; ii++) {
+      Bulkhead bulk = _hull.mBulkheads[ii];
       if (bulk.mBulkheadType != BulkheadType.bow) {
+        Panel panel = Panel.fromBulkhead(bulk);
+        panel.name = 'Bulkhead $ii';
         _basePanels.add(Panel.fromBulkhead(bulk));
       }
     }

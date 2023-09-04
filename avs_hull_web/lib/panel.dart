@@ -10,6 +10,7 @@ class Panel {
 
   List<Offset> mPoints = [];
   Offset _origin = Offset.zero;
+  String name = 'unnamed panel';
 
   Panel() {
     mPoints.clear();
@@ -18,6 +19,7 @@ class Panel {
   Panel.copy(Panel source) {
     _origin = Offset(source._origin.dx, source._origin.dy);
     mPoints = List.from(source.mPoints);
+    name = '${source.name} copy';
   }
 
   Panel.fromBulkhead(Bulkhead bulk) {
