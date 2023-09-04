@@ -10,6 +10,7 @@ import 'panel.dart';
 
 class PanelsDrawDetails {
   int panelIndex = -1; // -1 means "none"
+  int panIndex = -1; // -1 means "none"
 }
 
 class PanelsWindow extends StatelessWidget {
@@ -20,7 +21,7 @@ class PanelsWindow extends StatelessWidget {
   late final PanelPainter _painter;
   final List<Panel> _panels;
   final PanelsDrawDetails _drawDetails = PanelsDrawDetails();
-  late final _context;
+  late final BuildContext _context;
 
   @override
   Widget build(BuildContext context) {
@@ -48,46 +49,17 @@ class PanelsWindow extends StatelessWidget {
                 size: Size.infinite,
               ),
             )));
-    ;
   }
 
-  void _tapDown(TapDownDetails details) {
-    // print('tapDown');
-  }
+  void _tapDown(TapDownDetails details) {}
 
   void _tapUp(TapUpDetails details) {
-    // bool needsRedraw = false;
-    // double x, y;
-    // double startX, startY;
-    // if (_drawDetails.editable && _myHull.isEditable()) {
-    //   if (_drawDetails.dragStart.dx == details.localPosition.dx &&
-    //       _drawDetails.dragStart.dy == details.localPosition.dy) {
-    //     (x, y) = _painter.toHullCoords(_drawDetails.dragStart);
-    //     _myHull.bulkheadIsSelected = false;
-
-    //     for (int ii = 0; ii < _myHull.numBulkheads(); ii++) {
-    //       if (_myHull.isNearBulkhead(
-    //           ii, x, y, _nearnessDistance / _painter.scale())) {
-    //         _myHull.bulkheadIsSelected = true;
-    //         _myHull.selectedBulkhead = ii;
-    //         _painter.redraw();
-    //         break;
-    //       }
-    //     }
-    //   } else if (_myHull.movingHandle) {
-    //     (startX, startY) = _painter.toHullCoords(_drawDetails.dragStart);
-    //     (x, y) = _painter.toHullCoords(details.localPosition);
-    //     _myHull.updateBaseHull(_myHull.selectedBulkhead,
-    //         _drawDetails.selectedBulkheadPoint, startX - x, startY - y);
-    //     needsRedraw = true;
-    //   }
-    // }
-
-    // if (needsRedraw) _painter.redraw();
+    _drawDetails.panelIndex = _painter.clickInPanel(details.localPosition);
+    _painter.selectedPanel(_drawDetails.panelIndex);
+    _painter.redraw();
   }
 
   void _longPress(LongPressStartDetails details) {
-    print('LongPress');
     int selectedPanel = _painter.clickInPanel(details.localPosition);
 
     if (selectedPanel >= 0) {
@@ -123,21 +95,15 @@ class PanelsWindow extends StatelessWidget {
       ).then((value) {
         if (value != null) {
           // Handle the selected item
-          print('Selected: $value');
-
           if (value == 'Veritcal') {
-            print('flipping vertically');
             _panels[selectedPanel].flipVertically();
             _painter.redraw();
           } else if (value == 'Horizontal') {
-            print('flipping horizontally');
             _panels[selectedPanel].flipHorizontally();
             _painter.redraw();
           } else if (value == 'Duplicate') {
-            print('Duplicating');
             _panels.add(Panel.copy(_panels[selectedPanel]));
             _painter.redraw();
-            print('There are ${_panels.length} panels');
           }
         }
       });
@@ -145,16 +111,19 @@ class PanelsWindow extends StatelessWidget {
   }
 
   void _panStart(DragStartDetails details) {
-    int panelIndex = _painter.clickInPanel(details.localPosition);
-
-    _drawDetails.panelIndex = panelIndex;
+    _drawDetails.panIndex = _painter.clickInPanel(details.localPosition);
   }
 
   void _panUpdate(DragUpdateDetails details) {
     if (_drawDetails.panelIndex >= 0) {
-      _panels[_drawDetails.panelIndex].moveBy(
-          details.delta.dx / _painter.scale(),
-          details.delta.dy / _painter.scale());
+      if (_drawDetails.panelIndex == _drawDetails.panIndex) {
+        _panels[_drawDetails.panelIndex].moveBy(
+            details.delta.dx / _painter.scale(),
+            details.delta.dy / _painter.scale());
+      } else {
+        double angle = details.delta.dx / 25;
+        _panels[_drawDetails.panelIndex].rotate(angle);
+      }
       _painter.redraw();
     }
   }

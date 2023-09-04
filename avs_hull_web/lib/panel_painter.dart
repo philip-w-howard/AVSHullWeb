@@ -20,6 +20,7 @@ class PanelPainter extends CustomPainter {
   int _numPanelsY = 1;
   double _panelWidth = 96;
   double _panelHeight = 48;
+  int _selectedPanel = -1;
 
   List<Panel> _panelList = [];
 
@@ -99,6 +100,14 @@ class PanelPainter extends CustomPainter {
     Path drawPath = path.transform(xform.storage);
 
     canvas.drawPath(drawPath, paint);
+
+    if (_selectedPanel >= 0 && _selectedPanel < _panelList.length) {
+      path = Path();
+      path.addPolygon(_panelList[_selectedPanel].getOffsets(), false);
+      drawPath = path.transform(xform.storage);
+      paint.color = const Color.fromRGBO(255, 0, 0, 1.0);
+      canvas.drawPath(drawPath, paint);
+    }
   }
 
   @override
@@ -123,5 +132,9 @@ class PanelPainter extends CustomPainter {
       if (path.contains(location)) return ii;
     }
     return -1;
+  }
+
+  void selectedPanel(int index) {
+    _selectedPanel = index;
   }
 }
