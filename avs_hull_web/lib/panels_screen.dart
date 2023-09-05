@@ -101,9 +101,7 @@ class PanelsScreen extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     _showItemSelectionDialog(context);
-                    // Note: this causes a redraw
-                    // _panelsWindow.updateLayout(_layout.panelsX, _layout.panelsY,
-                    //     _layout.panelSizeX, _layout.panelSizeY);
+                    _panelsWindow.redraw();
                   },
                   child: const Text('Add Panel'),
                 ),

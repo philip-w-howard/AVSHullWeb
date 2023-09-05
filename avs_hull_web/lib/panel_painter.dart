@@ -125,7 +125,8 @@ class PanelPainter extends CustomPainter {
   }
 
   int clickInPanel(Offset click) {
-    Offset location = Offset(click.dx / _scale, click.dy / _scale);
+    Offset location = Offset(
+        (click.dx - _translateX) / _scale, (click.dy - _translateY) / _scale);
     for (int ii = 0; ii < _panelList.length; ii++) {
       final Path path = Path();
       path.addPolygon(_panelList[ii].getOffsets(), false);

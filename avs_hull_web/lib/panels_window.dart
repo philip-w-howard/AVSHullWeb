@@ -103,6 +103,10 @@ class PanelsWindow extends StatelessWidget {
     // }
   }
 
+  void redraw() {
+    _painter.redraw();
+  }
+
   void updateLayout(int numX, int numY, double sizeX, double sizeY) {
     _painter.updateLayout(numX, numY, sizeX, sizeY);
     _painter.redraw();
