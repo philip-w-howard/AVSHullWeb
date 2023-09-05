@@ -196,55 +196,10 @@ class PanelsScreen extends StatelessWidget {
     }
   }
 
-  // void _addPanel(BuildContext context) {
-  //   final RenderBox overlay =
-  //       Overlay.of(context).context.findRenderObject() as RenderBox;
-
-  //   // Calculate the position for the context menu
-  //   final Offset position = overlay.localToGlobal(details.globalPosition);
-
-  //   // Show the context menu
-  //   showMenu<String>(
-  //     context: context,
-  //     // position: RelativeRect.fromLTRB(
-  //     //   position.dx,
-  //     //   position.dy,
-  //     //   position.dx + 1.0,
-  //     //   position.dy + 1.0,
-  //     // ),
-  //     items: [
-  //       const PopupMenuItem<String>(
-  //         value: 'Duplicate',
-  //         child: Text('Duplicate'),
-  //       ),
-  //       const PopupMenuItem<String>(
-  //         value: 'Horizontal',
-  //         child: Text('Flip Horizontally'),
-  //       ),
-  //       const PopupMenuItem<String>(
-  //         value: 'Veritcal',
-  //         child: Text('Flip Vertically'),
-  //       ),
-  //     ],
-  //   ).then((value) {
-  //     if (value != null) {
-  //       // Handle the selected item
-  //       if (value == 'Veritcal') {
-  //         _panels[selectedPanel].flipVertically();
-  //         _painter.redraw();
-  //       } else if (value == 'Horizontal') {
-  //         _panels[selectedPanel].flipHorizontally();
-  //         _painter.redraw();
-  //       } else if (value == 'Duplicate') {
-  //         _panels.add(Panel.copy(_panels[selectedPanel]));
-  //         _painter.redraw();
-  //       }
-  //     }
-  //   });
-  // }
   void _showItemSelectionDialog(BuildContext context) async {
     final selected = await showMenu<String>(
       context: context,
+      color: Colors.amber,
       position: RelativeRect.fromRect(
         Offset.zero & const Size(10, 10),
         Offset.zero & MediaQuery.of(context).size,
@@ -263,34 +218,4 @@ class PanelsScreen extends StatelessWidget {
     }
     ;
   }
-
-  // void _showItemSelectionDialog(BuildContext context) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Select an Item'),
-  //         content: Container(
-  //           width: double.maxFinite,
-  //           child: ListView.builder(
-  //             shrinkWrap: true,
-  //             itemCount: _panelNames.length,
-  //             itemBuilder: (BuildContext context, int index) {
-  //               final item = _panelNames[index];
-  //               return ListTile(
-  //                 title: Text(item),
-  //                 onTap: () {
-  //                   int index = _panelNames.indexOf(item);
-  //                   print('selected $item at $index');
-  //                   _displayedPanels.add(Panel.copy(_basePanels[index]));
-  //                   Navigator.of(context).pop(); // Close the dialog
-  //                 },
-  //               );
-  //             },
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }
