@@ -53,6 +53,7 @@ class PanelsScreen extends StatelessWidget {
   final FocusNode _textPanelSizeXFocus = FocusNode();
   final FocusNode _textPanelSizeYFocus = FocusNode();
   final LayoutData _layout = LayoutData();
+  final List<String> _panelNames = [];
 
   @override
   Widget build(BuildContext context) {
@@ -99,11 +100,12 @@ class PanelsScreen extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
+                    _showItemSelectionDialog(context);
                     // Note: this causes a redraw
-                    _panelsWindow.updateLayout(_layout.panelsX, _layout.panelsY,
-                        _layout.panelSizeX, _layout.panelSizeY);
+                    // _panelsWindow.updateLayout(_layout.panelsX, _layout.panelsY,
+                    //     _layout.panelSizeX, _layout.panelSizeY);
                   },
-                  child: const Text('Redraw'),
+                  child: const Text('Add Panel'),
                 ),
                 const Spacer(flex: 1),
               ],
@@ -162,6 +164,7 @@ class PanelsScreen extends StatelessWidget {
   void createPanels() {
     _basePanels.clear();
     _displayedPanels.clear();
+    _panelNames.clear();
 
     // for (int ii = 0; ii < _hull.mChines.length / 2; ii++) {
     //   basePanels
@@ -174,6 +177,7 @@ class PanelsScreen extends StatelessWidget {
         Panel panel = Panel.fromBulkhead(bulk);
         panel.name = 'Bulkhead $ii';
         _basePanels.add(Panel.fromBulkhead(bulk));
+        _panelNames.add(panel.name);
       }
     }
 
@@ -186,11 +190,109 @@ class PanelsScreen extends StatelessWidget {
     for (Panel panel in _basePanels) {
       (min, max) = getMinMax2D(panel.getOffsets());
 
-      _displayedPanels.add(panel);
+      _displayedPanels.add(Panel.copy(panel));
 
       xOffset = -min.dx + 5;
       _displayedPanels[_displayedPanels.length - 1].moveBy(xOffset, yOffset);
       yOffset += max.dy + 5;
     }
   }
+
+  // void _addPanel(BuildContext context) {
+  //   final RenderBox overlay =
+  //       Overlay.of(context).context.findRenderObject() as RenderBox;
+
+  //   // Calculate the position for the context menu
+  //   final Offset position = overlay.localToGlobal(details.globalPosition);
+
+  //   // Show the context menu
+  //   showMenu<String>(
+  //     context: context,
+  //     // position: RelativeRect.fromLTRB(
+  //     //   position.dx,
+  //     //   position.dy,
+  //     //   position.dx + 1.0,
+  //     //   position.dy + 1.0,
+  //     // ),
+  //     items: [
+  //       const PopupMenuItem<String>(
+  //         value: 'Duplicate',
+  //         child: Text('Duplicate'),
+  //       ),
+  //       const PopupMenuItem<String>(
+  //         value: 'Horizontal',
+  //         child: Text('Flip Horizontally'),
+  //       ),
+  //       const PopupMenuItem<String>(
+  //         value: 'Veritcal',
+  //         child: Text('Flip Vertically'),
+  //       ),
+  //     ],
+  //   ).then((value) {
+  //     if (value != null) {
+  //       // Handle the selected item
+  //       if (value == 'Veritcal') {
+  //         _panels[selectedPanel].flipVertically();
+  //         _painter.redraw();
+  //       } else if (value == 'Horizontal') {
+  //         _panels[selectedPanel].flipHorizontally();
+  //         _painter.redraw();
+  //       } else if (value == 'Duplicate') {
+  //         _panels.add(Panel.copy(_panels[selectedPanel]));
+  //         _painter.redraw();
+  //       }
+  //     }
+  //   });
+  // }
+  void _showItemSelectionDialog(BuildContext context) async {
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromRect(
+        Offset.zero & const Size(10, 10),
+        Offset.zero & MediaQuery.of(context).size,
+      ),
+      items: _panelNames.map((item) {
+        return PopupMenuItem<String>(
+          value: item,
+          child: Text(item),
+        );
+      }).toList(),
+    );
+    if (selected != null) {
+      int index = _panelNames.indexOf(selected);
+      print('selected $selected at $index');
+      _displayedPanels.add(Panel.copy(_basePanels[index]));
+    }
+    ;
+  }
+
+  // void _showItemSelectionDialog(BuildContext context) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Select an Item'),
+  //         content: Container(
+  //           width: double.maxFinite,
+  //           child: ListView.builder(
+  //             shrinkWrap: true,
+  //             itemCount: _panelNames.length,
+  //             itemBuilder: (BuildContext context, int index) {
+  //               final item = _panelNames[index];
+  //               return ListTile(
+  //                 title: Text(item),
+  //                 onTap: () {
+  //                   int index = _panelNames.indexOf(item);
+  //                   print('selected $item at $index');
+  //                   _displayedPanels.add(Panel.copy(_basePanels[index]));
+  //                   Navigator.of(context).pop(); // Close the dialog
+  //                 },
+  //               );
+  //             },
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

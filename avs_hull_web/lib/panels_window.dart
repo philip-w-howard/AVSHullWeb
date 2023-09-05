@@ -63,50 +63,7 @@ class PanelsWindow extends StatelessWidget {
     int selectedPanel = _painter.clickInPanel(details.localPosition);
 
     if (selectedPanel >= 0) {
-      final RenderBox overlay =
-          Overlay.of(context).context.findRenderObject() as RenderBox;
-
-      // Calculate the position for the context menu
-      final Offset position = overlay.localToGlobal(details.globalPosition);
-
-      // Show the context menu
-      showMenu<String>(
-        context: context,
-        position: RelativeRect.fromLTRB(
-          position.dx,
-          position.dy,
-          position.dx + 1.0,
-          position.dy + 1.0,
-        ),
-        items: [
-          const PopupMenuItem<String>(
-            value: 'Duplicate',
-            child: Text('Duplicate'),
-          ),
-          const PopupMenuItem<String>(
-            value: 'Horizontal',
-            child: Text('Flip Horizontally'),
-          ),
-          const PopupMenuItem<String>(
-            value: 'Veritcal',
-            child: Text('Flip Vertically'),
-          ),
-        ],
-      ).then((value) {
-        if (value != null) {
-          // Handle the selected item
-          if (value == 'Veritcal') {
-            _panels[selectedPanel].flipVertically();
-            _painter.redraw();
-          } else if (value == 'Horizontal') {
-            _panels[selectedPanel].flipHorizontally();
-            _painter.redraw();
-          } else if (value == 'Duplicate') {
-            _panels.add(Panel.copy(_panels[selectedPanel]));
-            _painter.redraw();
-          }
-        }
-      });
+      _orientPanel(details, context, selectedPanel);
     }
   }
 
@@ -149,5 +106,53 @@ class PanelsWindow extends StatelessWidget {
   void updateLayout(int numX, int numY, double sizeX, double sizeY) {
     _painter.updateLayout(numX, numY, sizeX, sizeY);
     _painter.redraw();
+  }
+
+  void _orientPanel(
+      LongPressStartDetails details, BuildContext context, int selectedPanel) {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
+
+    // Calculate the position for the context menu
+    final Offset position = overlay.localToGlobal(details.globalPosition);
+
+    // Show the context menu
+    showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        position.dx,
+        position.dy,
+        position.dx + 1.0,
+        position.dy + 1.0,
+      ),
+      items: [
+        const PopupMenuItem<String>(
+          value: 'Duplicate',
+          child: Text('Duplicate'),
+        ),
+        const PopupMenuItem<String>(
+          value: 'Horizontal',
+          child: Text('Flip Horizontally'),
+        ),
+        const PopupMenuItem<String>(
+          value: 'Veritcal',
+          child: Text('Flip Vertically'),
+        ),
+      ],
+    ).then((value) {
+      if (value != null) {
+        // Handle the selected item
+        if (value == 'Veritcal') {
+          _panels[selectedPanel].flipVertically();
+          _painter.redraw();
+        } else if (value == 'Horizontal') {
+          _panels[selectedPanel].flipHorizontally();
+          _painter.redraw();
+        } else if (value == 'Duplicate') {
+          _panels.add(Panel.copy(_panels[selectedPanel]));
+          _painter.redraw();
+        }
+      }
+    });
   }
 }

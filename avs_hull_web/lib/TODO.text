@@ -1,7 +1,6 @@
 TODO.text
 Features:
     panel layouts
-        displayed panels should be panel.copy
         Get non-bulkhead panels to work
         user control of adding panels
         Only replace panels if underlying hull changed

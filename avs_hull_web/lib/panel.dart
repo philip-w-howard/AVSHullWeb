@@ -19,7 +19,7 @@ class Panel {
   Panel.copy(Panel source) {
     _origin = Offset(source._origin.dx, source._origin.dy);
     mPoints = List.from(source.mPoints);
-    name = '${source.name} copy';
+    name = source.name;
   }
 
   Panel.fromBulkhead(Bulkhead bulk) {
