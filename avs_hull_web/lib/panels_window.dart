@@ -132,7 +132,11 @@ class PanelsWindow extends StatelessWidget {
       items: [
         const PopupMenuItem<String>(
           value: 'Duplicate',
-          child: Text('Duplicate'),
+          child: Text('Duplicate panel'),
+        ),
+        const PopupMenuItem<String>(
+          value: 'Delete',
+          child: Text('Delete panel'),
         ),
         const PopupMenuItem<String>(
           value: 'Horizontal',
@@ -154,6 +158,11 @@ class PanelsWindow extends StatelessWidget {
           _painter.redraw();
         } else if (value == 'Duplicate') {
           _panels.add(Panel.copy(_panels[selectedPanel]));
+          _painter.redraw();
+        } else if (value == 'Delete') {
+          _panels.removeAt(selectedPanel);
+          selectedPanel = -1;
+          _painter.selectedPanel(-1);
           _painter.redraw();
         }
       }

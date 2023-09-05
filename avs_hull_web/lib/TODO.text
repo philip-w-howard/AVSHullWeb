@@ -2,7 +2,6 @@ TODO.text
 Features:
     panel layouts
         Get non-bulkhead panels to work
-        user control of adding panels
         Only replace panels if underlying hull changed
             implies hull timestamps
         
