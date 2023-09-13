@@ -5,7 +5,6 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
-import 'package:tuple/tuple.dart';
 import 'dart:math' as math;
 import 'point_3d.dart';
 
@@ -130,51 +129,51 @@ List<Point3D> rotatePoints(List<Point3D> points, List<List<double>> rotate) {
   return result;
 }
 
-// ******************************************************************
-double distanceToLine(
-  double pointX,
-  double pointY,
-  double lineX1,
-  double lineY1,
-  double lineX2,
-  double lineY2,
-) {
-  double lineLength =
-      math.sqrt(math.pow(lineX2 - lineX1, 2) + math.pow(lineY2 - lineY1, 2));
-  if (lineLength == 0) {
-    return math
-        .sqrt(math.pow(pointX - lineX1, 2) + math.pow(pointY - lineY1, 2));
-  }
+// // ******************************************************************
+// double distanceToLine(
+//   double pointX,
+//   double pointY,
+//   double lineX1,
+//   double lineY1,
+//   double lineX2,
+//   double lineY2,
+// ) {
+//   double lineLength =
+//       math.sqrt(math.pow(lineX2 - lineX1, 2) + math.pow(lineY2 - lineY1, 2));
+//   if (lineLength == 0) {
+//     return math
+//         .sqrt(math.pow(pointX - lineX1, 2) + math.pow(pointY - lineY1, 2));
+//   }
 
-  double t = math.max(
-      0,
-      math.min(
-          1,
-          ((pointX - lineX1) * (lineX2 - lineX1) +
-                  (pointY - lineY1) * (lineY2 - lineY1)) /
-              math.pow(lineLength, 2)));
+//   double t = math.max(
+//       0,
+//       math.min(
+//           1,
+//           ((pointX - lineX1) * (lineX2 - lineX1) +
+//                   (pointY - lineY1) * (lineY2 - lineY1)) /
+//               math.pow(lineLength, 2)));
 
-  double projectedX = lineX1 + t * (lineX2 - lineX1);
-  double projectedY = lineY1 + t * (lineY2 - lineY1);
+//   double projectedX = lineX1 + t * (lineX2 - lineX1);
+//   double projectedY = lineY1 + t * (lineY2 - lineY1);
 
-  return math.sqrt(
-      math.pow(pointX - projectedX, 2) + math.pow(pointY - projectedY, 2));
-}
-
-// **************************************************************************
-// Determine if the point (p3_x,p3_y) is near the line defined by (p1_x, p1_y) and (p2_x, p2_y)
-bool isNearPoint(double p1x, double p1y, double p2x, double p2y, double range) {
-  double deltaX = p1x - p2x;
-  double deltaY = p1y - p2y;
-  double distance = math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-  if (distance <= range) return true;
-
-  return false;
-}
+//   return math.sqrt(
+//       math.pow(pointX - projectedX, 2) + math.pow(pointY - projectedY, 2));
+// }
 
 // **************************************************************************
 // Determine if the point (p3_x,p3_y) is near the line defined by (p1_x, p1_y) and (p2_x, p2_y)
+// bool isNearPoint(double p1x, double p1y, double p2x, double p2y, double range) {
+//   double deltaX = p1x - p2x;
+//   double deltaY = p1y - p2y;
+//   double distance = math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+//   if (distance <= range) return true;
+
+//   return false;
+// }
+
+// // **************************************************************************
+// // Determine if the point (p3_x,p3_y) is near the line defined by (p1_x, p1_y) and (p2_x, p2_y)
 double distanceToPoint(double p1x, double p1y, double p2x, double p2y) {
   double deltaX = p1x - p2x;
   double deltaY = p1y - p2y;
@@ -183,8 +182,8 @@ double distanceToPoint(double p1x, double p1y, double p2x, double p2y) {
   return distance;
 }
 
-// **************************************************************************
-// Determine if the point (p3_x,p3_y) is near the line defined by (p1_x, p1_y) and (p2_x, p2_y)
+// // **************************************************************************
+// // Determine if the point (p3_x,p3_y) is near the line defined by (p1_x, p1_y) and (p2_x, p2_y)
 bool isNearLine(double line1x, double line1y, double line2x, double line2y,
     double pointX, double pointY, double range) {
   if (line1x == line2x) // vertical line
@@ -245,12 +244,13 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
   }
 }
 
-// ********************************************************************
+// *****************************************************************************
 (Offset, Offset) intersection(Offset p1, double r1, Offset p2, double r2) {
-  Offset intersection1 = Offset.zero;
-  Offset intersection2 = Offset.zero;
+  Offset intersection1 = Offset.infinite;
+  Offset intersection2 = Offset.infinite;
 
   if (p1.dx != p2.dx) {
+    //double A = (r1 * r1 - r2 * r2 - p1.X * p1.X + p2.X * p2.X - p1.Y * p1.Y + p2.Y * p2.Y) / (2 * p2.X - 2 * p1.X);
     double A = (r1 * r1 -
             r2 * r2 -
             p1.dx * p1.dx +
@@ -265,18 +265,18 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
 
     double y1, y2;
 
-    Tuple2<double, double> result = Tuple2(0.0, 0.0);
-    y1 = result.item1;
-    y2 = result.item2;
+    (y1, y2) = quadradicSolution(a, b, c);
 
-    double x = math.sqrt(y2);
-    if (x.isNaN) (y1, y2) = quadradicSolution(a, b, c);
     if (y1.isNaN || y2.isNaN) {
-      return (Offset.infinite, Offset.infinite); // <<<<<<<<<<<<<<<<<<<<<<
+      print('NAN 1 $p1, $r1, $p2, $r2, $A, $B, $a, $b, $c');
+      return (
+        const Offset(double.nan, double.nan),
+        const Offset(double.nan, double.nan)
+      );
     }
 
-    intersection1 = Offset(A + B * intersection1.dy, y1);
-    intersection2 = Offset(A + B * intersection2.dy, y2);
+    intersection1 = Offset(A + B * y1, y1);
+    intersection2 = Offset(A + B * y2, y2);
   } else {
     double A = (r1 * r1 -
             r2 * r2 -
@@ -289,24 +289,117 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
     double a = B * B + 1;
     double b = 2 * A * B - 2 * p1.dy * B - 2 * p1.dx;
     double c = A * A - 2 * p1.dy * A + p1.dy * p1.dy + p1.dx * p1.dx - r1 * r1;
-
     double x1, x2;
-    (x1, x2) = quadradicSolution(a, b, c);
 
-    intersection1 = Offset(x1, A + B * intersection1.dx);
-    intersection2 = Offset(x2, A + B * intersection2.dx);
+    (x1, x2) = quadradicSolution(a, b, c);
+    if (x1.isNaN || x2.isNaN) {
+      print('NAN 2 $p1, $r1, $p2, $r2, $A, $B, $a, $b, $c');
+      return (
+        const Offset(double.nan, double.nan),
+        const Offset(double.nan, double.nan)
+      );
+    }
+
+    intersection1 = Offset(x1, A + B * x1);
+    intersection2 = Offset(x2, A + b * x2);
   }
 
   return (intersection1, intersection2);
 }
+
+// ********************************************************************
+// (Offset, Offset) intersection(Offset p1, double r1, Offset p2, double r2) {
+//   double x1 = p1.dx;
+//   double y1 = p1.dy;
+//   double x2 = p2.dx;
+//   double y2 = p2.dx;
+
+//   double distance = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 * y2));
+
+//   // circles too far apart: no intersection
+//   if (distance > r1 + r2) {
+//     return (
+//       const Offset(double.nan, double.nan),
+//       const Offset(double.nan, double.nan)
+//     );
+//   }
+
+//   // one circle encloses the other: No intersection
+//   if (distance < (r1 - r2).abs()) {
+//     return (
+//       const Offset(double.nan, double.nan),
+//       const Offset(double.nan, double.nan)
+//     );
+//   }
+
+//   double len = (r1 * r1 - r2 * r2 + distance * distance) / (2 * distance);
+//   double height = math.sqrt(r1 * r1 + len * len);
+
+//   double xa = len / distance * (x2 - x1);
+//   double xb = height / distance * (y2 - y1) + x1;
+//   double ya = len / distance * (y2 - y1);
+//   double yb = height / distance * (x2 - x1) + y1;
+//   return (Offset(xa + xb, ya - yb), Offset(xa - xb, ya + yb));
+// }
+
+// ********************************************************************
+// (Offset, Offset) intersection(Offset p1, double r1, Offset p2, double r2) {
+//   Offset intersection1 = Offset.zero;
+//   Offset intersection2 = Offset.zero;
+
+//   if (p1.dx != p2.dx) {
+//     double A = (r1 * r1 -
+//             r2 * r2 -
+//             p1.dx * p1.dx +
+//             p2.dx * p2.dx -
+//             p1.dy * p1.dy +
+//             p2.dy * p2.dy) /
+//         (2 * p2.dx - 2 * p1.dx);
+//     double B = (p1.dy - p2.dy) / (p2.dx - p1.dx);
+//     double a = B * B + 1;
+//     double b = 2 * A * B - 2 * p1.dx * B - 2 * p1.dy;
+//     double c = A * A - 2 * p1.dx * A + p1.dx * p1.dx + p1.dy * p1.dy - r1 * r1;
+
+//     double y1 = 0;
+//     double y2 = 0;
+//     (y1, y2) = quadradicSolution(a, b, c);
+//     if (y1.isNaN || y2.isNaN) {
+//       return (Offset.infinite, Offset.infinite); // <<<<<<<<<<<<<<<<<<<<<<
+//     }
+
+//     intersection1 = Offset(A + B * y1, y1);
+//     intersection2 = Offset(A + B * y2, y2);
+//   } else {
+//     double A = (r1 * r1 -
+//             r2 * r2 -
+//             p1.dy * p1.dy +
+//             p2.dy * p2.dy -
+//             p1.dx * p1.dx +
+//             p2.dx * p2.dx) /
+//         (2 * p2.dy - 2 * p1.dy);
+//     double B = (p1.dx - p2.dx) / (p2.dy - p1.dy);
+//     double a = B * B + 1;
+//     double b = 2 * A * B - 2 * p1.dy * B - 2 * p1.dx;
+//     double c = A * A - 2 * p1.dy * A + p1.dy * p1.dy + p1.dx * p1.dx - r1 * r1;
+
+//     double x1, x2;
+//     (x1, x2) = quadradicSolution(a, b, c);
+
+//     intersection1 = Offset(x1, A + B * x1);
+//     intersection2 = Offset(x2, A + B * x2);
+//   }
+
+//    return (intersection1, intersection2);
+//  }
 
 // Compute the two solutions to the quadradic forumula.
 // a,b,c have the normal meaning for the quadradic formula.
 (double, double) quadradicSolution(double a, double b, double c) {
   double x1 = double.nan;
   double x2 = double.nan;
-  double base = b * b - 4 * a * c;
+  double base = (b * b) - (4 * a * c);
   if (base < 0) {
+    print('QUADRATIC NAN $a, $b, $c, $base, ${b * b}, ${4 * a * c}');
     return (double.nan, double.nan);
   }
 
@@ -403,9 +496,9 @@ double angleBetween(Offset vector1, Offset vector2) {
   double x2 = vector2.dx;
   double y2 = vector2.dy;
 
-  double dotProduct = (x1 * (x2 - x1)) + (y1 * (y2 - y1));
+  double dotProduct = (x1 * x2) + (y1 * y2);
   double magnitude1 = math.sqrt(x1 * x1 + y1 * y1);
-  double magnitude2 = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+  double magnitude2 = math.sqrt(x2 * x2 + y2 * y2);
 
   double cosine = dotProduct / (magnitude1 * magnitude2);
   double angleRadians = math.acos(cosine);

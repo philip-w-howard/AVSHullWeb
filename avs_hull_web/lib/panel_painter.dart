@@ -94,6 +94,7 @@ class PanelPainter extends CustomPainter {
     if (screenMin.dx < 0) _translateX -= _scale * screenMin.dx;
     if (screenMin.dy < 0) _translateY -= _scale * screenMin.dy;
 
+    //print('draw factors: $_scale, ($_translateX, $_translateY)');
     Matrix4 xform = Matrix4.compose(Vector3(_translateX, _translateY, 0),
         Quaternion.identity(), Vector3(_scale, _scale, _scale));
 

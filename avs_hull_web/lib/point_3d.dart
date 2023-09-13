@@ -30,7 +30,7 @@ class Point3D {
   }
 
   double length() {
-    return sqrt(x * x + y * y + z * y);
+    return sqrt(x * x + y * y + z * z);
   }
 
   @override

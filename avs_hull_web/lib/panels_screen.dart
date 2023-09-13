@@ -164,19 +164,21 @@ class PanelsScreen extends StatelessWidget {
     _displayedPanels.clear();
     _panelNames.clear();
 
-    // for (int ii = 0; ii < _hull.mChines.length / 2; ii++) {
-    //   basePanels
-    //       .add(Panel.fromChines(_hull.mChines[ii], _hull.mChines[ii + 1]));
-    // }
-
     for (int ii = 0; ii < _hull.mBulkheads.length; ii++) {
       Bulkhead bulk = _hull.mBulkheads[ii];
       if (bulk.mBulkheadType != BulkheadType.bow) {
         Panel panel = Panel.fromBulkhead(bulk);
         panel.name = 'Bulkhead $ii';
-        _basePanels.add(Panel.fromBulkhead(bulk));
+        _basePanels.add(panel);
         _panelNames.add(panel.name);
       }
+    }
+
+    for (int ii = 0; ii < _hull.mChines.length / 2; ii++) {
+      Panel panel = Panel.fromChines(_hull.mChines[ii], _hull.mChines[ii + 1]);
+      panel.name = 'Panel ${ii + 1}';
+      _basePanels.add(panel);
+      _panelNames.add(panel.name);
     }
 
     double xOffset = 0;
@@ -213,9 +215,7 @@ class PanelsScreen extends StatelessWidget {
     );
     if (selected != null) {
       int index = _panelNames.indexOf(selected);
-      print('selected $selected at $index');
       _displayedPanels.add(Panel.copy(_basePanels[index]));
     }
-    ;
   }
 }

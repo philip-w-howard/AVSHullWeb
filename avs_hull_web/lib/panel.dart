@@ -75,6 +75,9 @@ class Panel {
 
   // *************************************************************
   void _panelize(List<Point3D> chine1, List<Point3D> chine2) {
+    print('panelize 1 $chine1');
+    print('panelize 2 $chine2');
+
     double r1, r2;
     List<Offset> edge2 = [];
 
@@ -111,7 +114,7 @@ class Panel {
       (intersectionA1, intersectionA2) = intersection(
           mPoints[mPoints.length - 1], r1, edge2[edge2.length - 1], r2);
 
-      if (intersectionA1.dx >= intersectionA2.dy) {
+      if (intersectionA1.dx >= intersectionA2.dx) {
         mPoints.add(intersectionA1);
       } else {
         mPoints.add(intersectionA2);
@@ -156,6 +159,10 @@ class Panel {
       double a1 = angleBetween(v_1, v_1a).abs();
       double a2 = angleBetween(v_1, v_1b).abs();
 
+      if (intersectionA1.dx == double.infinity) {
+        print(
+            'infinity A ${mPoints[mPoints.length - 1]}, $r1, ${edge2[edge2.length - 1]}, $r2, $intersectionA1, $intersectionA2');
+      }
       if (a1 < a2) {
         mPoints.add(intersectionA1);
       } else {
@@ -176,6 +183,10 @@ class Panel {
       double b1 = angleBetween(v_2, v_2a).abs();
       double b2 = angleBetween(v_2, v_2b).abs();
 
+      if (intersectionB1.dx == double.infinity) {
+        print(
+            'infinity B ${edge2[edge2.length - 1]}, $r1, ${mPoints[mPoints.length - 1]}, $r2, $intersectionB1, $intersectionB2');
+      }
       if (b1 < b2) {
         edge2.add(intersectionB1);
       } else {
@@ -213,6 +224,8 @@ class Panel {
     for (int ii = edge2.length - 1; ii >= 0; ii--) {
       mPoints.add(edge2[ii]);
     }
+
+    print('panel $mPoints');
   }
 
   List<Offset> getOffsets() {
