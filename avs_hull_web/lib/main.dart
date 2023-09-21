@@ -10,10 +10,7 @@ import 'waterline_screen.dart';
 import 'panels_screen.dart';
 import 'hull.dart';
 
-import 'point_3d.dart';
-
 void main() {
-  print('${(Point3D(1, 2, 3) - Point3D(0.5, 0.6, 0.7)).length()}');
   runApp(const MainApp());
 }
 

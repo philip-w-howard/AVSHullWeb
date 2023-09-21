@@ -59,13 +59,13 @@ class Panel {
   }
 
   void _horizontalize() {
-    double x = mPoints[mPoints.length ~/ 2].dx - mPoints[0].dx;
-    double y = mPoints[mPoints.length ~/ 2].dy - mPoints[0].dy;
+    double x = mPoints[mPoints.length ~/ 2 - 1].dx - mPoints[0].dx;
+    double y = mPoints[mPoints.length ~/ 2 - 1].dy - mPoints[0].dy;
 
     double angle;
 
     angle = math.atan2(y, x);
-    rotate(angle);
+    rotate(-angle);
   }
 
   // *************************************************************
@@ -159,10 +159,6 @@ class Panel {
       double a1 = angleBetween(v_1, v_1a).abs();
       double a2 = angleBetween(v_1, v_1b).abs();
 
-      if (intersectionA1.dx == double.infinity) {
-        print(
-            'infinity A ${mPoints[mPoints.length - 1]}, $r1, ${edge2[edge2.length - 1]}, $r2, $intersectionA1, $intersectionA2');
-      }
       if (a1 < a2) {
         mPoints.add(intersectionA1);
       } else {
@@ -183,10 +179,6 @@ class Panel {
       double b1 = angleBetween(v_2, v_2a).abs();
       double b2 = angleBetween(v_2, v_2b).abs();
 
-      if (intersectionB1.dx == double.infinity) {
-        print(
-            'infinity B ${edge2[edge2.length - 1]}, $r1, ${mPoints[mPoints.length - 1]}, $r2, $intersectionB1, $intersectionB2');
-      }
       if (b1 < b2) {
         edge2.add(intersectionB1);
       } else {

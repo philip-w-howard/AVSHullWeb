@@ -175,6 +175,7 @@ class PanelsScreen extends StatelessWidget {
     }
 
     for (int ii = 0; ii < _hull.mChines.length / 2; ii++) {
+      print('********** create Panel ${ii + 1} *******');
       Panel panel = Panel.fromChines(_hull.mChines[ii], _hull.mChines[ii + 1]);
       panel.name = 'Panel ${ii + 1}';
       _basePanels.add(panel);

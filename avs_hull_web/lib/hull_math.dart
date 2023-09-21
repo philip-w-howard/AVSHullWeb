@@ -268,7 +268,6 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
     (y1, y2) = quadradicSolution(a, b, c);
 
     if (y1.isNaN || y2.isNaN) {
-      print('NAN 1 $p1, $r1, $p2, $r2, $A, $B, $a, $b, $c');
       return (
         const Offset(double.nan, double.nan),
         const Offset(double.nan, double.nan)
@@ -293,7 +292,6 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
 
     (x1, x2) = quadradicSolution(a, b, c);
     if (x1.isNaN || x2.isNaN) {
-      print('NAN 2 $p1, $r1, $p2, $r2, $A, $B, $a, $b, $c');
       return (
         const Offset(double.nan, double.nan),
         const Offset(double.nan, double.nan)
@@ -399,7 +397,6 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
   double x2 = double.nan;
   double base = (b * b) - (4 * a * c);
   if (base < 0) {
-    print('QUADRATIC NAN $a, $b, $c, $base, ${b * b}, ${4 * a * c}');
     return (double.nan, double.nan);
   }
 
