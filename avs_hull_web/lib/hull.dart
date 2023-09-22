@@ -12,13 +12,13 @@ import 'bulkhead.dart';
 import 'spline.dart';
 
 class HullParams {
-  BulkheadType bow = BulkheadType.transom;
+  BulkheadType bow = BulkheadType.bow;
   double forwardTransomAngle = 115;
   BulkheadType stern = BulkheadType.transom;
-  double sternTransomAngle = 85;
+  double sternTransomAngle = 75;
   int numBulkheads = 5;
   int numChines = 5;
-  double length = 200;
+  double length = 96;
   double width = 40;
   double height = 10;
 }
@@ -65,30 +65,24 @@ class Hull {
     }
 
     int numForward = (params.numBulkheads / 2 - bulk).floor();
-    print('Num forward $numForward');
     double radiusDelta = params.width * 0.10 * numForward;
     radius = params.width / 2 - radiusDelta * numForward;
 
     for (int ii = 0; ii < numForward; ii++) {
-      print('Adding bulkhead A $bulk to ${mBulkheads.length}');
       mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
           params.height, params.numChines, 90));
       radius += radiusDelta;
       bulk++;
     }
 
-    print('Adding bulkhead B $bulk to ${mBulkheads.length}');
     mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, params.width / 2,
         params.height, params.height, params.numChines, 90));
 
     int numAft = params.numBulkheads ~/ 2;
-    print('numAft $numAft');
     radiusDelta = params.width / 2 * 0.15 * numAft;
     radius = params.width / 2;
     for (bulk++; bulk < params.numBulkheads - 1; bulk++) {
       radius -= radiusDelta;
-      print(
-          'Adding bulkhead C $bulk to ${mBulkheads.length} width $radius $radiusDelta, ${params.width / 2}');
       mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
           params.height, params.numChines, 90));
     }
@@ -96,8 +90,6 @@ class Hull {
     radius -= radiusDelta;
 
     if (params.stern == BulkheadType.vertical) {
-      print(
-          'Adding bulkhead D $bulk to ${mBulkheads.length} width $radius $radiusDelta, ${params.width / 2}, ${params.height}');
       mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
           params.height, params.numChines, 60));
     } else if (params.stern == BulkheadType.transom) {

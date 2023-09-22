@@ -78,7 +78,7 @@ class PanelsWindow extends StatelessWidget {
             details.delta.dx / _painter.scale(),
             details.delta.dy / _painter.scale());
       } else {
-        double angle = details.delta.dx / 25;
+        double angle = details.delta.dx / 125;
         _panels[_drawDetails.panelIndex].rotate(angle);
       }
       _painter.redraw();
