@@ -1,6 +1,9 @@
 TODO.text
 Features:
     panel layouts
+        panelize(): better way to pick "correct" of two points. 
+            min angle?
+            +x does not work
         Get non-bulkhead panels to work
         Only replace panels if underlying hull changed
             implies hull timestamps
@@ -28,8 +31,3 @@ Expected to find fonts for (MaterialIcons, packages/cupertino_icons/CupertinoIco
 the assets section of your pubspec.yaml, are missing the package that would include them, or are missing "uses-material-design: true".
 Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 7548 bytes (99.5% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
 Compiling lib\main.dart for the Web...  
-
-
-Test intersection(p1, r1, p2, r2);
-Test angleBetween
-Test Offset subtraction & length compared with Vector subtraction & length

@@ -78,7 +78,7 @@ class Panel {
     print('panelize 1 $chine1');
     print('panelize 2 $chine2');
 
-    double r1, r2;
+    double r1;
     List<Offset> edge2 = [];
 
     mPoints.clear();
@@ -88,52 +88,28 @@ class Panel {
         (chine1[chine1.length - 1] - chine2[chine2.length - 1]).length() <
             _minEdgeLength;
 
-    if (pointyBow) {
-      mPoints.add(const Offset(0, 0));
-      edge2.add(const Offset(0, 0));
+    // Start at origin
+    mPoints.add(const Offset(0, 0));
+    edge2.add(const Offset(0, 0));
 
+    if (pointyBow) {
       r1 = (chine1[0] - chine1[1]).length();
       mPoints
           .add(Offset(r1 * math.cos(math.pi / 4), r1 * math.sin(math.pi / 4)));
     } else {
-      // Start at origin
-      mPoints.add(const Offset(0, 0));
-      edge2.add(const Offset(0, 0));
-
       // Make the edge the first segment in edge2
       r1 = (chine1[0] - chine2[0]).length();
       edge2.add(Offset(0, -r1));
 
       // Compute next point, and favor positive X direction
       // advance edge1 by one point
-      r1 = (chine1[0] - chine1[1]).length();
-      r2 = (chine2[0] - chine1[1]).length();
-
-      Offset intersectionA1 = Offset.zero;
-      Offset intersectionA2 = Offset.zero;
-      (intersectionA1, intersectionA2) = intersection(
-          mPoints[mPoints.length - 1], r1, edge2[edge2.length - 1], r2);
-
-      if (intersectionA1.dx >= intersectionA2.dx) {
-        mPoints.add(intersectionA1);
-      } else {
-        mPoints.add(intersectionA2);
-      }
+      mPoints.add(_computePointDx(chine1[0], chine1[1], chine2[0],
+          mPoints[mPoints.length - 1], edge2[edge2.length - 1]));
     }
 
     // add next point to edge2
-    r1 = (chine2[0] - chine2[1]).length();
-    r2 = (chine1[1] - chine2[1]).length();
-    Offset intersectionB1 = Offset.zero;
-    Offset intersectionB2 = Offset.zero;
-    (intersectionB1, intersectionB2) = intersection(
-        edge2[edge2.length - 1], r1, mPoints[mPoints.length - 1], r2);
-
-    if (intersectionB1.dx >= intersectionB2.dx) {
-      edge2.add(intersectionB1);
-    } else {
-      edge2.add(intersectionB2);
-    }
+    edge2.add(_computePointDx(chine2[0], chine2[1], chine1[1],
+        edge2[edge2.length - 1], mPoints[mPoints.length - 1]));
 
     // Complete the rest of the points
     int lastPoint;
@@ -144,70 +120,32 @@ class Panel {
     }
 
     for (int ii = 1; ii < lastPoint; ii++) {
-      r1 = (chine1[ii] - chine1[ii + 1]).length();
-      r2 = (chine2[ii] - chine1[ii + 1]).length();
-
-      Offset intersectionA1;
-      Offset intersectionA2;
-      (intersectionA1, intersectionA2) = intersection(
-          mPoints[mPoints.length - 1], r1, edge2[edge2.length - 1], r2);
-
-      Offset v_1 = mPoints[mPoints.length - 1] - mPoints[mPoints.length - 2];
-      Offset v_1a = intersectionA1 - mPoints[mPoints.length - 1];
-      Offset v_1b = intersectionA2 - mPoints[mPoints.length - 1];
-
-      double a1 = angleBetween(v_1, v_1a).abs();
-      double a2 = angleBetween(v_1, v_1b).abs();
-
-      if (a1 < a2) {
-        mPoints.add(intersectionA1);
-      } else {
-        mPoints.add(intersectionA2);
-      }
+      mPoints.add(_computePointAngle(
+          chine1[ii],
+          chine1[ii + 1],
+          chine2[ii],
+          mPoints[mPoints.length - 1],
+          edge2[edge2.length - 1],
+          mPoints[mPoints.length - 2]));
 
       // advance edge2 by one point
-      r1 = (chine2[ii] - chine2[ii + 1]).length();
-      r2 = (chine1[ii + 1] - chine2[ii + 1]).length();
-
-      (intersectionB1, intersectionB2) = intersection(
-          edge2[edge2.length - 1], r1, mPoints[mPoints.length - 1], r2);
-
-      Offset v_2 = edge2[edge2.length - 1] - edge2[edge2.length - 2];
-      Offset v_2a = intersectionB1 - edge2[edge2.length - 1];
-      Offset v_2b = intersectionB2 - edge2[edge2.length - 1];
-
-      double b1 = angleBetween(v_2, v_2a).abs();
-      double b2 = angleBetween(v_2, v_2b).abs();
-
-      if (b1 < b2) {
-        edge2.add(intersectionB1);
-      } else {
-        edge2.add(intersectionB2);
-      }
+      edge2.add(_computePointAngle(
+          chine2[ii],
+          chine2[ii + 1],
+          chine1[ii + 1],
+          edge2[edge2.length - 1],
+          mPoints[mPoints.length - 1],
+          edge2[edge2.length - 2]));
     }
 
     if (pointyStern) {
-      r1 = (chine1[chine1.length - 2] - chine1[chine1.length - 1]).length();
-      r2 = (chine2[chine2.length - 2] - chine2[chine2.length - 1]).length();
-
-      Offset intersectionA1;
-      Offset intersectionA2;
-
-      (intersectionA1, intersectionA2) = intersection(
-          mPoints[mPoints.length - 1], r1, edge2[edge2.length - 1], r2);
-
-      Offset v_1 = mPoints[mPoints.length - 1] - mPoints[mPoints.length - 2];
-      Offset v_1a = intersectionA1 - mPoints[mPoints.length - 1];
-      Offset v_1b = intersectionA2 - mPoints[mPoints.length - 1];
-
-      double a1 = angleBetween(v_1, v_1a).abs();
-      double a2 = angleBetween(v_1, v_1b).abs();
-
-      if (a1 < a2) {
-        mPoints.add(intersectionA1);
-      } else {
-        mPoints.add(intersectionA2);
-      }
+      mPoints.add(_computePointAngle(
+          chine1[chine1.length - 2],
+          chine1[chine1.length - 1],
+          chine2[chine2.length - 2],
+          mPoints[mPoints.length - 1],
+          edge2[edge2.length - 1],
+          mPoints[mPoints.length - 2]));
 
       // Don't need to add point to edge2 because it is the same (pointy) point and it would be a duplicate
     }
@@ -218,6 +156,45 @@ class Panel {
     }
 
     print('panel $mPoints');
+  }
+
+  Offset _computePointDx(
+      Point3D p1, Point3D p2, Point3D p3, Offset p4, Offset p5) {
+    double r1 = (p1 - p2).length();
+    double r2 = (p3 - p2).length();
+
+    Offset intersection1 = Offset.zero;
+    Offset intersection2 = Offset.zero;
+    (intersection1, intersection2) = intersection(p4, r1, p5, r2);
+
+    if (intersection1.dx >= intersection2.dx) {
+      return intersection1;
+    } else {
+      return intersection2;
+    }
+  }
+
+  Offset _computePointAngle(
+      Point3D p1, Point3D p2, Point3D p3, Offset p4, Offset p5, Offset p6) {
+    double r1 = (p1 - p2).length();
+    double r2 = (p3 - p2).length();
+
+    Offset intersection1 = Offset.zero;
+    Offset intersection2 = Offset.zero;
+    (intersection1, intersection2) = intersection(p4, r1, p5, r2);
+
+    Offset v_2 = p4 - p6;
+    Offset v_2a = intersection1 - p4;
+    Offset v_2b = intersection2 - p4;
+
+    double b1 = angleBetween(v_2, v_2a).abs();
+    double b2 = angleBetween(v_2, v_2b).abs();
+
+    if (b1 < b2) {
+      return intersection1;
+    } else {
+      return intersection2;
+    }
   }
 
   List<Offset> getOffsets() {
