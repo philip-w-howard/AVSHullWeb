@@ -75,9 +75,6 @@ class Panel {
 
   // *************************************************************
   void _panelize(List<Point3D> chine1, List<Point3D> chine2) {
-    print('panelize 1 $chine1');
-    print('panelize 2 $chine2');
-
     double r1;
     List<Offset> edge2 = [];
 
@@ -154,8 +151,6 @@ class Panel {
     for (int ii = edge2.length - 1; ii >= 0; ii--) {
       mPoints.add(edge2[ii]);
     }
-
-    print('panel $mPoints');
   }
 
   Offset _computePointDx(
@@ -187,8 +182,8 @@ class Panel {
     Offset v_2a = intersection1 - p4;
     Offset v_2b = intersection2 - p4;
 
-    double b1 = angleBetween(v_2, v_2a).abs();
-    double b2 = angleBetween(v_2, v_2b).abs();
+    double b1 = angleBetween(v_2, v_2a);
+    double b2 = angleBetween(v_2, v_2b);
 
     if (b1 < b2) {
       return intersection1;

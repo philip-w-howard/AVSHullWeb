@@ -500,5 +500,9 @@ double angleBetween(Offset vector1, Offset vector2) {
   double cosine = dotProduct / (magnitude1 * magnitude2);
   double angleRadians = math.acos(cosine);
 
+  if (angleRadians.isNaN) {
+    // Roundoff caused cosine>1, so acos() can't be computed. "round" to zero
+    return 0;
+  }
   return angleRadians;
 }
