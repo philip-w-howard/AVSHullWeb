@@ -35,7 +35,7 @@ class MainAppWindow extends StatefulWidget {
 
 class MainAppState extends State<MainAppWindow>
     with SingleTickerProviderStateMixin {
-  final _mainHull = Hull.create(200, 50, 20, 5, 4);
+  late final Hull _mainHull;
 
   final List<Tab> myTabs = <Tab>[
     const Tab(text: 'Design'),
@@ -51,6 +51,9 @@ class MainAppState extends State<MainAppWindow>
   @override
   void initState() {
     super.initState();
+
+    HullParams params = HullParams();
+    _mainHull = Hull.fromParams(params);
     _tabController = TabController(vsync: this, length: myTabs.length);
     _tabController.addListener(_handleTabSelection);
 

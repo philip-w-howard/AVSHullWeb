@@ -1,15 +1,9 @@
 TODO.text
 Features:
     panel layouts
-        panelize(): better way to pick "correct" of two points. 
-            min angle?
-            +x does not work
-        Get non-bulkhead panels to work
         Only replace panels if underlying hull changed
             implies hull timestamps
         
-    "better" initial hull
-    transoms
     flat-bottomed 
     closed-top 
     SaveAs formats

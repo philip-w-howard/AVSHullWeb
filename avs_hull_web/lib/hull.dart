@@ -11,6 +11,18 @@ import 'point_3d.dart';
 import 'bulkhead.dart';
 import 'spline.dart';
 
+class HullParams {
+  BulkheadType bow = BulkheadType.transom;
+  double forwardTransomAngle = 115;
+  BulkheadType stern = BulkheadType.transom;
+  double sternTransomAngle = 85;
+  int numBulkheads = 5;
+  int numChines = 5;
+  double length = 200;
+  double width = 40;
+  double height = 10;
+}
+
 class Hull {
   List<Bulkhead> mBulkheads = [];
   List<Spline> mChines = [];
@@ -18,29 +30,80 @@ class Hull {
 
   Hull();
 
-  Hull.create(double length, double width, double height, int numBulkheads,
-      int numChines) {
-    double radius = height;
-
+  //Hull.create(double length, double width, double height, int numBulkheads,
+  //    int numChines) {
+  Hull.fromParams(HullParams params) {
+    int bulk = 0;
+    double bulkSpacing = params.length / (params.numBulkheads - 1);
     List<Point3D> points = [];
 
-    for (int ii = 0; ii <= numChines; ii++) {
-      var angle = math.pi + ii * math.pi / 2 / numChines;
-      var z = math.cos(angle) * radius + radius;
-      var y = math.sin(angle) * radius + radius;
-      points.add(Point3D(0, y, z));
+    double radius = params.height;
+    if (radius >= params.length / params.numBulkheads) {
+      radius = 0.9 * params.length / params.numBulkheads;
     }
-    for (int ii = numChines - 1; ii >= 0; ii--) {
-      var angle = 2 * math.pi / 2 + ii * math.pi / 2 / numChines;
-      var z = math.cos(angle) * radius + radius;
-      var y = math.sin(angle) * radius + radius;
-      points.add(Point3D(0, y, z));
-    }
-    mBulkheads.add(Bulkhead.fromPoints(points, BulkheadType.bow));
 
-    for (int ii = 1; ii < numBulkheads; ii++) {
-      mBulkheads
-          .add(Bulkhead.round(width, ii * length / numBulkheads, numChines));
+    if (params.bow == BulkheadType.bow) {
+      for (int ii = 0; ii <= params.numChines; ii++) {
+        var angle = math.pi + ii * math.pi / 2 / params.numChines;
+        var z = math.cos(angle) * radius + radius;
+        var y = math.sin(angle) * radius + radius + params.height;
+        points.add(Point3D(0, y, z));
+      }
+      for (int ii = params.numChines - 1; ii >= 0; ii--) {
+        var angle = 2 * math.pi / 2 + ii * math.pi / 2 / params.numChines;
+        var z = math.cos(angle) * radius + radius;
+        var y = math.sin(angle) * radius + radius + params.height;
+        points.add(Point3D(0, y, z));
+      }
+      mBulkheads.add(Bulkhead.fromPoints(points, BulkheadType.bow));
+
+      bulk++;
+    } else if (params.bow == BulkheadType.transom) {
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, params.forwardTransomAngle));
+      bulk++;
+    }
+
+    int numForward = (params.numBulkheads / 2 - bulk).floor();
+    print('Num forward $numForward');
+    double radiusDelta = params.width * 0.10 * numForward;
+    radius = params.width / 2 - radiusDelta * numForward;
+
+    for (int ii = 0; ii < numForward; ii++) {
+      print('Adding bulkhead A $bulk to ${mBulkheads.length}');
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, 90));
+      radius += radiusDelta;
+      bulk++;
+    }
+
+    print('Adding bulkhead B $bulk to ${mBulkheads.length}');
+    mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, params.width / 2,
+        params.height, params.height, params.numChines, 90));
+
+    int numAft = params.numBulkheads ~/ 2;
+    print('numAft $numAft');
+    radiusDelta = params.width / 2 * 0.15 * numAft;
+    radius = params.width / 2;
+    for (bulk++; bulk < params.numBulkheads - 1; bulk++) {
+      radius -= radiusDelta;
+      print(
+          'Adding bulkhead C $bulk to ${mBulkheads.length} width $radius $radiusDelta, ${params.width / 2}');
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, 90));
+    }
+
+    radius -= radiusDelta;
+
+    if (params.stern == BulkheadType.vertical) {
+      print(
+          'Adding bulkhead D $bulk to ${mBulkheads.length} width $radius $radiusDelta, ${params.width / 2}, ${params.height}');
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, 60));
+    } else if (params.stern == BulkheadType.transom) {
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, params.sternTransomAngle));
+      bulk++;
     }
 
     normalize();
