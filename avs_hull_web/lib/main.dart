@@ -9,6 +9,7 @@ import 'design_screen.dart';
 import 'waterline_screen.dart';
 import 'panels_screen.dart';
 import 'hull.dart';
+import 'hull_logger.dart';
 
 void main() {
   runApp(const MainApp());
@@ -20,7 +21,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'AVS Hull 0.2',
+      title: 'AVS Hull 0.2.1',
       home: MainAppWindow(),
     );
   }
@@ -36,6 +37,7 @@ class MainAppWindow extends StatefulWidget {
 class MainAppState extends State<MainAppWindow>
     with SingleTickerProviderStateMixin {
   late final Hull _mainHull;
+  final HullLogger _hullLog = HullLogger();
 
   final List<Tab> myTabs = <Tab>[
     const Tab(text: 'Design'),
@@ -57,7 +59,7 @@ class MainAppState extends State<MainAppWindow>
     _tabController = TabController(vsync: this, length: myTabs.length);
     _tabController.addListener(_handleTabSelection);
 
-    _designScreen = DesignScreen(mainHull: _mainHull);
+    _designScreen = DesignScreen(mainHull: _mainHull, logger: _hullLog);
     _panelsScreen = PanelsScreen(_mainHull);
     _waterlineScreen = WaterlineScreen(_mainHull);
   }

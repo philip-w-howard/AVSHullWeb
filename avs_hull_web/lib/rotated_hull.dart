@@ -9,11 +9,13 @@ import 'hull_math.dart';
 import 'bulkhead.dart';
 import 'spline.dart';
 import 'hull.dart';
+import 'hull_logger.dart';
 
 enum HullView { front, side, top, rotated }
 
 class RotatedHull extends Hull {
   final Hull _baseHull;
+  final HullLogger? hullLogger;
   HullView _mView = HullView.rotated;
   bool _static = false;
   double _rotateX = 0;
@@ -28,7 +30,7 @@ class RotatedHull extends Hull {
   int selectedBulkhead = -1;
 
   // move code to createFromBase() method
-  RotatedHull(this._baseHull) {
+  RotatedHull(this._baseHull, {this.hullLogger}) {
     _createFromBase();
   }
 
@@ -148,6 +150,8 @@ class RotatedHull extends Hull {
     double newY = 0;
     double newZ = 0;
 
+    if (deltaX != 0 || deltaY != 0) hullLogger?.logHull(_baseHull);
+
     switch (_mView) {
       case HullView.front:
         newX = deltaX;
@@ -173,5 +177,13 @@ class RotatedHull extends Hull {
     newZ += _baseHull.mBulkheads[bulk].mPoints[chine].z;
 
     _baseHull.updateBulkhead(bulk, chine, newX, newY, newZ);
+  }
+
+  void popLog() {
+    Hull? previous;
+    previous = hullLogger?.popLog();
+
+    if (previous != null) _baseHull.updateFromHull(previous);
+    _createFromBase();
   }
 }

@@ -29,7 +29,11 @@ class Bulkhead {
     mTransomAngle = source.mTransomAngle;
     mFlatBottomed = source.mFlatBottomed;
     mClosedTop = source.mClosedTop;
-    mPoints = [...source.mPoints];
+
+    // need a deep copy
+    for (Point3D point in source.mPoints) {
+      mPoints.add(Point3D(point.x, point.y, point.z));
+    }
   }
 
   // **************************************************

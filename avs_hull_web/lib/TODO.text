@@ -1,9 +1,15 @@
 TODO.text
 Features:
+    Add HullLog to main(). Pass to DesignScreen and HullWindow.
+        Add Hull.updateFrom(Hull) to update a final hull
+        Add log calls to HullWindow
+        Add undo functionality to HullWindow key handler
+            All entries in the log seem to be the same. Adding references instead of copies?
     panel layouts
         Only replace panels if underlying hull changed
             implies hull timestamps
         
+    Resize: Need to recompute transom angles (or adjust resize to keep same angle)
     flat-bottomed 
     closed-top 
     SaveAs formats

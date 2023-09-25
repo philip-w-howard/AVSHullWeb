@@ -103,8 +103,12 @@ class Hull {
   }
 
   Hull.copy(Hull source) {
-    mBulkheads = List<Bulkhead>.from(source.mBulkheads);
-    mChines = List<Spline>.from(source.mChines);
+    // need a deep copy
+    for (Bulkhead bulk in source.mBulkheads) {
+      mBulkheads.add(Bulkhead.copy(bulk));
+    }
+
+    _createChines();
   }
 
   Hull.fromJson(Map<String, dynamic> json) {
@@ -123,6 +127,17 @@ class Hull {
       json['mBulkheads'].forEach((bulkheadJson) {
         mBulkheads.add(Bulkhead.fromJson(bulkheadJson));
       });
+    }
+
+    _createChines();
+  }
+
+  void updateFromHull(Hull source) {
+    mBulkheads.clear();
+
+    // need a deep copy
+    for (Bulkhead bulk in source.mBulkheads) {
+      mBulkheads.add(Bulkhead.copy(bulk));
     }
 
     _createChines();
