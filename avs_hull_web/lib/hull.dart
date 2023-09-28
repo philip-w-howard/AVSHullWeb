@@ -26,6 +26,7 @@ class HullParams {
 class Hull {
   List<Bulkhead> mBulkheads = [];
   List<Spline> mChines = [];
+  DateTime timeUpdated = DateTime.now();
   static const int _pointsPerChine = 50;
 
   Hull();
@@ -100,6 +101,7 @@ class Hull {
 
     normalize();
     _createChines();
+    timeUpdated = DateTime.now();
   }
 
   Hull.copy(Hull source) {
@@ -109,6 +111,7 @@ class Hull {
     }
 
     _createChines();
+    timeUpdated = DateTime.now();
   }
 
   Hull.fromJson(Map<String, dynamic> json) {
@@ -116,6 +119,12 @@ class Hull {
       json['mBulkheads'].forEach((bulkheadJson) {
         mBulkheads.add(Bulkhead.fromJson(bulkheadJson));
       });
+    }
+
+    if (json['timeUpdated'] != null) {
+      timeUpdated = DateTime.parse(json['timeUpdated']);
+    } else {
+      timeUpdated = DateTime.now();
     }
 
     _createChines();
@@ -129,6 +138,11 @@ class Hull {
       });
     }
 
+    if (json['timeUpdated'] != null) {
+      timeUpdated = DateTime.parse(json['timeUpdated']);
+    } else {
+      timeUpdated = DateTime.now();
+    }
     _createChines();
   }
 
@@ -140,6 +154,7 @@ class Hull {
       mBulkheads.add(Bulkhead.copy(bulk));
     }
 
+    timeUpdated = source.timeUpdated;
     _createChines();
   }
 
@@ -212,6 +227,8 @@ class Hull {
       bulk.resize(xRatio, yRatio, zRatio);
     }
 
+    timeUpdated = DateTime.now();
+
     _createChines();
   }
 
@@ -240,6 +257,7 @@ class Hull {
   Map<String, dynamic> toJson() {
     return {
       'mBulkheads': mBulkheads,
+      'timeUpdated': timeUpdated.toIso8601String(),
     };
   }
 
@@ -257,6 +275,7 @@ class Hull {
 
   void updateBulkhead(int bulk, int chine, double x, double y, double z) {
     mBulkheads[bulk].updatePoint(chine, x, y, z);
+    timeUpdated = DateTime.now();
     _createChines();
   }
 }
