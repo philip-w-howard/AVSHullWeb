@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'panel_painter.dart';
 import 'panel.dart';
+import 'panel_layout.dart';
 
 class PanelsDrawDetails {
   int panelIndex = -1; // -1 means "none"
@@ -19,7 +20,7 @@ class PanelsWindow extends StatelessWidget {
   }
 
   late final PanelPainter _painter;
-  final List<Panel> _panels;
+  final PanelLayout _panels;
   final PanelsDrawDetails _drawDetails = PanelsDrawDetails();
 
   @override
@@ -74,12 +75,13 @@ class PanelsWindow extends StatelessWidget {
   void _panUpdate(DragUpdateDetails details) {
     if (_drawDetails.panelIndex >= 0) {
       if (_drawDetails.panelIndex == _drawDetails.panIndex) {
-        _panels[_drawDetails.panelIndex].moveBy(
+        _panels.moveBy(
+            _drawDetails.panelIndex,
             details.delta.dx / _painter.scale(),
             details.delta.dy / _painter.scale());
       } else {
         double angle = details.delta.dx / 125;
-        _panels[_drawDetails.panelIndex].rotate(angle);
+        _panels.rotate(_drawDetails.panelIndex, angle);
       }
       _painter.redraw();
     }
@@ -151,16 +153,16 @@ class PanelsWindow extends StatelessWidget {
       if (value != null) {
         // Handle the selected item
         if (value == 'Veritcal') {
-          _panels[selectedPanel].flipVertically();
+          _panels.flipVertically(selectedPanel);
           _painter.redraw();
         } else if (value == 'Horizontal') {
-          _panels[selectedPanel].flipHorizontally();
+          _panels.flipHorizontally(selectedPanel);
           _painter.redraw();
         } else if (value == 'Duplicate') {
-          _panels.add(Panel.copy(_panels[selectedPanel]));
+          _panels.addPanel(Panel.copy(_panels.get(selectedPanel)));
           _painter.redraw();
         } else if (value == 'Delete') {
-          _panels.removeAt(selectedPanel);
+          _panels.removePanel(selectedPanel);
           selectedPanel = -1;
           _painter.selectedPanel(-1);
           _painter.redraw();

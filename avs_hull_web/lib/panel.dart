@@ -9,7 +9,7 @@ class Panel {
   static const double _minEdgeLength = 0.25;
 
   List<Offset> mPoints = [];
-  Offset _origin = Offset.zero;
+  Offset origin = Offset.zero;
   String name = 'unnamed panel';
 
   Panel() {
@@ -17,7 +17,7 @@ class Panel {
   }
 
   Panel.copy(Panel source) {
-    _origin = Offset(source._origin.dx, source._origin.dy);
+    origin = Offset(source.origin.dx, source.origin.dy);
     mPoints = List.from(source.mPoints);
     name = source.name;
   }
@@ -41,21 +41,21 @@ class Panel {
 
   Panel.fromChines(Spline chine1, Spline chine2) {
     mPoints.clear();
-    _origin = Offset.zero;
+    origin = Offset.zero;
     _panelize(chine1.getPoints(), chine2.getPoints());
     _horizontalize();
     _center(Offset.zero);
   }
 
-  void _center(Offset origin) {
-    _origin = origin;
+  void _center(Offset newOrigin) {
+    origin = newOrigin;
 
     Offset center = computeMidpoint(mPoints);
     if (center.dx != 0 || center.dy != 0) {
       mPoints = translateShape(mPoints, -center.dx, -center.dy);
     }
 
-    _origin = Offset(_origin.dx + center.dx, _origin.dy + center.dy);
+    origin = Offset(origin.dx + center.dx, origin.dy + center.dy);
   }
 
   void _horizontalize() {
@@ -65,12 +65,7 @@ class Panel {
     double angle;
 
     angle = math.atan2(y, x);
-    rotate(-angle);
-  }
-
-  // *************************************************************
-  void rotate(double angle) {
-    mPoints = rotate2D(mPoints, -angle);
+    _rotate(-angle);
   }
 
   // *************************************************************
@@ -195,25 +190,30 @@ class Panel {
   List<Offset> getOffsets() {
     List<Offset> offsets = [];
     for (Offset point in mPoints) {
-      offsets.add(Offset(point.dx + _origin.dx, point.dy + _origin.dy));
+      offsets.add(Offset(point.dx + origin.dx, point.dy + origin.dy));
     }
 
     return offsets;
   }
 
-  void moveBy(double x, double y) {
-    _origin = Offset(_origin.dx + x, _origin.dy + y);
+  // *************************************************************
+  void _rotate(double angle) {
+    mPoints = rotate2D(mPoints, -angle);
   }
 
-  void flipVertically() {
-    for (int ii = 0; ii < mPoints.length; ii++) {
-      mPoints[ii] = Offset(mPoints[ii].dx, -mPoints[ii].dy);
-    }
-  }
+  // void moveBy(double x, double y) {
+  //   origin = Offset(origin.dx + x, origin.dy + y);
+  // }
 
-  void flipHorizontally() {
-    for (int ii = 0; ii < mPoints.length; ii++) {
-      mPoints[ii] = Offset(-mPoints[ii].dx, mPoints[ii].dy);
-    }
-  }
+  // void flipVertically() {
+  //   for (int ii = 0; ii < mPoints.length; ii++) {
+  //     mPoints[ii] = Offset(mPoints[ii].dx, -mPoints[ii].dy);
+  //   }
+  // }
+
+  // void flipHorizontally() {
+  //   for (int ii = 0; ii < mPoints.length; ii++) {
+  //     mPoints[ii] = Offset(-mPoints[ii].dx, mPoints[ii].dy);
+  //   }
+  // }
 }

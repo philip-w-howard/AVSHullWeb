@@ -12,6 +12,7 @@ import 'hull.dart';
 import 'panel.dart';
 import 'bulkhead.dart';
 import 'panels_window.dart';
+import 'panel_layout.dart';
 
 class LayoutData {
   int panelsX = 1;
@@ -39,7 +40,7 @@ class PanelsScreen extends StatelessWidget {
 
   final Hull _hull;
   final List<Panel> _basePanels = [];
-  final List<Panel> _displayedPanels = [];
+  final PanelLayout _displayedPanels = PanelLayout();
   late final PanelsWindow _panelsWindow;
   final TextEditingController _textPanelsXController = TextEditingController();
   final TextEditingController _textPanelsYController = TextEditingController();
@@ -190,10 +191,10 @@ class PanelsScreen extends StatelessWidget {
     for (Panel panel in _basePanels) {
       (min, max) = getMinMax2D(panel.getOffsets());
 
-      _displayedPanels.add(Panel.copy(panel));
+      _displayedPanels.addPanel(Panel.copy(panel));
 
       xOffset = -min.dx + 5;
-      _displayedPanels[_displayedPanels.length - 1].moveBy(xOffset, yOffset);
+      _displayedPanels.moveBy(_displayedPanels.length() - 1, xOffset, yOffset);
       yOffset += max.dy + 5;
     }
   }
@@ -215,7 +216,7 @@ class PanelsScreen extends StatelessWidget {
     );
     if (selected != null) {
       int index = _panelNames.indexOf(selected);
-      _displayedPanels.add(Panel.copy(_basePanels[index]));
+      _displayedPanels.addPanel(Panel.copy(_basePanels[index]));
     }
   }
 }

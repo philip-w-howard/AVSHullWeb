@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math' as math;
 import 'panel.dart';
+import 'panel_layout.dart';
 
 class PanelPainter extends CustomPainter {
   BuildContext? _context;
@@ -22,9 +23,9 @@ class PanelPainter extends CustomPainter {
   double _panelHeight = 48;
   int _selectedPanel = -1;
 
-  List<Panel> _panelList = [];
+  PanelLayout _layout;
 
-  PanelPainter(this._panelList);
+  PanelPainter(this._layout);
 
   void setContext(BuildContext context) {
     _context = context;
@@ -37,8 +38,8 @@ class PanelPainter extends CustomPainter {
     _panelHeight = sizeY;
   }
 
-  void updatePanelList(List<Panel> panelList) {
-    _panelList = panelList;
+  void updatePanelList(PanelLayout layout) {
+    _layout = layout;
   }
 
   @override
@@ -60,7 +61,9 @@ class PanelPainter extends CustomPainter {
     Offset screenMax =
         Offset(_numPanelsX * _panelWidth, _numPanelsY * _panelHeight);
 
-    for (Panel panel in _panelList) {
+    for (int index = 0; index < _layout.length(); index++) {
+      Panel panel = _layout.get(index);
+
       Offset panelMin = Offset.zero;
       Offset panelMax = Offset.zero;
 
@@ -102,9 +105,9 @@ class PanelPainter extends CustomPainter {
 
     canvas.drawPath(drawPath, paint);
 
-    if (_selectedPanel >= 0 && _selectedPanel < _panelList.length) {
+    if (_selectedPanel >= 0 && _selectedPanel < _layout.length()) {
       path = Path();
-      path.addPolygon(_panelList[_selectedPanel].getOffsets(), false);
+      path.addPolygon(_layout.get(_selectedPanel).getOffsets(), false);
       drawPath = path.transform(xform.storage);
       paint.color = const Color.fromRGBO(255, 0, 0, 1.0);
       canvas.drawPath(drawPath, paint);
@@ -128,9 +131,9 @@ class PanelPainter extends CustomPainter {
   int clickInPanel(Offset click) {
     Offset location = Offset(
         (click.dx - _translateX) / _scale, (click.dy - _translateY) / _scale);
-    for (int ii = 0; ii < _panelList.length; ii++) {
+    for (int ii = 0; ii < _layout.length(); ii++) {
       final Path path = Path();
-      path.addPolygon(_panelList[ii].getOffsets(), false);
+      path.addPolygon(_layout.get(ii).getOffsets(), false);
       if (path.contains(location)) return ii;
     }
     return -1;
