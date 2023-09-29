@@ -49,6 +49,7 @@ class MainAppState extends State<MainAppWindow>
   late DesignScreen _designScreen;
   late PanelsScreen _panelsScreen;
   late WaterlineScreen _waterlineScreen;
+  late BuildContext _context;
 
   @override
   void initState() {
@@ -70,7 +71,8 @@ class MainAppState extends State<MainAppWindow>
         case 0:
           break;
         case 1:
-          _panelsScreen.createPanels();
+          // This is no longer needed
+          _panelsScreen.checkPanels(_context);
           break;
         case 2:
           break;
@@ -86,6 +88,7 @@ class MainAppState extends State<MainAppWindow>
 
   @override
   Widget build(BuildContext context) {
+    _context = context;
     return Scaffold(
         appBar: AppBar(
             title: const Text('AVS Hull 0.2'),

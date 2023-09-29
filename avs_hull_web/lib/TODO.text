@@ -1,6 +1,7 @@
 TODO.text
 Features:
     Timestamps on hulls and panels
+        Need to make PanelsScreen stateful in order to store context for pop-up on recomputing panels.
     panel layouts
         Only replace panels if underlying hull changed
             implies hull timestamps

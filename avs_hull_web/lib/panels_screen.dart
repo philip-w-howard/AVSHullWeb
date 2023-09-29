@@ -22,8 +22,11 @@ class LayoutData {
 }
 
 class PanelsScreen extends StatelessWidget {
+  static final GlobalKey<ScaffoldState> scaffoldKey =
+      GlobalKey<ScaffoldState>();
+
   PanelsScreen(this._hull, {super.key}) {
-    createPanels();
+    _createPanels();
 
     _panelsWindow = PanelsWindow(_displayedPanels);
 
@@ -60,7 +63,6 @@ class PanelsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final numericFormatter =
         FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,10}'));
-
     return Scaffold(
       body: Row(
         children: [
@@ -160,7 +162,39 @@ class PanelsScreen extends StatelessWidget {
     }
   }
 
-  void createPanels() {
+  void checkPanels(BuildContext context) {
+    if (_hull.timeUpdated.isAfter(_displayedPanels.timestamp())) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirmation'),
+            content: const Text('The hull has been modified since the panels'
+                ' were laid out. The panel layout will be cleared'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  _createPanels();
+                  _panelsWindow.redraw();
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+              ),
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  // Add your action here for "Yes"
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
+
+  void _createPanels() {
     _basePanels.clear();
     _displayedPanels.clear();
     _panelNames.clear();
@@ -218,5 +252,6 @@ class PanelsScreen extends StatelessWidget {
       int index = _panelNames.indexOf(selected);
       _displayedPanels.addPanel(Panel.copy(_basePanels[index]));
     }
+    _panelsWindow.redraw();
   }
 }
