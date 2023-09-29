@@ -1,11 +1,5 @@
 TODO.text
 Features:
-    Timestamps on hulls and panels
-        Need to make PanelsScreen stateful in order to store context for pop-up on recomputing panels.
-    panel layouts
-        Only replace panels if underlying hull changed
-            implies hull timestamps
-        
     Resize: Need to recompute transom angles (or adjust resize to keep same angle)
     flat-bottomed 
     closed-top 
@@ -17,7 +11,9 @@ Features:
     change number of chines
     add/delete/move bulkhead
     Show x,y,z coords in bottom line
-    Undo/Redo 
+    Redo 
+    Undo/Redo for panel layouts
+    Move Hull undo/redo into Hull class? or leave it separate?
     Zoom/Pan
 
 refactor Bulkhead to have rotate and getOffset methods like Spline
