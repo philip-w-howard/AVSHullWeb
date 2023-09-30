@@ -105,6 +105,16 @@ class Bulkhead {
       point.y *= yRatio;
       point.z *= zRatio;
     }
+
+    // Recompute transom angle
+    if (mBulkheadType == BulkheadType.transom) {
+      Point3D p1 = mPoints[0];
+      Point3D p2 = mPoints[mPoints.length ~/ 2];
+      double deltaY = p1.y - p2.y;
+      double deltaZ = p1.z - p2.z;
+      double newAngle = math.atan2(deltaY, deltaZ) * 180 / math.pi;
+      mTransomAngle = newAngle;
+    }
   }
 
   // **************************************************

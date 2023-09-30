@@ -1,6 +1,5 @@
 TODO.text
 Features:
-    Resize: Need to recompute transom angles (or adjust resize to keep same angle)
     flat-bottomed 
     closed-top 
     SaveAs formats
@@ -14,13 +13,9 @@ Features:
     Redo 
     Undo/Redo for panel layouts
     Move Hull undo/redo into Hull class? or leave it separate?
+        create EditableHull with undo/redo?
     Zoom/Pan
 
 refactor Bulkhead to have rotate and getOffset methods like Spline
     have getOffsets return List<Point3D>?
 
-FIX:
-Expected to find fonts for (MaterialIcons, packages/cupertino_icons/CupertinoIcons), but found (MaterialIcons). This usually means you are referring to font families in an IconData class but not including them in
-the assets section of your pubspec.yaml, are missing the package that would include them, or are missing "uses-material-design: true".
-Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 7548 bytes (99.5% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
-Compiling lib\main.dart for the Web...  
