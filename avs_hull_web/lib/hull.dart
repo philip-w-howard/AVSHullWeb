@@ -34,9 +34,14 @@ class Hull {
   //Hull.create(double length, double width, double height, int numBulkheads,
   //    int numChines) {
   Hull.fromParams(HullParams params) {
+    updateFromParams(params);
+  }
+
+  void updateFromParams(HullParams params) {
     int bulk = 0;
     double bulkSpacing = params.length / (params.numBulkheads - 1);
     List<Point3D> points = [];
+    mBulkheads = [];
 
     double radius = params.height;
     if (radius >= params.length / params.numBulkheads) {
@@ -92,7 +97,7 @@ class Hull {
 
     if (params.stern == BulkheadType.vertical) {
       mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-          params.height, params.numChines, 60));
+          params.height, params.numChines, 90));
     } else if (params.stern == BulkheadType.transom) {
       mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
           params.height, params.numChines, params.sternTransomAngle));

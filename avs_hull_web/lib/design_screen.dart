@@ -13,6 +13,7 @@ import 'hull_logger.dart';
 import 'hull_window.dart';
 import 'rotated_hull.dart';
 import 'resize_dialog.dart';
+import 'new_hull_dialog.dart';
 
 class DesignScreen extends StatelessWidget {
   DesignScreen({super.key, required Hull mainHull, required HullLogger logger})
@@ -63,6 +64,8 @@ class DesignScreen extends StatelessWidget {
                     _selectAndSaveFile();
                   } else if (choice == 'Open') {
                     _selectAndReadFile();
+                  } else if (choice == 'Create') {
+                    _createHull(context);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -195,6 +198,26 @@ class DesignScreen extends StatelessWidget {
   void _selectAndSaveFile() async {
     final String jsonStr = json.encode(_myHull.toJson());
     await _saveFile(jsonStr);
+  }
+
+  void _createHull(BuildContext context) async {
+    HullParams params = HullParams();
+
+    bool result = await showDialog(
+      builder: (BuildContext context) {
+        return NewHullDialog(
+            hullParams: params,
+            onSubmit: (newHullParams) {
+              params = newHullParams;
+            });
+      },
+      context: context,
+    );
+
+    if (result) {
+      _myHull.updateFromParams(params);
+      resetScreen();
+    }
   }
 
   // **********************************************
