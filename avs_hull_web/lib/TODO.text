@@ -1,12 +1,16 @@
 TODO.text
+Bugs:
+    Hull.updateFromParams does weird things for some settings (7 bulkheads)
+
 Features:
+    Hull.updateFromParams implement stern 'bow'
     flat-bottomed 
     closed-top 
     SaveAs formats
     waterlines
     Allow Save to specify filename
     Have Open/Save remember filename for re-use
-    Create Hull
+
     change number of chines
     add/delete/move bulkhead
     Show x,y,z coords in bottom line
