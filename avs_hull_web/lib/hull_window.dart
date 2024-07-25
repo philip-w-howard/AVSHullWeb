@@ -21,7 +21,7 @@ class HullDrawDetails {
 }
 
 class HullWindow extends StatelessWidget {
-  static const double _rotateScale = 0.05;
+  static const double _rotateScale = 0.10;
   static const double _nearnessDistance = 20;
 
   HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,

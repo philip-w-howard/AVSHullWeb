@@ -26,7 +26,7 @@ class Panel {
     double scaleFactor = 1;
 
     if (bulk.mBulkheadType == BulkheadType.transom) {
-      scaleFactor = math.sin(bulk.mTransomAngle);
+      scaleFactor = math.sin(bulk.mTransomAngle * (math.pi / 180.0));
     }
 
     mPoints.clear();
