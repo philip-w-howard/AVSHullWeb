@@ -5,6 +5,7 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:xml/xml.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:html' as html;
@@ -62,6 +63,8 @@ class DesignScreen extends StatelessWidget {
                   // Handle menu item selection
                   if (choice == 'Save') {
                     _selectAndSaveFile();
+                  } else if (choice == 'XML') {
+                    _selectAndXmlFile();
                   } else if (choice == 'Open') {
                     _selectAndReadFile();
                   } else if (choice == 'Create') {
@@ -77,6 +80,10 @@ class DesignScreen extends StatelessWidget {
                     const PopupMenuItem<String>(
                       value: 'Save',
                       child: Text('Save'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'XML',
+                      child: Text('Save to XML'),
                     ),
                     const PopupMenuItem<String>(
                       value: 'Create',
@@ -197,7 +204,15 @@ class DesignScreen extends StatelessWidget {
 
   void _selectAndSaveFile() async {
     final String jsonStr = json.encode(_myHull.toJson());
+
     await _saveFile(jsonStr);
+  }
+
+  void _selectAndXmlFile() async {
+    XmlDocument xml = _myHull.toXml();
+
+    final String xmlStr = xml.toXmlString(pretty: true);
+    await _saveFile(xmlStr);
   }
 
   void _createHull(BuildContext context) async {

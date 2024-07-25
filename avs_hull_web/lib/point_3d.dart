@@ -5,6 +5,7 @@
 // ***************************************************************
 
 import 'dart:math';
+import 'package:xml/xml.dart';
 
 class Point3D {
   late double x;
@@ -45,4 +46,15 @@ class Point3D {
       'z': z,
     };
   }
+
+  XmlDocument toXml() {
+    final builder = XmlBuilder();
+    builder.element('point', nest: () {
+      builder.element('x', nest: x);
+      builder.element('y', nest: y);
+      builder.element('z', nest: z);
+    });
+    return builder.buildDocument();
+  }
+
 }

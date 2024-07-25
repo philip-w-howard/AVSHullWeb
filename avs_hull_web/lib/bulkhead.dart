@@ -5,6 +5,7 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:xml/xml.dart';
 import 'dart:math' as math;
 import 'point_3d.dart';
 import 'hull_math.dart';
@@ -126,6 +127,26 @@ class Bulkhead {
       'mFlatBottomed': mFlatBottomed,
       'mClosedTop': mClosedTop,
     };
+  }
+
+  // **************************************************
+  XmlDocument toXml() {
+    final builder = XmlBuilder();
+    
+    builder.element('bulkhead', nest: () {
+    builder.element('points', nest: () {
+      for (var point in mPoints) {
+        builder.element('point', nest: point.toXml().rootElement);
+      }
+    });
+
+    builder.element('BulkheadType', nest: mBulkheadType.toString().split('.').last);
+    builder.element('TransomAngle', nest: mTransomAngle);
+    builder.element('FlatBottomed', nest: mFlatBottomed);
+    builder.element('ClosedTop', nest: mClosedTop);
+
+    });
+    return builder.buildDocument();
   }
 
   // **************************************************

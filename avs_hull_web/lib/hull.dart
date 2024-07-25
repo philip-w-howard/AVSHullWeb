@@ -6,6 +6,7 @@
 
 import 'dart:math' as math;
 import 'package:avs_hull_web/hull_math.dart';
+import 'package:xml/xml.dart';
 
 import 'point_3d.dart';
 import 'bulkhead.dart';
@@ -266,7 +267,23 @@ class Hull {
     };
   }
 
-  bool isNearBulkhead(int bulk, double x, double y, double distance) {
+  // **************************************************
+  XmlDocument toXml() {
+    final builder = XmlBuilder();
+    
+    builder.element('hull', nest: () {
+      builder.element('bulkheads', nest: () {
+        for (var bulkhead in mBulkheads) {
+          builder.element('bulkhead', nest: bulkhead.toXml().rootElement);
+        }
+      });
+
+      builder.element('timeUpdated', nest: timeUpdated.toIso8601String());
+    });
+    return builder.buildDocument();
+  }
+
+bool isNearBulkhead(int bulk, double x, double y, double distance) {
     if (bulk < 0 || bulk >= mBulkheads.length) return false;
 
     return mBulkheads[bulk].isNearBulkhead(x, y, distance);

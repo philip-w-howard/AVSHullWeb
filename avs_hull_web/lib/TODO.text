@@ -4,6 +4,7 @@ Bugs:
 
 Features:
     Save/Export hull as XML
+        need toXml() methods for hull, bulkhead, point
     Save/Export layouts
     Hull.updateFromParams implement stern 'bow'
     flat-bottomed 
