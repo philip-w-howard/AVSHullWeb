@@ -49,12 +49,16 @@ class Point3D {
 
   XmlDocument toXml() {
     final builder = XmlBuilder();
+    addXmlContent(builder);
+
+    return builder.buildDocument();
+  }
+  
+  void  addXmlContent(XmlBuilder builder) {
     builder.element('point', nest: () {
       builder.element('x', nest: x);
       builder.element('y', nest: y);
       builder.element('z', nest: z);
     });
-    return builder.buildDocument();
   }
-
 }

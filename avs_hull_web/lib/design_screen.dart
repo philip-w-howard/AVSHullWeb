@@ -205,14 +205,14 @@ class DesignScreen extends StatelessWidget {
   void _selectAndSaveFile() async {
     final String jsonStr = json.encode(_myHull.toJson());
 
-    await _saveFile(jsonStr);
+    await _saveFile(jsonStr, 'avsh');
   }
 
   void _selectAndXmlFile() async {
     XmlDocument xml = _myHull.toXml();
 
     final String xmlStr = xml.toXmlString(pretty: true);
-    await _saveFile(xmlStr);
+    await _saveFile(xmlStr, 'xml');
   }
 
   void _createHull(BuildContext context) async {
@@ -237,13 +237,13 @@ class DesignScreen extends StatelessWidget {
 
   // **********************************************
   // Need some way to return success/failure
-  Future<void> _saveFile(String contents) async {
+  Future<void> _saveFile(String contents, String extension) async {
     final encodedContent = base64.encode(utf8.encode(contents));
 
     final anchor = html.AnchorElement(
       href: 'data:text/plain;charset=utf-8;base64,$encodedContent',
     );
-    anchor.download = 'saved_hull.avsh';
+    anchor.download = 'saved_hull.$extension';
     anchor.click();
   }
 

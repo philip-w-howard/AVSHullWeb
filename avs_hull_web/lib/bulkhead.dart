@@ -132,24 +132,28 @@ class Bulkhead {
   // **************************************************
   XmlDocument toXml() {
     final builder = XmlBuilder();
-    
-    builder.element('bulkhead', nest: () {
-    builder.element('points', nest: () {
-      for (var point in mPoints) {
-        builder.element('point', nest: point.toXml().rootElement);
-      }
-    });
+    addXmlContent(builder);
 
-    builder.element('BulkheadType', nest: mBulkheadType.toString().split('.').last);
-    builder.element('TransomAngle', nest: mTransomAngle);
-    builder.element('FlatBottomed', nest: mFlatBottomed);
-    builder.element('ClosedTop', nest: mClosedTop);
-
-    });
     return builder.buildDocument();
   }
 
   // **************************************************
+  void addXmlContent(XmlBuilder builder) {
+    builder.element('bulkhead', nest: () {
+      builder.element('points', nest: () {
+        for (var point in mPoints) {
+          point.addXmlContent(builder);
+        }
+      });
+
+      builder.element('BulkheadType', nest: mBulkheadType.toString().split('.').last);
+      builder.element('TransomAngle', nest: mTransomAngle);
+      builder.element('FlatBottomed', nest: mFlatBottomed);
+      builder.element('ClosedTop', nest: mClosedTop);
+    });
+  }
+
+    // **************************************************
   bool isNearBulkhead(double x, double y, double distance) {
     for (int ii = 0; ii < numPoints() - 1; ii++) {
       double l1x = mPoints[ii].x;

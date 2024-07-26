@@ -270,11 +270,10 @@ class Hull {
   // **************************************************
   XmlDocument toXml() {
     final builder = XmlBuilder();
-    
     builder.element('hull', nest: () {
       builder.element('bulkheads', nest: () {
         for (var bulkhead in mBulkheads) {
-          builder.element('bulkhead', nest: bulkhead.toXml().rootElement);
+          bulkhead.addXmlContent(builder);
         }
       });
 
