@@ -5,6 +5,7 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 import 'point_3d.dart';
 
@@ -505,4 +506,77 @@ double angleBetween(Offset vector1, Offset vector2) {
     return 0;
   }
   return angleRadians;
+}
+
+//***********************************************************
+Offset computeSpacingPoint(Offset p1, Offset p2, int fixedOffset)
+{
+  double x = 0;
+  if (p1.dx.abs() > p2.dx.abs())
+  {
+    x = p1.dx;
+  }
+  else
+  {
+    x = p2.dx;
+  }
+
+  int steps = x ~/ fixedOffset;
+  double interestX = (steps * fixedOffset).toDouble();
+  double deltaX = p2.dx - p1.dx;
+  double offset = interestX - p1.dx;
+  double interestY = p1.dy;
+
+  if (offset != 0)
+  {
+    double deltaY = p2.dy - p1.dy;
+    interestY = p1.dy + deltaY * offset /deltaX;
+  }
+
+  return Offset(interestX, interestY);
+}
+
+//***********************************************************
+double computeMinAngle(Offset p1, Offset p2, Offset p3)
+{
+    double run1, run2, rise1, rise2;
+    double angle1, angle2;
+
+    run1 = p1.dx - p2.dx;
+    run2 = p3.dx - p2.dx;
+    rise1 = p1.dy - p2.dy;
+    rise2 = p3.dy - p2.dy;
+
+    angle1 = math.atan2(rise1, run1);
+    angle2 = math.atan2(rise2, run2);
+    double rightAngle = angle2 - angle1;
+    if (rightAngle < 0) rightAngle += 2 * math.pi;
+    double leftAngle = 2 * math.pi - rightAngle;
+
+    return math.min(rightAngle, leftAngle);
+}
+//***********************************************************
+bool isKnee(Offset p1, Offset p2, Offset p3, double angleInDegrees)
+{
+    double angle = math.pi - angleInDegrees * math.pi / 180.0;
+
+    if (angle > computeMinAngle(p1, p2, p3))
+    {
+      return true;
+    } 
+    else 
+    {
+      return false;
+    }
+}
+
+//***********************************************************
+bool spansX(Offset p1, Offset p2, int fixedOffset)
+{
+    double x1 = p1.dx.abs();
+    double x2 = p2.dx.abs();
+
+    if (x1 ~/ fixedOffset != x2 ~/ fixedOffset) return true;
+
+    return false;
 }

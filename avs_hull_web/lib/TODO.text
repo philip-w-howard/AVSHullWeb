@@ -3,9 +3,18 @@ Bugs:
     Hull.updateFromParams does weird things for some settings (7 bulkheads)
 
 Features:
-    Save/Export hull as XML
-        need toXml() methods for hull, bulkhead, point
     Save/Export layouts
+        Layout menu bar (follow design layout)
+            Save
+            Export as
+                offsets 
+                gcode
+                STL  
+                SVG
+        public enum OutputTypeEnum { EIGHTHS, SIXTEENTHS, THIRTYSECONDTHS, DECIMAL_2DIGIT, DECIMAL_3DIGIT, DECIMAL_4DIGIT }
+        public enum SpacingStyleEnum { EVERY_POINT, FIXED_SPACING }
+        public enum OriginEnum { UPPER_LEFT, LOWER_LEFT, CENTER }
+
     Hull.updateFromParams implement stern 'bow'
     flat-bottomed 
     closed-top 
