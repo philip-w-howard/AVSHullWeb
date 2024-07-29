@@ -2,7 +2,10 @@ TODO.text
 Bugs:
     Hull.updateFromParams does weird things for some settings (7 bulkheads)
 
+
+
 Features:
+    Hull.updateFromParams implement stern 'bow'
     Save/Export layouts
         Layout menu bar (follow design layout)
             Save
