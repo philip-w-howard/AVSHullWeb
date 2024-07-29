@@ -64,57 +64,142 @@ class PanelsScreen extends StatelessWidget {
     final numericFormatter =
         FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,10}'));
     return Scaffold(
-      body: Row(
-        children: [
-          Container(
-            color: Colors.yellow,
-            width: 125,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
+      body: Column(children: [
+        Container(
+            color: Colors.white,
+            height: 40,
+            child: Row(
               children: [
-                TextField(
-                  controller: _textPanelsXController,
-                  decoration: const InputDecoration(labelText: 'Width'),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [numericFormatter],
-                  focusNode: _textPanelsXFocus,
-                ),
-                TextField(
-                  controller: _textPanelsYController,
-                  decoration: const InputDecoration(labelText: 'Height'),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [numericFormatter],
-                  focusNode: _textPanelsYFocus,
-                ),
-                TextField(
-                  controller: _textPanelSizeXController,
-                  decoration: const InputDecoration(labelText: 'Panel Width'),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [numericFormatter],
-                  focusNode: _textPanelSizeXFocus,
-                ),
-                TextField(
-                  controller: _textPanelSizeYController,
-                  decoration: const InputDecoration(labelText: 'Panel Height'),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [numericFormatter],
-                  focusNode: _textPanelSizeYFocus,
-                ),
-                TextButton(
-                  onPressed: () {
-                    _showItemSelectionDialog(context);
-                    _panelsWindow.redraw();
+                PopupMenuButton<String>(
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'File',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  onSelected: (String choice) {
+                    // Handle menu item selection
+                    // if (choice == 'Save') {
+                    //   _selectAndSaveFile();
+                    // } else if (choice == 'XML') {
+                    //   _selectAndXmlFile();
+                    // } else if (choice == 'Open') {
+                    //   _selectAndReadFile();
+                    // } else if (choice == 'Create') {
+                    //   _createHull(context);
+                    // }
                   },
-                  child: const Text('Add Panel'),
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'Open',
+                        child: Text('Open'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Save',
+                        child: Text('Save'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'XML',
+                        child: Text('Save to XML'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Create',
+                        child: Text('Create'),
+                      ),
+                    ];
+                  },
                 ),
-                const Spacer(flex: 1),
+                PopupMenuButton<String>(
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Edit',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  onSelected: (String choice) async {
+                    // Handle menu item selection
+                    // if (choice == 'Resize') {
+                    //   _processResize(context);
+                    // } else if (choice == 'Chines') {
+                    //   _processChines(context);
+                    // }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      const PopupMenuItem<String>(
+                        value: 'Resize',
+                        child: Text('Resize'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Chines',
+                        child: Text('Chines'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'Bulkheads',
+                        child: Text('Bulkheads'),
+                      ),
+                    ];
+                  },
+                ),
               ],
+            )),
+        Expanded(
+            child: Row(
+          children: [
+            Container(
+              color: Colors.yellow,
+              width: 125,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: _textPanelsXController,
+                    decoration: const InputDecoration(labelText: 'Width'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [numericFormatter],
+                    focusNode: _textPanelsXFocus,
+                  ),
+                  TextField(
+                    controller: _textPanelsYController,
+                    decoration: const InputDecoration(labelText: 'Height'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [numericFormatter],
+                    focusNode: _textPanelsYFocus,
+                  ),
+                  TextField(
+                    controller: _textPanelSizeXController,
+                    decoration: const InputDecoration(labelText: 'Panel Width'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [numericFormatter],
+                    focusNode: _textPanelSizeXFocus,
+                  ),
+                  TextField(
+                    controller: _textPanelSizeYController,
+                    decoration:
+                        const InputDecoration(labelText: 'Panel Height'),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [numericFormatter],
+                    focusNode: _textPanelSizeYFocus,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      _showItemSelectionDialog(context);
+                      _panelsWindow.redraw();
+                    },
+                    child: const Text('Add Panel'),
+                  ),
+                  const Spacer(flex: 1),
+                ],
+              ),
             ),
-          ),
-          _panelsWindow,
-        ],
-      ),
+            _panelsWindow,
+          ],
+        )),
+      ]),
     );
   }
 
