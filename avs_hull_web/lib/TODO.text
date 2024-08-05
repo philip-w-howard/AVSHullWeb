@@ -9,11 +9,14 @@ Features:
     Save/Export layouts
         Layout menu bar (follow design layout)
             Save
+            Open
             Export as
                 offsets 
                 gcode
                 STL  
                 SVG
+        Some way to save export params at least for the session.
+        
         public enum OutputTypeEnum { EIGHTHS, SIXTEENTHS, THIRTYSECONDTHS, DECIMAL_2DIGIT, DECIMAL_3DIGIT, DECIMAL_4DIGIT }
         public enum SpacingStyleEnum { EVERY_POINT, FIXED_SPACING }
         public enum OriginEnum { UPPER_LEFT, LOWER_LEFT, CENTER }

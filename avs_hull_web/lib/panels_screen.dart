@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/export_offsets_dialog.dart';
 import 'package:avs_hull_web/hull_math.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -78,37 +79,33 @@ class PanelsScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
-                  onSelected: (String choice) {
-                    // Handle menu item selection
-                    // if (choice == 'Save') {
-                    //   _selectAndSaveFile();
-                    // } else if (choice == 'XML') {
-                    //   _selectAndXmlFile();
-                    // } else if (choice == 'Open') {
-                    //   _selectAndReadFile();
-                    // } else if (choice == 'Create') {
-                    //   _createHull(context);
-                    // }
-                  },
                   itemBuilder: (BuildContext context) {
                     return [
                       const PopupMenuItem<String>(
                         value: 'Open',
+                        enabled: false,
                         child: Text('Open'),
                       ),
                       const PopupMenuItem<String>(
                         value: 'Save',
+                        enabled: false,
                         child: Text('Save'),
                       ),
                       const PopupMenuItem<String>(
-                        value: 'XML',
-                        child: Text('Save to XML'),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'Create',
-                        child: Text('Create'),
+                        value: 'Offsets',
+                        child: Text('Export to Offsets'),
                       ),
                     ];
+                  },
+                  onSelected: (String choice) {
+                    // Handle menu item selection
+                    if (choice == 'Open') {
+                      _selectAndReadFile();
+                    } else if (choice == 'Save') {
+                      _selectAndSaveFile();
+                    } else if (choice == 'Offsets') {
+                      _exportToOffsets(context);
+                    }
                   },
                 ),
                 PopupMenuButton<String>(
@@ -339,4 +336,29 @@ class PanelsScreen extends StatelessWidget {
     }
     _panelsWindow.redraw();
   }
+
+  // *********************************************************
+  void _exportToOffsets(BuildContext context) async {
+    // FIX THIS: Need some way to preserve the params
+    OffsetsParams params = OffsetsParams();
+
+    bool result = await showDialog(
+      builder: (BuildContext context) {
+        return ExportOffsetsDialog(
+            offsetParams: params,
+            onSubmit: (newHullParams) {
+              params = newHullParams;
+            });
+      },
+      context: context,
+    );
+    if (result) {
+      // FIX THIS: output results
+    }
+  }
+
+  // *********************************************************
+  void _selectAndReadFile() async {}
+  // *********************************************************
+  void _selectAndSaveFile() async {}
 }
