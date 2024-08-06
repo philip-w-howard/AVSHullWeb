@@ -5,12 +5,12 @@
 // ***************************************************************
 
 import 'dart:math' as math;
-import 'package:avs_hull_web/hull_math.dart';
+import 'package:avs_hull_web/geometry/hull_math.dart';
 import 'package:xml/xml.dart';
 
-import 'point_3d.dart';
+import '../geometry/point_3d.dart';
 import 'bulkhead.dart';
-import 'spline.dart';
+import '../geometry/spline.dart';
 
 class HullParams {
   BulkheadType bow = BulkheadType.bow;

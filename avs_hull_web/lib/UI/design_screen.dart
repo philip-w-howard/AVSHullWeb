@@ -9,10 +9,10 @@ import 'package:xml/xml.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:html' as html;
-import 'hull.dart';
-import 'hull_logger.dart';
+import '../models/hull.dart';
+import '../IO/hull_logger.dart';
 import 'hull_window.dart';
-import 'rotated_hull.dart';
+import '../models/rotated_hull.dart';
 import 'resize_dialog.dart';
 import 'new_hull_dialog.dart';
 

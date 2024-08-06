@@ -7,10 +7,10 @@
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math' as math;
-import 'point_3d.dart';
-import 'bulkhead.dart';
-import 'rotated_hull.dart';
-import 'spline.dart';
+import '../geometry/point_3d.dart';
+import '../models/bulkhead.dart';
+import '../models/rotated_hull.dart';
+import '../geometry/spline.dart';
 
 class HullPainter extends CustomPainter {
   static const double _nearnessDistance = 5;

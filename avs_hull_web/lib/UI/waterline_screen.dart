@@ -5,9 +5,9 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
-import 'hull.dart';
+import '../models/hull.dart';
 import 'hull_window.dart';
-import 'rotated_hull.dart';
+import '../models/rotated_hull.dart';
 
 class WaterlineScreen extends StatelessWidget {
   WaterlineScreen(this._hull, {super.key}) {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'point_3d.dart';
-import 'hull_math.dart';
-import 'spline.dart';
+import '../geometry/point_3d.dart';
+import '../geometry/hull_math.dart';
+import '../geometry/spline.dart';
 import 'bulkhead.dart';
 
 class Panel {

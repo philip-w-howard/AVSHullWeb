@@ -7,8 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 import 'dart:math' as math;
-import 'point_3d.dart';
-import 'hull_math.dart';
+import '../geometry/point_3d.dart';
+import '../geometry/hull_math.dart';
 
 enum BulkheadType { bow, vertical, transom }
 

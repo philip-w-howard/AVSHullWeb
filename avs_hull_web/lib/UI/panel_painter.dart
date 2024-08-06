@@ -4,12 +4,12 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/hull_math.dart';
+import 'package:avs_hull_web/geometry/hull_math.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math' as math;
-import 'panel.dart';
-import 'panel_layout.dart';
+import '../models/panel.dart';
+import '../models/panel_layout.dart';
 
 class PanelPainter extends CustomPainter {
   BuildContext? _context;
