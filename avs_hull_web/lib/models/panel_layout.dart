@@ -6,7 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'panel.dart';
-import 'hull_math.dart';
+import '../geometry/hull_math.dart';
 
 class PanelLayout {
   final List<Panel> _panels = [];

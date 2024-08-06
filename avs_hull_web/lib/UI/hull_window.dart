@@ -5,10 +5,10 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
-import 'hull.dart';
-import 'rotated_hull.dart';
+import '../models/hull.dart';
+import '../models/rotated_hull.dart';
 import 'hull_painter.dart';
-import 'hull_logger.dart';
+import '../IO/hull_logger.dart';
 
 class HullDrawDetails {
   double? height;

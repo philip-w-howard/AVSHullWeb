@@ -4,12 +4,12 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'point_3d.dart';
-import 'hull_math.dart';
+import '../geometry/point_3d.dart';
+import '../geometry/hull_math.dart';
 import 'bulkhead.dart';
-import 'spline.dart';
+import '../geometry/spline.dart';
 import 'hull.dart';
-import 'hull_logger.dart';
+import '../IO/hull_logger.dart';
 
 enum HullView { front, side, top, rotated }
 

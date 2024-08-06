@@ -3,7 +3,7 @@
 // Released under the MIT license.
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
-import 'hull.dart';
+import '../models/hull.dart';
 
 class HullLogger {
   final List<Hull> _hullLog = [];

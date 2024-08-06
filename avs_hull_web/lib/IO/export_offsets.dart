@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:html' as html;
-import 'export_offsets_dialog.dart';
-import 'panel.dart';
-import 'panel_layout.dart';
+import '../UI/export_offsets_dialog.dart';
+import '../models/panel.dart';
+import '../models/panel_layout.dart';
 
 bool exportPanelOffset(PanelLayout panels, OffsetsParams params) {
   String output = '';

@@ -4,10 +4,10 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/hull.dart';
+import 'package:avs_hull_web/models/hull.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'bulkhead.dart';
+import '../models/bulkhead.dart';
 
 class NewHullDialog extends StatefulWidget {
   const NewHullDialog(

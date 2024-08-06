@@ -5,11 +5,11 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
-import 'design_screen.dart';
-import 'waterline_screen.dart';
-import 'panels_screen.dart';
-import 'hull.dart';
-import 'hull_logger.dart';
+import 'UI/design_screen.dart';
+import 'UI/waterline_screen.dart';
+import 'UI/panels_screen.dart';
+import 'models/hull.dart';
+import 'IO/hull_logger.dart';
 
 void main() {
   runApp(const MainApp());

@@ -6,8 +6,8 @@
 
 import 'package:flutter/material.dart';
 import 'panel_painter.dart';
-import 'panel.dart';
-import 'panel_layout.dart';
+import '../models/panel.dart';
+import '../models/panel_layout.dart';
 
 class PanelsDrawDetails {
   int panelIndex = -1; // -1 means "none"

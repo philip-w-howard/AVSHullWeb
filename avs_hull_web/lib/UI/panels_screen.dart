@@ -4,17 +4,17 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/export_offsets.dart';
-import 'package:avs_hull_web/export_offsets_dialog.dart';
-import 'package:avs_hull_web/hull_math.dart';
+import 'package:avs_hull_web/IO/export_offsets.dart';
+import 'package:avs_hull_web/UI/export_offsets_dialog.dart';
+import 'package:avs_hull_web/geometry/hull_math.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'hull.dart';
-import 'panel.dart';
-import 'bulkhead.dart';
+import '../models/hull.dart';
+import '../models/panel.dart';
+import '../models/bulkhead.dart';
 import 'panels_window.dart';
-import 'panel_layout.dart';
+import '../models/panel_layout.dart';
 
 class LayoutData {
   int panelsX = 1;
