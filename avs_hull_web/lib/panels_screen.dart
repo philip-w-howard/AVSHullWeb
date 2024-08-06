@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/export_offsets.dart';
 import 'package:avs_hull_web/export_offsets_dialog.dart';
 import 'package:avs_hull_web/hull_math.dart';
 import 'package:flutter/material.dart';
@@ -353,7 +354,7 @@ class PanelsScreen extends StatelessWidget {
       context: context,
     );
     if (result) {
-      // FIX THIS: output results
+      exportPanelOffset(_displayedPanels, params);
     }
   }
 
