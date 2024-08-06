@@ -8,13 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'dart:html' as html;
 import '../models/hull.dart';
 import '../IO/hull_logger.dart';
 import 'hull_window.dart';
 import '../models/rotated_hull.dart';
 import 'resize_dialog.dart';
 import 'new_hull_dialog.dart';
+import '../IO/file_io.dart';
 
 class DesignScreen extends StatelessWidget {
   DesignScreen({super.key, required Hull mainHull, required HullLogger logger})
@@ -194,7 +194,7 @@ class DesignScreen extends StatelessWidget {
   }
 
   void _selectAndReadFile() async {
-    String? contents = await _readFile();
+    String? contents = await readFile('avsh');
     if (contents != null) {
       Map<String, dynamic> jsonData = json.decode(contents);
       _myHull.updateFromJson(jsonData);
@@ -205,14 +205,14 @@ class DesignScreen extends StatelessWidget {
   void _selectAndSaveFile() async {
     final String jsonStr = json.encode(_myHull.toJson());
 
-    await _saveFile(jsonStr, 'avsh');
+    await saveFile(jsonStr, 'avs_hull', 'avsh');
   }
 
   void _selectAndXmlFile() async {
     XmlDocument xml = _myHull.toXml();
 
     final String xmlStr = xml.toXmlString(pretty: true);
-    await _saveFile(xmlStr, 'xml');
+    await saveFile(xmlStr, 'avs_hull', 'xml');
   }
 
   void _createHull(BuildContext context) async {
@@ -235,42 +235,4 @@ class DesignScreen extends StatelessWidget {
     }
   }
 
-  // **********************************************
-  // Need some way to return success/failure
-  Future<void> _saveFile(String contents, String extension) async {
-    final encodedContent = base64.encode(utf8.encode(contents));
-
-    final anchor = html.AnchorElement(
-      href: 'data:text/plain;charset=utf-8;base64,$encodedContent',
-    );
-    anchor.download = 'saved_hull.$extension';
-    anchor.click();
-  }
-
-  // **********************************************
-  // Does not indicate failure when "cancel" is hit
-  Future<String?> _readFile() async {
-    final completer = Completer<String>();
-    try {
-      html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
-      uploadInput.click();
-
-      await uploadInput.onChange.first;
-
-      final file = uploadInput.files!.first;
-      final reader = html.FileReader();
-
-      reader.onLoadEnd.listen((event) {
-        final fileContents = reader.result as String;
-        completer.complete(fileContents);
-      });
-
-      reader.readAsText(file);
-
-      return completer.future;
-    } catch (e) {
-      //print('caught exception');
-    }
-    return null;
-  }
 }
