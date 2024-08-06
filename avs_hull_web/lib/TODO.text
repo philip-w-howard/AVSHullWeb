@@ -1,19 +1,43 @@
 TODO.text
-Implement transoms
-Implement proper rotation
+Bugs:
+    Hull.updateFromParams does weird things for some settings (7 bulkheads)
+
+
+
+Features:
+    Hull.updateFromParams implement stern 'bow'
+    Save/Export layouts
+        Layout menu bar (follow design layout)
+            Save
+            Open
+            Export as
+                offsets 
+                gcode
+                STL  
+                SVG
+        Some way to save export params at least for the session.
+        
+        public enum OutputTypeEnum { EIGHTHS, SIXTEENTHS, THIRTYSECONDTHS, DECIMAL_2DIGIT, DECIMAL_3DIGIT, DECIMAL_4DIGIT }
+        public enum SpacingStyleEnum { EVERY_POINT, FIXED_SPACING }
+        public enum OriginEnum { UPPER_LEFT, LOWER_LEFT, CENTER }
+
+    Hull.updateFromParams implement stern 'bow'
+    flat-bottomed 
+    closed-top 
+    SaveAs formats
+    waterlines
+    Allow Save to specify filename
+    Have Open/Save remember filename for re-use
+
+    change number of chines
+    add/delete/move bulkhead
+    Show x,y,z coords in bottom line
+    Redo 
+    Undo/Redo for panel layouts
+    Move Hull undo/redo into Hull class? or leave it separate?
+        create EditableHull with undo/redo?
+    Zoom/Pan
 
 refactor Bulkhead to have rotate and getOffset methods like Spline
     have getOffsets return List<Point3D>?
 
-CONCEPT IS DONE. Implement Waterlines tab with dialog-like fields in a panel on the left.
-
-Remove double-tap from editWindow
-
-Allow Save to specify filename
-Have Open/Save remember filename for re-use
-
-FIX:
-Expected to find fonts for (MaterialIcons, packages/cupertino_icons/CupertinoIcons), but found (MaterialIcons). This usually means you are referring to font families in an IconData class but not including them in
-the assets section of your pubspec.yaml, are missing the package that would include them, or are missing "uses-material-design: true".
-Font asset "MaterialIcons-Regular.otf" was tree-shaken, reducing it from 1645184 to 7548 bytes (99.5% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.
-Compiling lib\main.dart for the Web...  

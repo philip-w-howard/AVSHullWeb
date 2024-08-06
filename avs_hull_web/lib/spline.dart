@@ -240,4 +240,8 @@ class Spline {
 
     return offsets;
   }
+
+  List<Point3D> getPoints() {
+    return _points;
+  }
 }

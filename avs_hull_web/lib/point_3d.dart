@@ -4,6 +4,9 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'dart:math';
+import 'package:xml/xml.dart';
+
 class Point3D {
   late double x;
   late double y;
@@ -17,6 +20,20 @@ class Point3D {
     z = json['z'] ?? 0;
   }
 
+  Point3D.zero() {
+    x = 0;
+    y = 0;
+    z = 0;
+  }
+
+  Point3D operator -(Point3D operand) {
+    return Point3D(x - operand.x, y - operand.y, z - operand.z);
+  }
+
+  double length() {
+    return sqrt(x * x + y * y + z * z);
+  }
+
   @override
   String toString() {
     return 'Point($x, $y, $z)';
@@ -28,5 +45,20 @@ class Point3D {
       'y': y,
       'z': z,
     };
+  }
+
+  XmlDocument toXml() {
+    final builder = XmlBuilder();
+    addXmlContent(builder);
+
+    return builder.buildDocument();
+  }
+  
+  void  addXmlContent(XmlBuilder builder) {
+    builder.element('point', nest: () {
+      builder.element('x', nest: x);
+      builder.element('y', nest: y);
+      builder.element('z', nest: z);
+    });
   }
 }

@@ -5,26 +5,34 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
+import 'package:xml/xml.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'dart:html' as html;
 import 'hull.dart';
+import 'hull_logger.dart';
 import 'hull_window.dart';
 import 'rotated_hull.dart';
 import 'resize_dialog.dart';
+import 'new_hull_dialog.dart';
 
 class DesignScreen extends StatelessWidget {
-  DesignScreen({super.key, required Hull mainHull}) : _myHull = mainHull {
+  DesignScreen({super.key, required Hull mainHull, required HullLogger logger})
+      : _myHull = mainHull,
+        _hullLogger = logger {
     _frontWindow = HullWindow(_myHull, HullView.front, _selectFront, null);
     _sideWindow = HullWindow(_myHull, HullView.side, _selectSide, null);
     _topWindow = HullWindow(_myHull, HullView.top, _selectTop, null);
-    _editWindow = HullWindow(_myHull, HullView.rotated, null, resetScreen);
+    _editWindow = HullWindow(_myHull, HullView.rotated, null, resetScreen,
+        logger: _hullLogger);
     _editWindow.setRotatable();
     _editWindow.setEditable();
   }
 
   //final Hull myHull = Hull(length: 200, width: 50, height:20, numBulkheads:5 numChines:5);
   final Hull _myHull;
+  final HullLogger _hullLogger;
+
   late final HullWindow _frontWindow;
   late final HullWindow _sideWindow;
   late final HullWindow _topWindow;
@@ -55,8 +63,12 @@ class DesignScreen extends StatelessWidget {
                   // Handle menu item selection
                   if (choice == 'Save') {
                     _selectAndSaveFile();
+                  } else if (choice == 'XML') {
+                    _selectAndXmlFile();
                   } else if (choice == 'Open') {
                     _selectAndReadFile();
+                  } else if (choice == 'Create') {
+                    _createHull(context);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -68,6 +80,10 @@ class DesignScreen extends StatelessWidget {
                     const PopupMenuItem<String>(
                       value: 'Save',
                       child: Text('Save'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'XML',
+                      child: Text('Save to XML'),
                     ),
                     const PopupMenuItem<String>(
                       value: 'Create',
@@ -188,18 +204,46 @@ class DesignScreen extends StatelessWidget {
 
   void _selectAndSaveFile() async {
     final String jsonStr = json.encode(_myHull.toJson());
-    await _saveFile(jsonStr);
+
+    await _saveFile(jsonStr, 'avsh');
+  }
+
+  void _selectAndXmlFile() async {
+    XmlDocument xml = _myHull.toXml();
+
+    final String xmlStr = xml.toXmlString(pretty: true);
+    await _saveFile(xmlStr, 'xml');
+  }
+
+  void _createHull(BuildContext context) async {
+    HullParams params = HullParams();
+
+    bool result = await showDialog(
+      builder: (BuildContext context) {
+        return NewHullDialog(
+            hullParams: params,
+            onSubmit: (newHullParams) {
+              params = newHullParams;
+            });
+      },
+      context: context,
+    );
+
+    if (result) {
+      _myHull.updateFromParams(params);
+      resetScreen();
+    }
   }
 
   // **********************************************
   // Need some way to return success/failure
-  Future<void> _saveFile(String contents) async {
+  Future<void> _saveFile(String contents, String extension) async {
     final encodedContent = base64.encode(utf8.encode(contents));
 
     final anchor = html.AnchorElement(
       href: 'data:text/plain;charset=utf-8;base64,$encodedContent',
     );
-    anchor.download = 'saved_hull.avsh';
+    anchor.download = 'saved_hull.$extension';
     anchor.click();
   }
 

@@ -5,49 +5,119 @@
 // ***************************************************************
 
 import 'dart:math' as math;
+import 'package:avs_hull_web/hull_math.dart';
+import 'package:xml/xml.dart';
+
 import 'point_3d.dart';
 import 'bulkhead.dart';
 import 'spline.dart';
 
+class HullParams {
+  BulkheadType bow = BulkheadType.bow;
+  double forwardTransomAngle = 115;
+  BulkheadType stern = BulkheadType.transom;
+  double sternTransomAngle = 75;
+  int numBulkheads = 5;
+  int numChines = 5;
+  double length = 96;
+  double width = 40;
+  double height = 10;
+}
+
 class Hull {
   List<Bulkhead> mBulkheads = [];
   List<Spline> mChines = [];
+  DateTime timeUpdated = DateTime.now();
   static const int _pointsPerChine = 50;
 
   Hull();
 
-  Hull.create(double length, double width, double height, int numBulkheads,
-      int numChines) {
-    double radius = height;
+  //Hull.create(double length, double width, double height, int numBulkheads,
+  //    int numChines) {
+  Hull.fromParams(HullParams params) {
+    updateFromParams(params);
+  }
 
+  void updateFromParams(HullParams params) {
+    int bulk = 0;
+    double bulkSpacing = params.length / (params.numBulkheads - 1);
     List<Point3D> points = [];
+    mBulkheads = [];
 
-    for (int ii = 0; ii <= numChines; ii++) {
-      var angle = math.pi + ii * math.pi / 2 / numChines;
-      var z = math.cos(angle) * radius + radius;
-      var y = math.sin(angle) * radius + radius;
-      points.add(Point3D(0, y, z));
+    double radius = params.height;
+    if (radius >= params.length / params.numBulkheads) {
+      radius = 0.9 * params.length / params.numBulkheads;
     }
-    for (int ii = numChines - 1; ii >= 0; ii--) {
-      var angle = 2 * math.pi / 2 + ii * math.pi / 2 / numChines;
-      var z = math.cos(angle) * radius + radius;
-      var y = math.sin(angle) * radius + radius;
-      points.add(Point3D(0, y, z));
-    }
-    mBulkheads.add(Bulkhead.fromPoints(points, BulkheadType.bow));
 
-    for (int ii = 1; ii < numBulkheads; ii++) {
-      mBulkheads
-          .add(Bulkhead.round(width, ii * length / numBulkheads, numChines));
+    if (params.bow == BulkheadType.bow) {
+      for (int ii = 0; ii <= params.numChines; ii++) {
+        var angle = math.pi + ii * math.pi / 2 / params.numChines;
+        var z = math.cos(angle) * radius + radius;
+        var y = math.sin(angle) * radius + radius + params.height;
+        points.add(Point3D(0, y, z));
+      }
+      for (int ii = params.numChines - 1; ii >= 0; ii--) {
+        var angle = 2 * math.pi / 2 + ii * math.pi / 2 / params.numChines;
+        var z = math.cos(angle) * radius + radius;
+        var y = math.sin(angle) * radius + radius + params.height;
+        points.add(Point3D(0, y, z));
+      }
+      mBulkheads.add(Bulkhead.fromPoints(points, BulkheadType.bow));
+
+      bulk++;
+    } else if (params.bow == BulkheadType.transom) {
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, params.forwardTransomAngle));
+      bulk++;
+    }
+
+    int numForward = (params.numBulkheads / 2 - bulk).floor();
+    double radiusDelta = params.width * 0.10 * numForward;
+    radius = params.width / 2 - radiusDelta * numForward;
+
+    for (int ii = 0; ii < numForward; ii++) {
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, 90));
+      radius += radiusDelta;
+      bulk++;
+    }
+
+    mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, params.width / 2,
+        params.height, params.height, params.numChines, 90));
+
+    int numAft = params.numBulkheads ~/ 2;
+    radiusDelta = params.width / 2 * 0.15 * numAft;
+    radius = params.width / 2;
+    for (bulk++; bulk < params.numBulkheads - 1; bulk++) {
+      radius -= radiusDelta;
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, 90));
+    }
+
+    radius -= radiusDelta;
+
+    if (params.stern == BulkheadType.vertical) {
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, 90));
+    } else if (params.stern == BulkheadType.transom) {
+      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+          params.height, params.numChines, params.sternTransomAngle));
+      bulk++;
     }
 
     normalize();
     _createChines();
+    timeUpdated = DateTime.now();
   }
 
   Hull.copy(Hull source) {
-    mBulkheads = List<Bulkhead>.from(source.mBulkheads);
-    mChines = List<Spline>.from(source.mChines);
+    // need a deep copy
+    for (Bulkhead bulk in source.mBulkheads) {
+      mBulkheads.add(Bulkhead.copy(bulk));
+    }
+
+    _createChines();
+    timeUpdated = DateTime.now();
   }
 
   Hull.fromJson(Map<String, dynamic> json) {
@@ -55,6 +125,12 @@ class Hull {
       json['mBulkheads'].forEach((bulkheadJson) {
         mBulkheads.add(Bulkhead.fromJson(bulkheadJson));
       });
+    }
+
+    if (json['timeUpdated'] != null) {
+      timeUpdated = DateTime.parse(json['timeUpdated']);
+    } else {
+      timeUpdated = DateTime.now();
     }
 
     _createChines();
@@ -68,6 +144,23 @@ class Hull {
       });
     }
 
+    if (json['timeUpdated'] != null) {
+      timeUpdated = DateTime.parse(json['timeUpdated']);
+    } else {
+      timeUpdated = DateTime.now();
+    }
+    _createChines();
+  }
+
+  void updateFromHull(Hull source) {
+    mBulkheads.clear();
+
+    // need a deep copy
+    for (Bulkhead bulk in source.mBulkheads) {
+      mBulkheads.add(Bulkhead.copy(bulk));
+    }
+
+    timeUpdated = source.timeUpdated;
     _createChines();
   }
 
@@ -113,18 +206,20 @@ class Hull {
   }
 
   Point3D size() {
-    Point3D size = Point3D(double.negativeInfinity, double.negativeInfinity,
-        double.negativeInfinity);
+    Point3D min = Point3D.zero();
+    Point3D max = Point3D.zero();
+    Point3D sizeMin = Point3D.zero();
+    Point3D sizeMax = Point3D.zero();
 
     for (Bulkhead bulkhead in mBulkheads) {
-      for (Point3D point in bulkhead.mPoints) {
-        size.x = math.max(size.x, point.x);
-        size.y = math.max(size.y, point.y);
-        size.z = math.max(size.z, point.z);
-      }
+      (min, max) = getMinMax(bulkhead.mPoints);
+
+      sizeMin = min3D(min, sizeMin);
+      sizeMax = max3D(max, sizeMax);
     }
 
-    return size;
+    return Point3D(
+        sizeMax.x - sizeMin.x, sizeMax.y - sizeMin.y, sizeMax.z - sizeMin.z);
   }
 
   void resize(double xSize, double ySize, double zSize) {
@@ -137,6 +232,8 @@ class Hull {
     for (Bulkhead bulk in mBulkheads) {
       bulk.resize(xRatio, yRatio, zRatio);
     }
+
+    timeUpdated = DateTime.now();
 
     _createChines();
   }
@@ -166,10 +263,26 @@ class Hull {
   Map<String, dynamic> toJson() {
     return {
       'mBulkheads': mBulkheads,
+      'timeUpdated': timeUpdated.toIso8601String(),
     };
   }
 
-  bool isNearBulkhead(int bulk, double x, double y, double distance) {
+  // **************************************************
+  XmlDocument toXml() {
+    final builder = XmlBuilder();
+    builder.element('hull', nest: () {
+      builder.element('bulkheads', nest: () {
+        for (var bulkhead in mBulkheads) {
+          bulkhead.addXmlContent(builder);
+        }
+      });
+
+      builder.element('timeUpdated', nest: timeUpdated.toIso8601String());
+    });
+    return builder.buildDocument();
+  }
+
+bool isNearBulkhead(int bulk, double x, double y, double distance) {
     if (bulk < 0 || bulk >= mBulkheads.length) return false;
 
     return mBulkheads[bulk].isNearBulkhead(x, y, distance);
@@ -183,6 +296,7 @@ class Hull {
 
   void updateBulkhead(int bulk, int chine, double x, double y, double z) {
     mBulkheads[bulk].updatePoint(chine, x, y, z);
+    timeUpdated = DateTime.now();
     _createChines();
   }
 }

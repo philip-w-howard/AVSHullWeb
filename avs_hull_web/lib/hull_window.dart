@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 import 'hull.dart';
 import 'rotated_hull.dart';
 import 'hull_painter.dart';
+import 'hull_logger.dart';
 
-class DrawDetails {
+class HullDrawDetails {
   double? height;
   Offset dragStart = Offset.zero;
   bool rotatable = false;
@@ -20,12 +21,13 @@ class DrawDetails {
 }
 
 class HullWindow extends StatelessWidget {
-  static const double _rotateScale = 0.05;
+  static const double _rotateScale = 0.10;
   static const double _nearnessDistance = 20;
 
   HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
-      {super.key}) {
-    _myHull = RotatedHull(hull);
+      {super.key, HullLogger? logger}) {
+    _myHull = RotatedHull(hull, hullLogger: logger);
+    _hullLogger = logger;
     _myHull.setView(view);
     if (view == HullView.rotated) {
       _myHull.rotateTo(10, 50, 190);
@@ -38,9 +40,11 @@ class HullWindow extends StatelessWidget {
 
   late final HullPainter _painter;
   late final RotatedHull _myHull;
+  late final HullLogger? _hullLogger;
   final void Function()? _selector;
   final void Function()? _updateScreen;
-  final DrawDetails _drawDetails = DrawDetails();
+  final HullDrawDetails _drawDetails = HullDrawDetails();
+  final FocusNode _focusNode = FocusNode();
 
   void setHeight(double height) {
     _drawDetails.height = height;
@@ -77,31 +81,35 @@ class HullWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _painter.setContext(context);
+    if (_hullLogger != null) _focusNode.requestFocus();
     return Expanded(
       child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         _drawDetails.size = constraints.biggest;
-        return Container(
-            height: _drawDetails.height,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black, // Border color
-                width: 1.0, // Border width
-              ),
-              color: Colors.yellow,
-            ),
-            child: GestureDetector(
-              onDoubleTap: _selector,
-              onTapDown: _tapDown,
-              onTapUp: _tapUp,
-              onPanStart: _panStart,
-              onPanUpdate: _panUpdate,
-              onPanEnd: _panEnd,
-              child: CustomPaint(
-                painter: _painter,
-                size: Size.infinite,
-              ),
-            ));
+        return RawKeyboardListener(
+            focusNode: _focusNode,
+            onKey: _processKeypress,
+            child: Container(
+                height: _drawDetails.height,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.black, // Border color
+                    width: 1.0, // Border width
+                  ),
+                  color: Colors.yellow,
+                ),
+                child: GestureDetector(
+                  onDoubleTap: _selector,
+                  onTapDown: _tapDown,
+                  onTapUp: _tapUp,
+                  onPanStart: _panStart,
+                  onPanUpdate: _panUpdate,
+                  onPanEnd: _panEnd,
+                  child: CustomPaint(
+                    painter: _painter,
+                    size: Size.infinite,
+                  ),
+                )));
       }),
     );
   }
@@ -113,7 +121,6 @@ class HullWindow extends StatelessWidget {
   void _tapUp(TapUpDetails details) {
     bool needsRedraw = false;
     double x, y;
-    double startX, startY;
     if (_drawDetails.editable && _myHull.isEditable()) {
       if (_drawDetails.dragStart.dx == details.localPosition.dx &&
           _drawDetails.dragStart.dy == details.localPosition.dy) {
@@ -130,10 +137,8 @@ class HullWindow extends StatelessWidget {
           }
         }
       } else if (_myHull.movingHandle) {
-        (startX, startY) = _painter.toHullCoords(_drawDetails.dragStart);
-        (x, y) = _painter.toHullCoords(details.localPosition);
-        _myHull.updateBaseHull(_myHull.selectedBulkhead,
-            _drawDetails.selectedBulkheadPoint, startX - x, startY - y);
+        _myHull.updateBaseHull(
+            _myHull.selectedBulkhead, _drawDetails.selectedBulkheadPoint, 0, 0);
         needsRedraw = true;
       }
     }
@@ -218,5 +223,16 @@ class HullWindow extends StatelessWidget {
 
   void redraw() {
     _painter.redraw();
+  }
+
+  void _processKeypress(RawKeyEvent event) {
+    //print('keypress: ${event.logicalKey.keyLabel}');
+    if (_hullLogger != null &&
+        event.isControlPressed &&
+        event.character == 'z') {
+      _myHull.popLog();
+      _updateScreen!();
+    }
+    //print('Keypress $event');
   }
 }

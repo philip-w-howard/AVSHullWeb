@@ -1,7 +1,7 @@
 name: avs_hull_web
 description: A Very Simple Hull editing program
 publish_to: 'none'
-version: 0.1.0
+version: 0.2.1
 
 environment:
   sdk: '>=3.0.1 <4.0.0'
@@ -9,7 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  tuple: ^2.0.2
   vector_math: ^2.0.0
+  cupertino_icons: ^1.0.6
+  xml: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -18,3 +21,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # assets:
+  #   - packages/cupertino_icons/assets/CupertinoIcons.ttf

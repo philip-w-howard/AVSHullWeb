@@ -25,7 +25,6 @@ class WaterlineScreen extends StatelessWidget {
     return Scaffold(
       body: Row(
         children: [
-          //_MainMenu(mHull, context),
           Column(
             children: [
               const Text('this is row 1'),
