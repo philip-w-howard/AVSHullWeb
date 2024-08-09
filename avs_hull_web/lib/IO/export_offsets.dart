@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../UI/export_offsets_dialog.dart';
 import '../models/panel.dart';
 import '../models/panel_layout.dart';
 import 'file_io.dart';
+import '../settings/settings.dart';
 
-bool exportPanelOffset(PanelLayout panels, OffsetsParams params) {
+bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params) {
   String output = '';
 
   for (int index = 0; index < panels.length(); index++) {
-    output += offsetString(panels.get(index), params);
+    output += _offsetString(panels.get(index), params);
   }
   
   saveFile(output, 'offsets', 'txt');
@@ -17,7 +17,7 @@ bool exportPanelOffset(PanelLayout panels, OffsetsParams params) {
 }
 
 // **********************************************************
-String offsetString(Panel panel, OffsetsParams params) {
+String _offsetString(Panel panel, ExportOffsetsParams params) {
   String output = '';
 
   output += 'Panel ${panel.name}\n\n';

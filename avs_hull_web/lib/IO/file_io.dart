@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:async';
 import 'dart:html' as html;
+import '../settings/settings.dart';
 
 // **********************************************************
 Future<void> saveFile(String contents, String defaultName, String extension) async {
@@ -44,4 +45,25 @@ Future<String?> readFile(String extension) async {
   }
   
   return null;
+}
+
+void writeExportOffsetsParams(ExportOffsetsParams params) {
+  String jsonString = json.encode(params.toJson());
+
+  print('writing ExportOffsetsParams object to localStorage');
+  print(jsonString);
+  html.window.localStorage['ExportOffsetsParams'] = jsonString;
+}
+
+ExportOffsetsParams readExportOffsetsParams() {
+  String? jsonString = html.window.localStorage['ExportOffsetsParams'];
+  if (jsonString != null) {
+    Map<String, dynamic> paramsMap = json.decode(jsonString);
+    print('Loaded ExportOffsetsParams from localStorage');
+    return ExportOffsetsParams.fromJson(paramsMap);
+  }
+
+  // If setting not found, create default settings
+  print('returning default ExportOffsetsParams object');
+  return ExportOffsetsParams();
 }

@@ -15,6 +15,7 @@ import '../models/panel.dart';
 import '../models/bulkhead.dart';
 import 'panels_window.dart';
 import '../models/panel_layout.dart';
+import '../settings/settings.dart';
 
 class LayoutData {
   int panelsX = 1;
@@ -340,8 +341,8 @@ class PanelsScreen extends StatelessWidget {
 
   // *********************************************************
   void _exportToOffsets(BuildContext context) async {
-    // FIX THIS: Need some way to preserve the params
-    OffsetsParams params = OffsetsParams();
+    print('trying to load params\n');
+    ExportOffsetsParams params = loadExportOffsetsParams();
 
     bool result = await showDialog(
       builder: (BuildContext context) {
@@ -355,6 +356,7 @@ class PanelsScreen extends StatelessWidget {
     );
     if (result) {
       exportPanelOffset(_displayedPanels, params);
+      saveExportOffsetsParams(params);
     }
   }
 

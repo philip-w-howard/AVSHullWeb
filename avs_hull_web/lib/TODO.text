@@ -11,16 +11,24 @@ Features:
             Save
             Open
             Export as
-                offsets 
+                offsets - works for "all points"
                 gcode
                 STL  
                 SVG
         Some way to save export params at least for the session.
-        
-        public enum OutputTypeEnum { EIGHTHS, SIXTEENTHS, THIRTYSECONDTHS, DECIMAL_2DIGIT, DECIMAL_3DIGIT, DECIMAL_4DIGIT }
-        public enum SpacingStyleEnum { EVERY_POINT, FIXED_SPACING }
-        public enum OriginEnum { UPPER_LEFT, LOWER_LEFT, CENTER }
+            use IndexedDB  or LocalStorage
+            LocalStorage
+                Settings module:
+                    init: reads values and sets defaults for any that don't exist
+                    update: updates any changed values
+                    Store as JSON
 
+                    filenames: hull, layout
+                    values for creating a hull (reset on startup?)
+                    layout config
+                    save offsets params
+                    resize params (reset on startup)
+                    waterline params
     Hull.updateFromParams implement stern 'bow'
     flat-bottomed 
     closed-top 

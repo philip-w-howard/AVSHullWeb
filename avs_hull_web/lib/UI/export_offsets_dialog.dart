@@ -6,33 +6,22 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../settings/settings.dart';
 
 // *****************************************************
-// Export to Offsets details
-enum OffsetsPrecision { eigths, sixteenths, thirtysecondths, decimal2Digits, decimal3Digits, decimal4Digits }
-enum SpacingStyle {everyPoint, fixedSpacing}
-enum Origin {lowerLeft, upperLeft, center}
-
-class OffsetsParams {
-  OffsetsPrecision precision = OffsetsPrecision.sixteenths;
-  SpacingStyle spacingStyle = SpacingStyle.fixedSpacing;
-  double spacing = 6;
-  Origin origin = Origin.lowerLeft;
-}
-
 class ExportOffsetsDialog extends StatefulWidget {
   const ExportOffsetsDialog(
       {super.key, required this.onSubmit, required this.offsetParams});
 
-  final Function(OffsetsParams params) onSubmit;
-  final OffsetsParams offsetParams;
+  final Function(ExportOffsetsParams params) onSubmit;
+  final ExportOffsetsParams offsetParams;
 
   @override
   OffsetsDialogState createState() => OffsetsDialogState();
 }
 
 class OffsetsDialogState extends State<ExportOffsetsDialog> {
-  late OffsetsParams _params;
+  late ExportOffsetsParams _params;
 
   @override
   void initState() {
