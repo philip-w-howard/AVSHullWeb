@@ -511,7 +511,11 @@ double angleBetween(Offset vector1, Offset vector2) {
 //***********************************************************
 Offset computeSpacingPoint(Offset p1, Offset p2, int fixedOffset)
 {
+  // Handle vertical points
+  if (p1.dx == p2.dx) return p1;
+
   double x = 0;
+  // negative points may not work
   if (p1.dx.abs() > p2.dx.abs())
   {
     x = p1.dx;

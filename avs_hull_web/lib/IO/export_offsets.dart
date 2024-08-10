@@ -3,6 +3,7 @@ import '../models/panel.dart';
 import '../models/panel_layout.dart';
 import 'file_io.dart';
 import '../settings/settings.dart';
+import '../geometry/fixed_offsets.dart';
 
 bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params) {
   String output = '';
@@ -22,7 +23,14 @@ String _offsetString(Panel panel, ExportOffsetsParams params) {
 
   output += 'Panel ${panel.name}\n\n';
 
-  List<Offset> offsets = panel.getOffsets();
+  List<Offset> offsets;
+
+  if (params.spacingStyle == SpacingStyle.fixedSpacing) {
+    offsets = getFixedOffsets(panel, params.spacing);
+  } else {
+    offsets = panel.getOffsets();
+  }
+
   for (Offset offset in offsets) {
     output += '(${offset.dx}, ${offset.dy})\n';
   }

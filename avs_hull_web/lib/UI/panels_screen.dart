@@ -341,7 +341,6 @@ class PanelsScreen extends StatelessWidget {
 
   // *********************************************************
   void _exportToOffsets(BuildContext context) async {
-    print('trying to load params\n');
     ExportOffsetsParams params = loadExportOffsetsParams();
 
     bool result = await showDialog(

@@ -25,13 +25,9 @@ class ExportOffsetsParams {
     this.spacingStyle = SpacingStyle.fixedSpacing,
     this.spacing = 6,
     this.origin = Origin.lowerLeft
-  })
-  {
-    print('created EportOffsetsParmas with spacing:$spacing');
-  }
-
+  });
+ 
   factory ExportOffsetsParams.fromJson(Map<String, dynamic> json) {
-    print('creating EportOffsetsParmas with spacing:${json['spacing']}, origin:${json['origin'].toString()}');
     return ExportOffsetsParams(
       precision: OffsetsPrecision.values.firstWhere((type) => type.toString() == 'OffsetsPrecision.${json['precision']}'),
       spacingStyle: SpacingStyle.values.firstWhere((type) => type.toString() == 'SpacingStyle.${json['spacingStyle']}'),

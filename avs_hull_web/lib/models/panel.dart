@@ -1,3 +1,9 @@
+// ***************************************************************
+// Part of the AVS Hull program
+// Released under the MIT license.
+// See https://github.com/philip-w-howard/AVSHullWeb for details
+// ***************************************************************
+
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../geometry/point_3d.dart';
@@ -7,7 +13,6 @@ import 'bulkhead.dart';
 
 class Panel {
   static const double _minEdgeLength = 0.25;
-  static const double _kneeAngle = 5;         // min angle of a knee in degrees
 
   List<Offset> mPoints = [];
   Offset origin = Offset.zero;
@@ -50,45 +55,6 @@ class Panel {
     _panelize(chine1.getPoints(), chine2.getPoints());
     _horizontalize();
     _center(Offset.zero);
-  }
-
-  Panel.toFixedOffsets(Panel source, int fixedOffset)
-  {
-    mPoints.clear();
-
-    Offset p1 = source.mPoints[mPoints.length - 2];
-    Offset p2 = source.mPoints[mPoints.length - 1];
-    Offset p3;
-    bool first = true;
-
-    p1 = Offset(p1.dx + origin.dx, p1.dy + origin.dy);
-    p2 = Offset(p2.dx + origin.dx, p2.dy + origin.dy);
-
-    for (Offset p in mPoints)
-    {
-      p3 = Offset(p.dx + origin.dx, p.dy + origin.dy);
-
-      if (first)
-      {
-        mPoints.add(p3);
-        first = false;
-      }
-      else if (isKnee(p1, p2, p3, _kneeAngle))
-      {
-        mPoints.add(p2);
-      }
-
-      if (spansX(p2, p3, fixedOffset))
-      {
-        Offset temp = computeSpacingPoint(p1, p2, fixedOffset);
-        mPoints.add(temp);
-      }
-
-      p1 = p2;
-      p2 = p3;
-    }
-
-    origin = source.origin;
   }
 
   // *******************************

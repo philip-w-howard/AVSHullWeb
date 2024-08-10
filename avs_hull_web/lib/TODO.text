@@ -16,18 +16,16 @@ Features:
                 STL  
                 SVG
         Some way to save export params at least for the session.
-            use IndexedDB  or LocalStorage
             LocalStorage
                 Settings module:
                     init: reads values and sets defaults for any that don't exist
                     update: updates any changed values
                     Store as JSON
 
+                    save offsets params              done
                     filenames: hull, layout
                     values for creating a hull (reset on startup?)
                     layout config
-                    save offsets params
-                    resize params (reset on startup)
                     waterline params
     Hull.updateFromParams implement stern 'bow'
     flat-bottomed 
@@ -48,4 +46,6 @@ Features:
 
 refactor Bulkhead to have rotate and getOffset methods like Spline
     have getOffsets return List<Point3D>?
+
+    panel_layout has some functions that probably belong in panel. In particular panel.origin and mPoints should be private.
 
