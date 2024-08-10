@@ -32,7 +32,7 @@ String _offsetString(Panel panel, ExportOffsetsParams params) {
   }
 
   for (Offset offset in offsets) {
-    output += '(${offset.dx}, ${offset.dy})\n';
+    output += '${formatPoint(offset, params)}\n';
   }
 
   output += '\n';
