@@ -5,11 +5,11 @@ import 'file_io.dart';
 import '../settings/settings.dart';
 import '../geometry/fixed_offsets.dart';
 
-bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params) {
+bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params, LayoutSettings layout) {
   String output = '';
 
   for (int index = 0; index < panels.length(); index++) {
-    output += _offsetString(panels.get(index), params);
+    output += _offsetString(panels.get(index), params, layout);
   }
   
   saveFile(output, 'offsets', 'txt');
@@ -18,7 +18,7 @@ bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params) {
 }
 
 // **********************************************************
-String _offsetString(Panel panel, ExportOffsetsParams params) {
+String _offsetString(Panel panel, ExportOffsetsParams params, LayoutSettings layout) {
   String output = '';
 
   output += 'Panel ${panel.name}\n\n';
@@ -32,7 +32,7 @@ String _offsetString(Panel panel, ExportOffsetsParams params) {
   }
 
   for (Offset offset in offsets) {
-    output += '${formatPoint(offset, params)}\n';
+    output += '${formatPoint(offset, params, layout)}\n';
   }
 
   output += '\n';

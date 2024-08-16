@@ -2,7 +2,7 @@ TODO.text
 Bugs:
     Hull.updateFromParams does weird things for some settings (7 bulkheads)
 
-
+    Fix fixedOffsets origin problem.
 
 Features:
     Hull.updateFromParams implement stern 'bow'
@@ -25,7 +25,7 @@ Features:
                     save offsets params              done
                     filenames: hull, layout
                     values for creating a hull (reset on startup?)
-                    layout config
+                    layout config                    done
                     waterline params
     Hull.updateFromParams implement stern 'bow'
     flat-bottomed 

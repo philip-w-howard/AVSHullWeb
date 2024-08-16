@@ -112,11 +112,8 @@ class PanelsScreen extends StatelessWidget {
               ],
             )),
         Expanded(
-            child: Row(
-          children: [
-            _panelsWindow,
-          ],
-        )),
+          child: _panelsWindow
+        ),
       ]),
     );
   }
@@ -217,6 +214,7 @@ class PanelsScreen extends StatelessWidget {
   // *********************************************************
   void _exportToOffsets(BuildContext context) async {
     ExportOffsetsParams params = loadExportOffsetsParams();
+    LayoutSettings layout = loadLayoutSettings();
 
     bool result = await showDialog(
       builder: (BuildContext context) {
@@ -229,7 +227,7 @@ class PanelsScreen extends StatelessWidget {
       context: context,
     );
     if (result) {
-      exportPanelOffset(_displayedPanels, params);
+      exportPanelOffset(_displayedPanels, params, layout);
       saveExportOffsetsParams(params);
     }
   }

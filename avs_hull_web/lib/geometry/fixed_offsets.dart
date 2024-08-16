@@ -53,7 +53,7 @@ String fraction(double value, int denominator)
 {
     int intPart = value.toInt();
     double fNumerator = value - intPart;
-    int numerator = (fNumerator*denominator).round();
+    int numerator = (fNumerator*denominator).round().abs();
 
     String intStr = '$intPart'.padLeft(5);
     String result = '$intStr-$numerator/$denominator'.padRight(12);
@@ -67,14 +67,14 @@ String decimal(double value, int digits)
     return result;
 }
 
-String formatPoint(Offset point, ExportOffsetsParams params)
+String formatPoint(Offset point, ExportOffsetsParams params, LayoutSettings layout)
 {
     String result = "";
 
     // double layout_width = layout.SheetsWide * layout.SheetWidth;
     // double layout_height = layout.SheetsHigh * layout.SheetHeight;
-    double layoutWidth = 0;
-    double layoutHeight = 0;
+    double layoutWidth = (layout.width * layout.panelWidth).toDouble();
+    double layoutHeight = (layout.height * layout.panelHeight).toDouble();
 
     if (params.origin == Origin.upperLeft)
     {
