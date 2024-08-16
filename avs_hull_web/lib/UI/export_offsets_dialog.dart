@@ -5,8 +5,8 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../settings/settings.dart';
+import 'input_helpers.dart';
 
 // *****************************************************
 class ExportOffsetsDialog extends StatefulWidget {
@@ -175,37 +175,3 @@ class OriginSelector extends DropdownMenu<Origin> {
         );
 }
 
-// ****************************************************************
-class DoubleEntry extends TextField {
-  final ValueChanged<double> update;
-
-  DoubleEntry(
-      {super.key,
-      required String initValue,
-      required InputDecoration title,
-      required this.update})
-      : super(
-          controller: TextEditingController(),
-          decoration: title,
-          keyboardType: TextInputType.number,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,10}'))
-          ],
-          focusNode: FocusNode(),
-        ) {
-    focusNode?.addListener(listener);
-    controller?.text = initValue;
-  }
-
-  void listener() {
-    // Code to execut e when text field 3 changes
-    bool? hasFocus = focusNode?.hasFocus;
-    if (hasFocus != null && !hasFocus) {
-      String? text = controller?.text;
-      if (text != null) {
-        double newValue = double.parse(text);
-        update(newValue);
-      }
-    }
-  }
-}

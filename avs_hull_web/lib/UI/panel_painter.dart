@@ -10,6 +10,7 @@ import 'package:vector_math/vector_math_64.dart';
 import 'dart:math' as math;
 import '../models/panel.dart';
 import '../models/panel_layout.dart';
+import '../settings/settings.dart';
 
 class PanelPainter extends CustomPainter {
   BuildContext? _context;
@@ -17,10 +18,7 @@ class PanelPainter extends CustomPainter {
   double _translateX = 0;
   double _translateY = 0;
 
-  int _numPanelsX = 1;
-  int _numPanelsY = 1;
-  double _panelWidth = 96;
-  double _panelHeight = 48;
+  LayoutSettings _layoutSettings = loadLayoutSettings();
   int _selectedPanel = -1;
 
   PanelLayout _layout;
@@ -31,11 +29,8 @@ class PanelPainter extends CustomPainter {
     _context = context;
   }
 
-  void updateLayout(int numX, int numY, double sizeX, double sizeY) {
-    _numPanelsX = numX;
-    _numPanelsY = numY;
-    _panelWidth = sizeX;
-    _panelHeight = sizeY;
+  void updateLayout() {
+    _layoutSettings = loadLayoutSettings();
   }
 
   void updatePanelList(PanelLayout layout) {
@@ -51,15 +46,20 @@ class PanelPainter extends CustomPainter {
 
     Path path = Path();
 
-    for (int col = 0; col < _numPanelsX; col++) {
-      for (int row = 0; row < _numPanelsY; row++) {
+
+    for (int col = 0; col < _layoutSettings.width; col++) {
+      for (int row = 0; row < _layoutSettings.height; row++) {
         path.addRect(Rect.fromLTWH(
-            col * _panelWidth, row * _panelHeight, _panelWidth, _panelHeight));
+            (col * _layoutSettings.panelWidth).toDouble(), (row * _layoutSettings.panelHeight).toDouble(), 
+            _layoutSettings.panelWidth.toDouble(), _layoutSettings.panelHeight.toDouble()));
       }
     }
     Offset screenMin = Offset.zero;
     Offset screenMax =
-        Offset(_numPanelsX * _panelWidth, _numPanelsY * _panelHeight);
+        Offset(
+          (_layoutSettings.width * _layoutSettings.panelWidth).toDouble(),
+          (_layoutSettings.height * _layoutSettings.panelHeight).toDouble()
+          );
 
     for (int index = 0; index < _layout.length(); index++) {
       Panel panel = _layout.get(index);
