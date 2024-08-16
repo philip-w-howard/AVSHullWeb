@@ -41,68 +41,38 @@ class Hull {
   void updateFromParams(HullParams params) {
     int bulk = 0;
     double bulkSpacing = params.length / (params.numBulkheads - 1);
-    List<Point3D> points = [];
     mBulkheads = [];
 
-    double radius = params.height;
-    if (radius >= params.length / params.numBulkheads) {
-      radius = 0.9 * params.length / params.numBulkheads;
-    }
+    for (bulk=0; bulk<params.numBulkheads; bulk++)
+    {
+      // double radius = (params.width / 2) * (1 - (bulk * bulkSpacing - params.length / 2) / (params.length / 2.5)).abs();
+      double radius = (params.width / 2) * (1 - (bulk * bulkSpacing - params.length / 2).abs() / (params.length / 1.5));
 
-    if (params.bow == BulkheadType.bow) {
-      for (int ii = 0; ii <= params.numChines; ii++) {
-        var angle = math.pi + ii * math.pi / 2 / params.numChines;
-        var z = math.cos(angle) * radius + radius;
-        var y = math.sin(angle) * radius + radius + params.height;
-        points.add(Point3D(0, y, z));
+      if (bulk == 0) {
+        if (params.bow == BulkheadType.bow) {
+          radius = params.height;
+          if (radius > bulkSpacing * 0.9) radius = bulkSpacing * 0.9;
+
+          mBulkheads.add(Bulkhead.bow(params.numChines, radius, params.height));
+        } else {
+          mBulkheads.add(Bulkhead.round(0, radius, params.height,
+              params.height, params.numChines, params.forwardTransomAngle));
+        }
+      } else if (bulk == params.numBulkheads - 1) {
+        if (params.stern == BulkheadType.vertical) {
+          mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+              params.height, params.numChines, 90));
+        } else if (params.stern == BulkheadType.transom) {
+          mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+              params.height, params.numChines, params.sternTransomAngle));
+        } else {
+          // need to figure out backwards bows
+          mBulkheads.add(Bulkhead.bow(params.numChines, radius, params.height));
+        }
+      } else {
+        mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+            params.height, params.numChines, 90));
       }
-      for (int ii = params.numChines - 1; ii >= 0; ii--) {
-        var angle = 2 * math.pi / 2 + ii * math.pi / 2 / params.numChines;
-        var z = math.cos(angle) * radius + radius;
-        var y = math.sin(angle) * radius + radius + params.height;
-        points.add(Point3D(0, y, z));
-      }
-      mBulkheads.add(Bulkhead.fromPoints(points, BulkheadType.bow));
-
-      bulk++;
-    } else if (params.bow == BulkheadType.transom) {
-      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-          params.height, params.numChines, params.forwardTransomAngle));
-      bulk++;
-    }
-
-    int numForward = (params.numBulkheads / 2 - bulk).floor();
-    double radiusDelta = params.width * 0.10 * numForward;
-    radius = params.width / 2 - radiusDelta * numForward;
-
-    for (int ii = 0; ii < numForward; ii++) {
-      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-          params.height, params.numChines, 90));
-      radius += radiusDelta;
-      bulk++;
-    }
-
-    mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, params.width / 2,
-        params.height, params.height, params.numChines, 90));
-
-    int numAft = params.numBulkheads ~/ 2;
-    radiusDelta = params.width / 2 * 0.15 * numAft;
-    radius = params.width / 2;
-    for (bulk++; bulk < params.numBulkheads - 1; bulk++) {
-      radius -= radiusDelta;
-      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-          params.height, params.numChines, 90));
-    }
-
-    radius -= radiusDelta;
-
-    if (params.stern == BulkheadType.vertical) {
-      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-          params.height, params.numChines, 90));
-    } else if (params.stern == BulkheadType.transom) {
-      mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-          params.height, params.numChines, params.sternTransomAngle));
-      bulk++;
     }
 
     normalize();

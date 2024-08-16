@@ -2,8 +2,6 @@ TODO.text
 Bugs:
     Hull.updateFromParams does weird things for some settings (7 bulkheads)
 
-    Fix fixedOffsets origin problem.
-
 Features:
     Hull.updateFromParams implement stern 'bow'
     Save/Export layouts
@@ -11,7 +9,7 @@ Features:
             Save
             Open
             Export as
-                offsets - works for "all points"
+                offsets         done
                 gcode
                 STL  
                 SVG

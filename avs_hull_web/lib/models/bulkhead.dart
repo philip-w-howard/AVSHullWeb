@@ -60,6 +60,31 @@ class Bulkhead {
   }
 
   // **************************************************
+  Bulkhead.bow(int numChines, double radius, double height) {
+    List<Point3D> points = [];
+
+    for (int ii = 0; ii <= numChines; ii++) {
+      var angle = math.pi + ii * math.pi / 2 / numChines;
+      var z = math.cos(angle) * radius + radius;
+      var y = math.sin(angle) * height + 2*height;
+      points.add(Point3D(0, y, z));
+    }
+    for (int ii = numChines - 1; ii >= 0; ii--) {
+      var angle = math.pi + ii * math.pi / 2 / numChines;
+      var z = math.cos(angle) * radius + radius;
+      var y = math.sin(angle) * height + 2*height;
+      points.add(Point3D(0, y, z));
+    }
+
+    // NOTE: Should be able to compute angle, flatbottomed, and closedTop based on points
+    mBulkheadType = BulkheadType.bow;
+    mPoints = [...points];
+    mTransomAngle = 90;
+    mFlatBottomed = false;
+    mClosedTop = false;
+
+  }
+  // **************************************************
   Bulkhead.fromPoints(List<Point3D> points, BulkheadType type) {
     // NOTE: Should be able to compute angle, flatbottomed, and closedTop based on points
     mBulkheadType = type;
