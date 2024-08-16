@@ -52,3 +52,44 @@ void saveExportOffsetsParams(ExportOffsetsParams params) {
 ExportOffsetsParams loadExportOffsetsParams() {
   return readExportOffsetsParams();
 }
+
+// ***************************************************************
+// ***************************************************************
+
+class LayoutSettings {
+  int width = 1;
+  int height = 1;
+  int panelWidth = 96;
+  int panelHeight = 48;
+
+  LayoutSettings({
+    this.width = 1,
+    this.height = 1,
+    this.panelWidth = 96,
+    this.panelHeight = 48
+  });
+
+  factory LayoutSettings.fromJson(Map<String, dynamic> json) {
+    return LayoutSettings(
+      width: json['width'],
+      height: json['height'],
+      panelWidth: json['panelWidth'],
+      panelHeight: json['panelHeight'],
+    );
+  }
+
+    Map<String, dynamic> toJson() => {
+    'width': width,
+    'height': height,
+    'panelWidth': panelWidth,
+    'panelHeight': panelHeight,
+  };
+}
+// ***********************************************************
+void saveLayoutSettings(LayoutSettings settings) {
+  writeLayoutSettings(settings);
+}
+
+LayoutSettings loadLayoutSettings() {
+  return readLayoutSettings();
+}

@@ -47,6 +47,7 @@ Future<String?> readFile(String extension) async {
   return null;
 }
 
+// ***********************************************************
 void writeExportOffsetsParams(ExportOffsetsParams params) {
   String jsonString = json.encode(params.toJson());
 
@@ -62,4 +63,22 @@ ExportOffsetsParams readExportOffsetsParams() {
 
   // If setting not found, create default settings
   return ExportOffsetsParams();
+}
+
+// ***********************************************************
+void writeLayoutSettings(LayoutSettings settings) {
+  String jsonString = json.encode(settings.toJson());
+
+  html.window.localStorage['LayoutSettings'] = jsonString;
+}
+
+LayoutSettings readLayoutSettings() {
+  String? jsonString = html.window.localStorage['LayoutSettings'];
+  if (jsonString != null) {
+    Map<String, dynamic> settingsMap = json.decode(jsonString);
+    return LayoutSettings.fromJson(settingsMap);
+  }
+
+  // If setting not found, create default settings
+  return LayoutSettings();
 }
