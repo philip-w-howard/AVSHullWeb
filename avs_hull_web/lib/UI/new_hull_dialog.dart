@@ -60,7 +60,7 @@ class ResizeDialogState extends State<NewHullDialog> {
               }),
           DoubleEntry(
               title: const InputDecoration(labelText: 'Stern transom angle'),
-              initValue: _params.forwardTransomAngle.toString(),
+              initValue: _params.sternTransomAngle.toString(),
               update: (double angle) {
                 _params.sternTransomAngle = angle;
               }),

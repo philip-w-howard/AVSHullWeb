@@ -435,7 +435,7 @@ Offset computeMidpoint(List<Offset> points) {
     if (point.z > maxZ) maxZ = point.z;
   }
 
-  return (Point3D(minX, minY, minZ), Point3D(maxX, maxY, minZ));
+  return (Point3D(minX, minY, minZ), Point3D(maxX, maxY, maxZ));
 }
 
 (Offset, Offset) getMinMax2D(List<Offset> points) {

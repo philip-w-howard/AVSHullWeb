@@ -165,7 +165,7 @@ class DesignScreen extends StatelessWidget {
     double xSize = size.x;
     double ySize = size.y;
     double zSize = size.z;
-
+    
     bool result = await showDialog(
       builder: (BuildContext context) {
         return ResizeDialog(

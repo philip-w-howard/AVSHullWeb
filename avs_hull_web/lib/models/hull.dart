@@ -54,24 +54,29 @@ class Hull {
           if (radius > bulkSpacing * 0.9) radius = bulkSpacing * 0.9;
 
           mBulkheads.add(Bulkhead.bow(params.numChines, radius, params.height));
+        } else if (params.bow == BulkheadType.vertical) {
+          mBulkheads.add(Bulkhead.round(0, radius, params.height,
+              params.height, params.numChines, 90));
         } else {
           mBulkheads.add(Bulkhead.round(0, radius, params.height,
               params.height, params.numChines, params.forwardTransomAngle));
         }
       } else if (bulk == params.numBulkheads - 1) {
-        if (params.stern == BulkheadType.vertical) {
+        if (params.stern == BulkheadType.bow) {
+          radius = params.height;
+          if (radius > bulkSpacing * 0.9) radius = bulkSpacing * 0.9;
+
+          mBulkheads.add(Bulkhead.stern(params.numChines, radius, params.height, params.length));
+        } else if (params.stern == BulkheadType.vertical) {
           mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
               params.height, params.numChines, 90));
         } else if (params.stern == BulkheadType.transom) {
           mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
               params.height, params.numChines, params.sternTransomAngle));
-        } else {
-          // need to figure out backwards bows
-          mBulkheads.add(Bulkhead.bow(params.numChines, radius, params.height));
         }
       } else {
-        mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-            params.height, params.numChines, 90));
+          mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
+              params.height, params.numChines, 90));
       }
     }
 

@@ -1,8 +1,15 @@
 TODO.text
 Bugs:
-    Hull.updateFromParams does weird things for some settings (7 bulkheads)
 
 Features:
+    change number of chines
+    add/delete/move bulkhead
+    flat-bottomed 
+    Redo 
+    Undo/Redo for panel layouts
+    closed-top 
+    SaveAs formats
+    waterlines
     Hull.updateFromParams implement stern 'bow'
     Save/Export layouts
         Layout menu bar (follow design layout)
@@ -25,25 +32,17 @@ Features:
                     values for creating a hull (reset on startup?)
                     layout config                    done
                     waterline params
-    Hull.updateFromParams implement stern 'bow'
-    flat-bottomed 
-    closed-top 
-    SaveAs formats
-    waterlines
     Allow Save to specify filename
     Have Open/Save remember filename for re-use
 
-    change number of chines
-    add/delete/move bulkhead
     Show x,y,z coords in bottom line
-    Redo 
-    Undo/Redo for panel layouts
-    Move Hull undo/redo into Hull class? or leave it separate?
-        create EditableHull with undo/redo?
     Zoom/Pan
 
 refactor Bulkhead to have rotate and getOffset methods like Spline
     have getOffsets return List<Point3D>?
 
     panel_layout has some functions that probably belong in panel. In particular panel.origin and mPoints should be private.
+
+    Move Hull undo/redo into Hull class? or leave it separate?
+        create EditableHull with undo/redo?
 
