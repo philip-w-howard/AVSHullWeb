@@ -11,8 +11,10 @@ import 'package:xml/xml.dart';
 import '../geometry/point_3d.dart';
 import 'bulkhead.dart';
 import '../geometry/spline.dart';
+import '../settings/settings.dart';
 
 class HullParams {
+  String name = unnamedHullName;
   BulkheadType bow = BulkheadType.bow;
   double forwardTransomAngle = 115;
   BulkheadType stern = BulkheadType.transom;
@@ -25,6 +27,7 @@ class HullParams {
 }
 
 class Hull {
+  String name = unnamedHullName;
   List<Bulkhead> mBulkheads = [];
   List<Spline> mChines = [];
   DateTime timeUpdated = DateTime.now();
@@ -42,6 +45,7 @@ class Hull {
     int bulk = 0;
     double bulkSpacing = params.length / (params.numBulkheads - 1);
     mBulkheads = [];
+    name = params.name;
 
     for (bulk=0; bulk<params.numBulkheads; bulk++)
     {
@@ -96,6 +100,8 @@ class Hull {
   }
 
   Hull.fromJson(Map<String, dynamic> json) {
+    if (json['name'] != null) name = json['name'];
+
     if (json['mBulkheads'] != null) {
       json['mBulkheads'].forEach((bulkheadJson) {
         mBulkheads.add(Bulkhead.fromJson(bulkheadJson));
@@ -235,8 +241,10 @@ class Hull {
     }
   }
 
+  // **************************************************
   Map<String, dynamic> toJson() {
     return {
+      'name': name,
       'mBulkheads': mBulkheads,
       'timeUpdated': timeUpdated.toIso8601String(),
     };

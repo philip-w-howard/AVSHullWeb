@@ -1,7 +1,19 @@
 import 'dart:convert';
 import 'dart:async';
 import 'dart:html' as html;
+
+import '../models/hull.dart';
 import '../settings/settings.dart';
+
+// **********************************************************
+void printLocalStorageKeys() {
+  // Iterate over the length of localStorage
+  for (int i = 0; i < html.window.localStorage.length; i++) {
+    // Get the key at the current index
+    String? key = html.window.localStorage.keys.elementAt(i);
+    print('Key: $key');
+  }
+}
 
 // **********************************************************
 Future<void> saveFile(String contents, String defaultName, String extension) async {
@@ -48,37 +60,33 @@ Future<String?> readFile(String extension) async {
 }
 
 // ***********************************************************
-void writeExportOffsetsParams(ExportOffsetsParams params) {
-  String jsonString = json.encode(params.toJson());
-
-  html.window.localStorage['ExportOffsetsParams'] = jsonString;
+void writeString(String key, String contents) {
+  html.window.localStorage[key] = contents;
 }
-
-ExportOffsetsParams readExportOffsetsParams() {
-  String? jsonString = html.window.localStorage['ExportOffsetsParams'];
-  if (jsonString != null) {
-    Map<String, dynamic> paramsMap = json.decode(jsonString);
-    return ExportOffsetsParams.fromJson(paramsMap);
-  }
-
-  // If setting not found, create default settings
-  return ExportOffsetsParams();
+// ***********************************************************
+String? readString(String key) {
+  return html.window.localStorage[key];
 }
 
 // ***********************************************************
-void writeLayoutSettings(LayoutSettings settings) {
-  String jsonString = json.encode(settings.toJson());
+void writeHull(Hull hull) {
+  String jsonString = json.encode(hull.toJson());
+  String key = 'hull.${hull.name}';
 
-  html.window.localStorage['LayoutSettings'] = jsonString;
+  // FIX THIS: check to see if the key already exists?
+  writeString(key, jsonString);
+  recordLastHull(hull.name);
 }
+// ***********************************************************
+Hull? readHull(String name) {
+  String key = 'hull.$name';
+  String? jsonString = html.window.localStorage[key];
 
-LayoutSettings readLayoutSettings() {
-  String? jsonString = html.window.localStorage['LayoutSettings'];
   if (jsonString != null) {
-    Map<String, dynamic> settingsMap = json.decode(jsonString);
-    return LayoutSettings.fromJson(settingsMap);
+    Map<String, dynamic> jsonHull = json.decode(jsonString);
+    return Hull.fromJson(jsonHull);
   }
 
-  // If setting not found, create default settings
-  return LayoutSettings();
+  return null;
 }
+

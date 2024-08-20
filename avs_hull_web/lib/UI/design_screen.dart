@@ -61,11 +61,16 @@ class DesignScreen extends StatelessWidget {
                 ),
                 onSelected: (String choice) {
                   // Handle menu item selection
-                  if (choice == 'Save') {
+                  if (choice == 'Load') {
+                    _selectAndLoadFile();
+                  } else if (choice == 'Save') {
+                    writeHull(_myHull);
+                  }
+                  else if (choice == 'ExportJSON') {
                     _selectAndSaveFile();
                   } else if (choice == 'XML') {
                     _selectAndXmlFile();
-                  } else if (choice == 'Open') {
+                  } else if (choice == 'ImportJSON') {
                     _selectAndReadFile();
                   } else if (choice == 'Create') {
                     _createHull(context);
@@ -74,16 +79,24 @@ class DesignScreen extends StatelessWidget {
                 itemBuilder: (BuildContext context) {
                   return [
                     const PopupMenuItem<String>(
-                      value: 'Open',
-                      child: Text('Open'),
+                      value: 'Load',
+                      child: Text('Load'),
                     ),
                     const PopupMenuItem<String>(
                       value: 'Save',
                       child: Text('Save'),
                     ),
                     const PopupMenuItem<String>(
+                      value: 'ExportJSON',
+                      child: Text('Export to JSON'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'ImportJSON',
+                      child: Text('Import from JSON'),
+                    ),
+                    const PopupMenuItem<String>(
                       value: 'XML',
-                      child: Text('Save to XML'),
+                      child: Text('Export to XML'),
                     ),
                     const PopupMenuItem<String>(
                       value: 'Create',
@@ -193,6 +206,16 @@ class DesignScreen extends StatelessWidget {
     return _processResize(context);
   }
 
+  void _selectAndLoadFile() {
+    // FIX THIS: Need to prompt for name
+    String name = 'Phil_1';
+    Hull? tempHull = readHull(name);
+    if (tempHull != null) {
+      _myHull.updateFromHull(tempHull);
+    }
+    resetScreen();
+  }
+
   void _selectAndReadFile() async {
     String? contents = await readFile('avsh');
     if (contents != null) {
@@ -205,14 +228,14 @@ class DesignScreen extends StatelessWidget {
   void _selectAndSaveFile() async {
     final String jsonStr = json.encode(_myHull.toJson());
 
-    await saveFile(jsonStr, 'avs_hull', 'avsh');
+    await saveFile(jsonStr, _myHull.name, 'avsh');
   }
 
   void _selectAndXmlFile() async {
     XmlDocument xml = _myHull.toXml();
 
     final String xmlStr = xml.toXmlString(pretty: true);
-    await saveFile(xmlStr, 'avs_hull', 'xml');
+    await saveFile(xmlStr, _myHull.name, 'xml');
   }
 
   void _createHull(BuildContext context) async {

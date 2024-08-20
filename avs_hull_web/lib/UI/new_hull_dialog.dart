@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:avs_hull_web/models/hull.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,7 +43,13 @@ class ResizeDialogState extends State<NewHullDialog> {
           child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          BulkheadTypeSelector(
+          MyTextEntry(
+              initValue: _params.name,
+              title: const InputDecoration(labelText: 'Name'),
+              update: (String name) {
+                _params.name = name;
+              }),
+           BulkheadTypeSelector(
               param: _params.bow,
               update: (BulkheadType type) {
                 _params.bow = type;

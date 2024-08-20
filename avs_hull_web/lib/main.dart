@@ -10,6 +10,8 @@ import 'UI/waterline_screen.dart';
 import 'UI/panels_screen.dart';
 import 'models/hull.dart';
 import 'IO/hull_logger.dart';
+import 'settings/settings.dart';
+import 'io/file_io.dart';
 
 void main() {
   runApp(const MainApp());
@@ -55,8 +57,19 @@ class MainAppState extends State<MainAppWindow>
   void initState() {
     super.initState();
 
-    HullParams params = HullParams();
-    _mainHull = Hull.fromParams(params);
+    String hullName = fetchLastHullName();
+    if (hullName != unnamedHullName) {
+      Hull? tempHull = readHull(hullName);
+      if (tempHull != null) {
+        _mainHull = tempHull;
+      } else {
+        HullParams params = HullParams();
+        _mainHull = Hull.fromParams(params);
+      }
+    } else {
+      HullParams params = HullParams();
+      _mainHull = Hull.fromParams(params);
+    }
     _tabController = TabController(vsync: this, length: myTabs.length);
     _tabController.addListener(_handleTabSelection);
 

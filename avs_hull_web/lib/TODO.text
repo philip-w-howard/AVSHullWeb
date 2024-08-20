@@ -10,7 +10,6 @@ Features:
     closed-top 
     SaveAs formats
     waterlines
-    Hull.updateFromParams implement stern 'bow'
     Save/Export layouts
         Layout menu bar (follow design layout)
             Save

@@ -6,12 +6,18 @@
 
 // ***********************************************************
 // Export to Offsets details
-import 'package:avs_hull_web/IO/file_io.dart';
+import 'dart:convert';
+import '../IO/file_io.dart';
 
 enum OffsetsPrecision { eigths, sixteenths, thirtysecondths, decimal2Digits, decimal3Digits, decimal4Digits }
 enum SpacingStyle {everyPoint, fixedSpacing}
 enum Origin {lowerLeft, upperLeft, center}
 
+const layoutSettingsKey = 'LayoutSettings';
+const exportOffsetsParamsKey = 'ExportOffsetsParams';
+const lastHullKey = 'LastHullName';
+const unnamedHullName = 'unnamed';
+// ***********************************************************
 // ***********************************************************
 class ExportOffsetsParams {
   OffsetsPrecision precision = OffsetsPrecision.sixteenths;
@@ -46,11 +52,20 @@ class ExportOffsetsParams {
 
 // ***********************************************************
 void saveExportOffsetsParams(ExportOffsetsParams params) {
-  writeExportOffsetsParams(params);
+  String jsonString = json.encode(params.toJson());
+  writeString(exportOffsetsParamsKey, jsonString);
 }
 
 ExportOffsetsParams loadExportOffsetsParams() {
-  return readExportOffsetsParams();
+  String? jsonString = readString(exportOffsetsParamsKey);
+
+  if (jsonString != null) {
+    Map<String, dynamic> paramsMap = json.decode(jsonString);
+    return ExportOffsetsParams.fromJson(paramsMap);
+  }
+
+  // If setting not found, create default settings
+  return ExportOffsetsParams();
 }
 
 // ***************************************************************
@@ -87,9 +102,31 @@ class LayoutSettings {
 }
 // ***********************************************************
 void saveLayoutSettings(LayoutSettings settings) {
-  writeLayoutSettings(settings);
+  String jsonString = json.encode(settings.toJson());
+  writeString(layoutSettingsKey, jsonString);
 }
 
+// ***********************************************************
 LayoutSettings loadLayoutSettings() {
-  return readLayoutSettings();
+  String? jsonString = readString(layoutSettingsKey);
+  if (jsonString != null) {
+    Map<String, dynamic> settingsMap = json.decode(jsonString);
+    return LayoutSettings.fromJson(settingsMap);
+  }
+
+  // If setting not found, create default settings
+  return LayoutSettings();
+}
+
+// ***********************************************************
+// ***********************************************************
+void recordLastHull(String name) {
+  writeString(lastHullKey, name);
+}
+
+String fetchLastHullName() {
+  String? name =  readString(lastHullKey);
+
+  if (name != null) return name;
+  return unnamedHullName;
 }

@@ -76,3 +76,37 @@ class IntEntry extends TextField {
     }
   }
 }
+
+// ****************************************************************
+class MyTextEntry extends TextField {
+  final ValueChanged<String> update;
+
+  MyTextEntry(
+      {super.key,
+      required String initValue,
+      required InputDecoration title,
+      required this.update})
+      : super(
+          controller: TextEditingController(),
+          decoration: title,
+          keyboardType: TextInputType.number,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_]'))
+          ],
+          focusNode: FocusNode(),
+        ) {
+    focusNode?.addListener(_listener);
+    controller?.text = initValue;
+  }
+
+  void _listener() {
+    // Code to execute when text field 3 changes
+    bool? hasFocus = focusNode?.hasFocus;
+    if (hasFocus != null && !hasFocus) {
+      String? text = controller?.text;
+      if (text != null) {
+        update(text);
+      }
+    }
+  }
+}
