@@ -23,7 +23,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'AVS Hull 0.2.1',
+      title: 'AVS Hull $version',
       home: MainAppWindow(),
     );
   }
@@ -104,7 +104,7 @@ class MainAppState extends State<MainAppWindow>
     _context = context;
     return Scaffold(
         appBar: AppBar(
-            title: const Text('AVS Hull 0.2'),
+            title: const Text('AVS Hull $version'),
             bottom: TabBar(
               controller: _tabController,
               isScrollable: true,

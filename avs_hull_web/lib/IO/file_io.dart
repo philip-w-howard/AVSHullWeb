@@ -5,6 +5,8 @@ import 'dart:html' as html;
 import '../models/hull.dart';
 import '../settings/settings.dart';
 
+const hullPrefix = 'hull.';
+
 // **********************************************************
 void printLocalStorageKeys() {
   // Iterate over the length of localStorage
@@ -15,6 +17,20 @@ void printLocalStorageKeys() {
   }
 }
 
+// **********************************************************
+List<String> getHullNames() {
+  List<String> names = [];
+  
+  for (int i = 0; i < html.window.localStorage.length; i++) {
+    // Get the key at the current index
+    String key = html.window.localStorage.keys.elementAt(i);
+    if (key.startsWith(hullPrefix)) {
+      names.add(key.substring(hullPrefix.length));
+    }
+  }
+
+  return names;
+}
 // **********************************************************
 Future<void> saveFile(String contents, String defaultName, String extension) async {
   try {
@@ -71,7 +87,7 @@ String? readString(String key) {
 // ***********************************************************
 void writeHull(Hull hull) {
   String jsonString = json.encode(hull.toJson());
-  String key = 'hull.${hull.name}';
+  String key = '$hullPrefix${hull.name}';
 
   // FIX THIS: check to see if the key already exists?
   writeString(key, jsonString);
@@ -79,7 +95,7 @@ void writeHull(Hull hull) {
 }
 // ***********************************************************
 Hull? readHull(String name) {
-  String key = 'hull.$name';
+  String key = '$hullPrefix$name';
   String? jsonString = html.window.localStorage[key];
 
   if (jsonString != null) {

@@ -4,6 +4,8 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/UI/select_hull_dialog.dart';
+import 'package:avs_hull_web/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 import 'dart:convert';
@@ -62,7 +64,7 @@ class DesignScreen extends StatelessWidget {
                 onSelected: (String choice) {
                   // Handle menu item selection
                   if (choice == 'Load') {
-                    _selectAndLoadFile();
+                    _selectAndLoadFile(context);
                   } else if (choice == 'Save') {
                     writeHull(_myHull);
                   }
@@ -206,14 +208,26 @@ class DesignScreen extends StatelessWidget {
     return _processResize(context);
   }
 
-  void _selectAndLoadFile() {
-    // FIX THIS: Need to prompt for name
-    String name = 'Phil_1';
-    Hull? tempHull = readHull(name);
-    if (tempHull != null) {
-      _myHull.updateFromHull(tempHull);
+  void _selectAndLoadFile(BuildContext context) async {
+    String hullName = unnamedHullName;
+
+    bool result = await showDialog(
+      builder: (BuildContext context) {
+        return SelectHullDialog(
+            onSubmit: (chosenHullName) {
+              hullName = chosenHullName;
+            });
+      },
+      context: context,
+    );
+
+    if (result) {
+      Hull? tempHull = readHull(hullName);
+      if (tempHull != null) {
+        _myHull.updateFromHull(tempHull);
+      }
+      resetScreen();
     }
-    resetScreen();
   }
 
   void _selectAndReadFile() async {
