@@ -39,7 +39,7 @@ class Bulkhead {
 
   // **************************************************
   Bulkhead.round(double z, double width, double height, double top,
-      int numChines, double transomAngle) {
+      int numChines, double transomAngle, bool flatBottomed, bool closedTop) {
     if (transomAngle == 90) {
       mBulkheadType = BulkheadType.vertical;
       mTransomAngle = 90;
@@ -51,8 +51,11 @@ class Bulkhead {
     // convert to radians
     transomAngle *= math.pi / 180;
 
-    for (int ii = 0; ii <= 2 * numChines; ii++) {
-      var angle = math.pi + ii * math.pi / 2 / numChines;
+    int numPoints = 2 * numChines;
+    if (flatBottomed) numPoints++;
+
+    for (int ii = 0; ii <= numPoints; ii++) {
+      var angle = math.pi + ii * math.pi / numPoints;
       var x = math.cos(angle) * width;
       var y = math.sin(angle) * height + height + top;
       mPoints.add(Point3D(x, y, z + math.cos(transomAngle) * (y - 2*height)));
@@ -60,14 +63,22 @@ class Bulkhead {
   }
 
   // **************************************************
-  Bulkhead.bow(int numChines, double radius, double height) {
+  Bulkhead.bow(int numChines, double radius, double height, bool flatBottomed, bool closedTop) {
     List<Point3D> points = [];
+
+    mBulkheadType = BulkheadType.bow;
+    mTransomAngle = 90;
+    mFlatBottomed = flatBottomed;
+    mClosedTop = closedTop;
 
     for (int ii = 0; ii <= numChines; ii++) {
       var angle = math.pi + math.pi / 2 * (ii / numChines);
       var z = math.cos(angle) * radius + radius;
       var y = math.sin(angle) * height + 2*height;
       points.add(Point3D(0, y, z));
+
+      // flat bottomed gets a duplicate bottom
+      if (flatBottomed && ii==numChines) points.add(Point3D(0, y, z));
     }
     for (int ii = numChines - 1; ii >= 0; ii--) {
       var angle = math.pi + math.pi / 2 * (ii / numChines);
@@ -77,22 +88,25 @@ class Bulkhead {
     }
 
     // NOTE: Should be able to compute angle, flatbottomed, and closedTop based on points
-    mBulkheadType = BulkheadType.bow;
     mPoints = [...points];
-    mTransomAngle = 90;
-    mFlatBottomed = false;
-    mClosedTop = false;
-
   }
   // **************************************************
-  Bulkhead.stern(int numChines, double radius, double height, double length) {
+  Bulkhead.stern(int numChines, double radius, double height, double length, bool flatBottomed, bool closedTop) {
     List<Point3D> points = [];
+
+    mBulkheadType = BulkheadType.bow;
+    mTransomAngle = 90;
+    mFlatBottomed = flatBottomed;
+    mClosedTop = closedTop;
 
     for (int ii = 0; ii <= numChines; ii++) {
       var angle = math.pi + math.pi / 2 * (ii / numChines);
       var z = length - math.cos(angle) * radius - radius;
       var y = math.sin(angle) * height + 2*height;
       points.add(Point3D(0, y, z));
+
+      // flat bottomed gets a duplicate bottom
+      if (flatBottomed && ii==numChines) points.add(Point3D(0, y, z));
     }
     for (int ii = numChines - 1; ii >= 0; ii--) {
       var angle = math.pi + math.pi / 2 * (ii / numChines);
@@ -102,12 +116,7 @@ class Bulkhead {
     }
 
     // NOTE: Should be able to compute angle, flatbottomed, and closedTop based on points
-    mBulkheadType = BulkheadType.bow;
     mPoints = [...points];
-    mTransomAngle = 90;
-    mFlatBottomed = false;
-    mClosedTop = false;
-
   }
   // **************************************************
   Bulkhead.fromPoints(List<Point3D> points, BulkheadType type) {

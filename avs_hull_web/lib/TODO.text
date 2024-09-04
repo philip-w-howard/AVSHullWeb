@@ -32,7 +32,7 @@ Features:
                     layout config                    done
                     waterline params
     Allow Save to specify filename
-    Have Open/Save remember filename for re-use
+        happens in "Create" dialog.
 
     Show x,y,z coords in bottom line
     Zoom/Pan

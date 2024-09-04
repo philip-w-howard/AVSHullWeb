@@ -24,6 +24,8 @@ class HullParams {
   double length = 96;
   double width = 40;
   double height = 10;
+  bool closedTop = false;
+  bool flatBottomed = false;
 }
 
 class Hull {
@@ -57,30 +59,30 @@ class Hull {
           radius = params.height;
           if (radius > bulkSpacing * 0.9) radius = bulkSpacing * 0.9;
 
-          mBulkheads.add(Bulkhead.bow(params.numChines, radius, params.height));
+          mBulkheads.add(Bulkhead.bow(params.numChines, radius, params.height, params.flatBottomed, params.closedTop));
         } else if (params.bow == BulkheadType.vertical) {
           mBulkheads.add(Bulkhead.round(0, radius, params.height,
-              params.height, params.numChines, 90));
+              params.height, params.numChines, 90, params.flatBottomed, params.closedTop));
         } else {
           mBulkheads.add(Bulkhead.round(0, radius, params.height,
-              params.height, params.numChines, params.forwardTransomAngle));
+              params.height, params.numChines, params.forwardTransomAngle, params.flatBottomed, params.closedTop));
         }
       } else if (bulk == params.numBulkheads - 1) {
         if (params.stern == BulkheadType.bow) {
           radius = params.height;
           if (radius > bulkSpacing * 0.9) radius = bulkSpacing * 0.9;
 
-          mBulkheads.add(Bulkhead.stern(params.numChines, radius, params.height, params.length));
+          mBulkheads.add(Bulkhead.stern(params.numChines, radius, params.height, params.length, params.flatBottomed, params.closedTop));
         } else if (params.stern == BulkheadType.vertical) {
           mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-              params.height, params.numChines, 90));
+              params.height, params.numChines, 90, params.flatBottomed, params.closedTop));
         } else if (params.stern == BulkheadType.transom) {
           mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-              params.height, params.numChines, params.sternTransomAngle));
+              params.height, params.numChines, params.sternTransomAngle, params.flatBottomed, params.closedTop));
         }
       } else {
           mBulkheads.add(Bulkhead.round(bulk * bulkSpacing, radius, params.height,
-              params.height, params.numChines, 90));
+              params.height, params.numChines, 90, params.flatBottomed, params.closedTop));
       }
     }
 

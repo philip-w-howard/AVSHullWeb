@@ -110,3 +110,51 @@ class MyTextEntry extends TextField {
     }
   }
 }
+
+// *******************************************************
+class CustomCheckbox extends StatefulWidget {
+  final String label;
+  final bool initValue;
+  final ValueChanged<bool> onChanged;
+
+  const CustomCheckbox({
+    super.key, 
+    required this.label,
+    required this.onChanged,
+    required this.initValue,
+  });
+
+  @override
+  CustomCheckboxState createState() => CustomCheckboxState();
+}
+
+class CustomCheckboxState extends State<CustomCheckbox> {
+  late bool isChecked;
+
+  @override
+  void initState() {
+    super.initState();
+    isChecked = widget.initValue; // Initialize checkbox state with initialValue
+  }
+
+  void _onCheckboxChanged(bool? value) {
+    setState(() {
+      isChecked = value ?? false;
+    });
+    widget.onChanged(isChecked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Checkbox(
+          value: isChecked,
+          onChanged: _onCheckboxChanged,
+        ),
+        Text(widget.label),
+      ],
+    );
+  }
+}

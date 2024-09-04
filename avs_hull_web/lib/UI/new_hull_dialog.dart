@@ -101,6 +101,20 @@ class ResizeDialogState extends State<NewHullDialog> {
               update: (double value) {
                 _params.numChines = value as int;
               }),
+          CustomCheckbox(
+            label: 'Closed Top', 
+            initValue: _params.closedTop,
+            onChanged: (bool value) {
+              _params.closedTop = value;
+            }
+          ),
+          CustomCheckbox(
+            label: 'Flat Bottomed', 
+            initValue: _params.flatBottomed,
+            onChanged: (bool value) {
+              _params.flatBottomed = value;
+            }
+          ),
         ],
       )),
       actions: [
