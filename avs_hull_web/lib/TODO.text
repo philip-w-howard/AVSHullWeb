@@ -2,9 +2,11 @@ TODO.text
 Bugs:
 
 Features:
+    XYZBox
+        Add enable/disable methods
+        Create variables so I can individually access the x,y,z values
     change number of chines
     add/delete/move bulkhead
-    flat-bottomed 
     Redo 
     Undo/Redo for panel layouts
     closed-top 

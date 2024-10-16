@@ -158,3 +158,73 @@ class CustomCheckboxState extends State<CustomCheckbox> {
     );
   }
 }
+
+// **************************************************************
+class XYZWidget extends StatefulWidget {
+  final String labelText;
+  final String initValue;
+  final double width;
+  final double height;
+
+  const XYZWidget({
+    super.key,
+    required this.labelText,
+    required this.initValue,
+    required this.width,
+    required this.height,
+    })
+    : super();
+
+  @override
+  XYZWidgetState createState() => XYZWidgetState();
+}
+
+class XYZWidgetState extends State<XYZWidget> {
+  // Step 1: Create a TextEditingController
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Step 2: Set an initial value
+    _controller.text = widget.initValue;
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller when the widget is disposed
+    _controller.dispose();
+    super.dispose();
+  }
+
+  // Method to programmatically update the text field
+  void setContent(String newValue) {
+    setState(() {
+      _controller.text = newValue;
+    });
+  }
+
+  // Method to read the text field content
+  String getContent() {
+    final textValue = _controller.text;
+    return textValue;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return  SizedBox(
+        width: widget.width, height: widget.height, 
+        child: TextField(
+          //enabled: false,
+          controller: _controller,
+          decoration: InputDecoration(
+            labelText: widget.labelText,
+            contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4), 
+            border: const OutlineInputBorder(),
+          ),
+        ),
+      );
+
+  }
+}

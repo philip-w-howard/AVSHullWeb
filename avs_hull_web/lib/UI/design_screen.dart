@@ -17,6 +17,8 @@ import '../models/rotated_hull.dart';
 import 'resize_dialog.dart';
 import 'new_hull_dialog.dart';
 import '../IO/file_io.dart';
+import 'package:avs_hull_web/UI/input_helpers.dart';
+
 
 class DesignScreen extends StatelessWidget {
   DesignScreen({super.key, required Hull mainHull, required HullLogger logger})
@@ -151,6 +153,60 @@ class DesignScreen extends StatelessWidget {
             ],
           ),
           _editWindow,
+          const Padding(
+              padding: EdgeInsets.all(6.0),
+              child: Row(
+                children: [
+                    XYZWidget(
+                      labelText: 'x',
+                      initValue: '',
+                      width: 50,
+                      height: 30,
+                    ),
+                  SizedBox(width: 8), // Spacing between textboxes
+                  SizedBox(
+                    width: 50, height: 30, 
+                    child: TextField(
+                      enabled: false,
+                      decoration: InputDecoration(
+                        labelText: 'y',
+                        border: OutlineInputBorder(),
+                        hintText: '2',
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  SizedBox(
+                    width: 50, height: 30, 
+                    child: TextField(
+                      //enabled: false,
+                      decoration: InputDecoration(
+                        labelText: 'z',
+                        contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 4), 
+                        border: OutlineInputBorder(),
+                        hintText: '3',
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  
+                  // Larger text box occupying remaining space
+                  Expanded(
+                    child: SizedBox(
+                      height: 30, 
+                      child: TextField(
+                        // enabled: false,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: '',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
         ],
       ),
     );

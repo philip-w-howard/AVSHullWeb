@@ -104,6 +104,7 @@ class MainAppState extends State<MainAppWindow>
     _context = context;
     return Scaffold(
         appBar: AppBar(
+            toolbarHeight: 20.0,
             title: const Text('AVS Hull $version'),
             bottom: TabBar(
               controller: _tabController,
