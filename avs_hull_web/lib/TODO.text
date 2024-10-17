@@ -4,7 +4,7 @@ Bugs:
 Features:
     XYZBox
         Add enable/disable methods
-        Create variables so I can individually access the x,y,z values
+        Add GlobalKeys to access the state of the X,Y,Z fields. See Notepad++ for example
     change number of chines
     add/delete/move bulkhead
     Redo 

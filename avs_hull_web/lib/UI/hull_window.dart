@@ -105,13 +105,47 @@ class HullWindow extends StatelessWidget {
                   onPanStart: _panStart,
                   onPanUpdate: _panUpdate,
                   onPanEnd: _panEnd,
-                  child: CustomPaint(
-                    painter: _painter,
-                    size: Size.infinite,
+                  child: MouseRegion(
+                    onHover: _hover,
+                    child: CustomPaint(
+                      painter: _painter,
+                      size: Size.infinite,
+                    ),
                   ),
                 )));
       }),
     );
+  }
+
+  void _hover(PointerEvent details) {
+    double rawX,rawY;
+    double x,y,z;
+
+    (rawX, rawY) = _painter.toHullCoords(details.localPosition);
+
+    switch (_myHull.getView()) {
+      case HullView.front:
+        x = rawX - _myHull.size().x/2;
+        y = _myHull.size().y - rawY;
+        z = 0;
+        break;
+      case HullView.side:
+        x = 0;
+        y = _myHull.size().y - rawY;
+        z = rawX;
+        break;
+      case HullView.top:
+        x = rawY - _myHull.size().y/2;
+        y = 0;
+        z = rawX;
+        break;
+      default:
+        x = 0;
+        y = 0;
+        z = 0;
+        break;
+    }
+    print("Loc: $x $y $z raw: $rawX $rawY");
   }
 
   void _tapDown(TapDownDetails details) {

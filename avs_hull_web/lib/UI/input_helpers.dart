@@ -177,24 +177,24 @@ class XYZWidget extends StatefulWidget {
 
   @override
   XYZWidgetState createState() => XYZWidgetState();
+  
 }
 
 class XYZWidgetState extends State<XYZWidget> {
   // Step 1: Create a TextEditingController
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController(); 
+  bool _isEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    
-    // Step 2: Set an initial value
     _controller.text = widget.initValue;
   }
 
   @override
   void dispose() {
-    // Dispose of the controller when the widget is disposed
     _controller.dispose();
+    // Dispose of the controller when the widget is disposed
     super.dispose();
   }
 
@@ -210,13 +210,24 @@ class XYZWidgetState extends State<XYZWidget> {
     final textValue = _controller.text;
     return textValue;
   }
+  
+  void setEnabled() {
+     setState(() {
+      _isEnabled = true;
+    });
+  }
+  void setDisabled() {
+     setState(() {
+      _isEnabled = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return  SizedBox(
         width: widget.width, height: widget.height, 
         child: TextField(
-          //enabled: false,
+          enabled: _isEnabled,
           controller: _controller,
           decoration: InputDecoration(
             labelText: widget.labelText,
