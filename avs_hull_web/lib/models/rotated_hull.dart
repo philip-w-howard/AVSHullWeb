@@ -4,6 +4,8 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/UI/input_helpers.dart';
+
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
 import 'bulkhead.dart';
@@ -16,6 +18,7 @@ enum HullView { front, side, top, rotated }
 class RotatedHull extends Hull {
   final Hull _baseHull;
   final HullLogger? hullLogger;
+  late final XYZWidget xyz;
   HullView _mView = HullView.rotated;
   bool _static = false;
   double _rotateX = 0;
@@ -30,7 +33,7 @@ class RotatedHull extends Hull {
   int selectedBulkhead = -1;
 
   // move code to createFromBase() method
-  RotatedHull(this._baseHull, {this.hullLogger}) {
+  RotatedHull(this._baseHull, {this.hullLogger, required this.xyz}) {
     _createFromBase();
   }
 

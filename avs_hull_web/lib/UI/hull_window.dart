@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
 import '../models/hull.dart';
 import '../models/rotated_hull.dart';
@@ -23,10 +24,11 @@ class HullDrawDetails {
 class HullWindow extends StatelessWidget {
   static const double _rotateScale = 0.10;
   static const double _nearnessDistance = 20;
+  late final XYZWidget xyz;
 
   HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
-      {super.key, HullLogger? logger}) {
-    _myHull = RotatedHull(hull, hullLogger: logger);
+      {super.key, HullLogger? logger, required this.xyz}) {
+    _myHull = RotatedHull(hull, hullLogger: logger, xyz: xyz);
     _hullLogger = logger;
     _myHull.setView(view);
     if (view == HullView.rotated) {
@@ -145,6 +147,10 @@ class HullWindow extends StatelessWidget {
         z = 0;
         break;
     }
+    xyz.setX(x);
+    xyz.setY(y);
+    xyz.setZ(z);
+    
     print("Loc: $x $y $z raw: $rawX $rawY");
   }
 

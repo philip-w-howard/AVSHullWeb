@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
 import '../models/hull.dart';
 import 'hull_window.dart';
@@ -11,7 +12,7 @@ import '../models/rotated_hull.dart';
 
 class WaterlineScreen extends StatelessWidget {
   WaterlineScreen(this._hull, {super.key}) {
-    _hullWindow = HullWindow(_hull, HullView.rotated, null, null);
+    _hullWindow = HullWindow(_hull, HullView.rotated, null, null, xyz: XYZWidget());
     _hullWindow.setRotatable();
 
     resetScreen();

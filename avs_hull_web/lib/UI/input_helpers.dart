@@ -160,13 +160,13 @@ class CustomCheckboxState extends State<CustomCheckbox> {
 }
 
 // **************************************************************
-class XYZWidget extends StatefulWidget {
+class LocationWidget extends StatefulWidget {
   final String labelText;
   final String initValue;
   final double width;
   final double height;
 
-  const XYZWidget({
+  const LocationWidget({
     super.key,
     required this.labelText,
     required this.initValue,
@@ -176,19 +176,24 @@ class XYZWidget extends StatefulWidget {
     : super();
 
   @override
-  XYZWidgetState createState() => XYZWidgetState();
-  
+  LocationWidgetState createState() => LocationWidgetState(); 
 }
 
-class XYZWidgetState extends State<XYZWidget> {
+class LocationWidgetState extends State<LocationWidget> {
   // Step 1: Create a TextEditingController
   final TextEditingController _controller = TextEditingController(); 
   bool _isEnabled = false;
-
+  late final InputDecoration _decoration;
+  
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initValue;
+    _decoration = InputDecoration(
+            labelText: widget.labelText,
+            contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4), 
+            border: const OutlineInputBorder(),
+          );
   }
 
   @override
@@ -229,13 +234,96 @@ class XYZWidgetState extends State<XYZWidget> {
         child: TextField(
           enabled: _isEnabled,
           controller: _controller,
-          decoration: InputDecoration(
-            labelText: widget.labelText,
-            contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4), 
-            border: const OutlineInputBorder(),
-          ),
+          decoration: _decoration,
         ),
       );
 
+  }
+}
+
+// **************************************************************
+class XYZWidget extends StatelessWidget {
+  final GlobalKey<LocationWidgetState> _xPosKey = GlobalKey<LocationWidgetState>();
+  final GlobalKey<LocationWidgetState> _yPosKey = GlobalKey<LocationWidgetState>();
+  final GlobalKey<LocationWidgetState> _zPosKey = GlobalKey<LocationWidgetState>();
+  
+  late final LocationWidget _xPosField;
+  late final LocationWidget _yPosField;
+  late final LocationWidget _zPosField;
+
+  XYZWidget({
+    super.key,
+  }) {
+    _xPosField = LocationWidget(key: _xPosKey, labelText: 'x', initValue: '', width: 50, height: 30);
+    _yPosField = LocationWidget(key: _yPosKey, labelText: 'y', initValue: '', width: 50, height: 30);
+    _zPosField = LocationWidget(key: _zPosKey, labelText: 'z', initValue: '', width: 50, height: 30);   
+  }
+
+  @override
+  build(BuildContext context) {
+    return   Row(
+                children: [
+                  _xPosField,
+                  const SizedBox(width: 8), // Spacing between textboxes
+                  _yPosField,
+                  const SizedBox(width: 8),
+                  _zPosField,
+                  const SizedBox(width: 8),
+                  
+                  // Larger text box occupying remaining space
+                  const Expanded(
+                    child: SizedBox(
+                      height: 30, 
+                      child: TextField(
+                        // enabled: false,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: '',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+  }
+
+  void enableX()
+  {
+     _xPosKey.currentState?.setEnabled();
+  }
+  void disableX()
+  {
+     _xPosKey.currentState?.setDisabled();
+  }
+
+  void enableY()
+  {
+     _yPosKey.currentState?.setEnabled();
+  }
+  void disableY()
+  {
+     _yPosKey.currentState?.setDisabled();
+  }
+
+  void enableZ()
+  {
+     _zPosKey.currentState?.setEnabled();
+  }
+  void disableZ()
+  {
+     _zPosKey.currentState?.setDisabled();
+  }
+
+  void setX(double x) {
+    String formattedValue = x.toStringAsFixed(2);
+    _xPosKey.currentState?.setContent(formattedValue);
+  }
+  void setY(double y) {
+    String formattedValue = y.toStringAsFixed(2);
+    _yPosKey.currentState?.setContent(formattedValue);
+  }
+  void setZ(double z) {
+    String formattedValue = z.toStringAsFixed(2);
+    _zPosKey.currentState?.setContent(formattedValue);
   }
 }

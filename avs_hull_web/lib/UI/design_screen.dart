@@ -21,24 +21,18 @@ import 'package:avs_hull_web/UI/input_helpers.dart';
 
 
 class DesignScreen extends StatelessWidget {
-  final GlobalKey<XYZWidgetState> _xPosKey = GlobalKey<XYZWidgetState>();
-  final GlobalKey<XYZWidgetState> _yPosKey = GlobalKey<XYZWidgetState>();
-  final GlobalKey<XYZWidgetState> _zPosKey = GlobalKey<XYZWidgetState>();
 
   DesignScreen({super.key, required Hull mainHull, required HullLogger logger})
       : _myHull = mainHull,
         _hullLogger = logger {
-    _frontWindow = HullWindow(_myHull, HullView.front, _selectFront, null);
-    _sideWindow = HullWindow(_myHull, HullView.side, _selectSide, null);
-    _topWindow = HullWindow(_myHull, HullView.top, _selectTop, null);
+    xyz = XYZWidget();
+    _frontWindow = HullWindow(_myHull, HullView.front, _selectFront, null, xyz: xyz,);
+    _sideWindow = HullWindow(_myHull, HullView.side, _selectSide, null, xyz: xyz,);
+    _topWindow = HullWindow(_myHull, HullView.top, _selectTop, null, xyz: xyz,);
     _editWindow = HullWindow(_myHull, HullView.rotated, null, resetScreen,
-        logger: _hullLogger);
+        logger: _hullLogger, xyz: xyz,);
     _editWindow.setRotatable();
     _editWindow.setEditable();
-
-    _xPosField = XYZWidget(key: _xPosKey, labelText: 'x', initValue: '', width: 50, height: 30);
-    _yPosField = XYZWidget(key: _yPosKey, labelText: 'y', initValue: '', width: 50, height: 30);
-    _zPosField = XYZWidget(key: _zPosKey, labelText: 'z', initValue: '', width: 50, height: 30);   
   }
 
   //final Hull myHull = Hull(length: 200, width: 50, height:20, numBulkheads:5 numChines:5);
@@ -49,9 +43,7 @@ class DesignScreen extends StatelessWidget {
   late final HullWindow _sideWindow;
   late final HullWindow _topWindow;
   late final HullWindow _editWindow;
-  late final XYZWidget _xPosField;
-  late final XYZWidget _yPosField;
-  late final XYZWidget _zPosField;
+  late final XYZWidget xyz;
 
   @override
   Widget build(BuildContext context) {
@@ -166,30 +158,7 @@ class DesignScreen extends StatelessWidget {
           _editWindow,
           Padding(
               padding: EdgeInsets.all(6.0),
-              child: Row(
-                children: [
-                  _xPosField,
-                  const SizedBox(width: 8), // Spacing between textboxes
-                  _yPosField,
-                  const SizedBox(width: 8),
-                  _zPosField,
-                  const SizedBox(width: 8),
-                  
-                  // Larger text box occupying remaining space
-                  const Expanded(
-                    child: SizedBox(
-                      height: 30, 
-                      child: TextField(
-                        // enabled: false,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: '',
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              child: xyz,
             ),
 
         ],
@@ -206,13 +175,6 @@ class DesignScreen extends StatelessWidget {
 
   void _selectFront() {
     _editWindow.setView(HullView.front);
-    
-    _xPosKey.currentState?.setDisabled();
-    _yPosKey.currentState?.setEnabled();
-    if (_zPosKey.currentState != null) {
-      _zPosKey.currentState?.setDisabled();
-    }
-
   }
 
   void _selectSide() {
