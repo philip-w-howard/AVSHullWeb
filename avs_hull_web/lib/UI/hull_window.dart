@@ -149,9 +149,7 @@ class HullWindow extends StatelessWidget {
     }
     xyz.setX(x);
     xyz.setY(y);
-    xyz.setZ(z);
-    
-    print("Loc: $x $y $z raw: $rawX $rawY");
+    xyz.setZ(z);   
   }
 
   void _tapDown(TapDownDetails details) {
@@ -218,8 +216,6 @@ class HullWindow extends StatelessWidget {
       double locRatio = details.localPosition.dx / _drawDetails.size.width;
 
       _drawDetails.rotateModeA = (locRatio < 0.25 || locRatio > .75);
-      print('calc: ${details.localPosition.dx} ${_drawDetails.size.width}');
-      print('width $width locRatio $locRatio ModeA ${_drawDetails.rotateModeA}');
     }
   }
 

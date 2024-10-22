@@ -157,7 +157,7 @@ class DesignScreen extends StatelessWidget {
           ),
           _editWindow,
           Padding(
-              padding: EdgeInsets.all(6.0),
+              padding: const EdgeInsets.all(6.0),
               child: xyz,
             ),
 

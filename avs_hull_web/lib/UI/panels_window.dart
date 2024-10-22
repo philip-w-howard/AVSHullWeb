@@ -26,8 +26,7 @@ class PanelsWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _painter.setContext(context);
-    return Expanded(
-        child: Container(
+    return Container(
             decoration: BoxDecoration(
               border: Border.all(
                 color: Colors.black, // Border color
@@ -49,7 +48,7 @@ class PanelsWindow extends StatelessWidget {
                 painter: _painter,
                 size: Size.infinite,
               ),
-            )));
+            ));
   }
 
   void _tapDown(TapDownDetails details) {}

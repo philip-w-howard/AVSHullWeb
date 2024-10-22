@@ -2,9 +2,6 @@ TODO.text
 Bugs:
 
 Features:
-    XYZBox
-        Add enable/disable methods
-        Need to pass x,y,z controls to hull_window to update x,y,z
     change number of chines
     add/delete/move bulkhead
     Redo 
