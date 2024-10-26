@@ -86,6 +86,8 @@ String? readString(String key) {
 
 // ***********************************************************
 void writeHull(Hull hull) {
+  hull.timeSaved = DateTime.now();
+
   String jsonString = json.encode(hull.toJson());
   String key = '$hullPrefix${hull.name}';
 
@@ -94,13 +96,14 @@ void writeHull(Hull hull) {
   recordLastHull(hull.name);
 }
 // ***********************************************************
-Hull? readHull(String name) {
+Hull? readHull(String name, Hull original) {
   String key = '$hullPrefix$name';
   String? jsonString = html.window.localStorage[key];
 
   if (jsonString != null) {
     Map<String, dynamic> jsonHull = json.decode(jsonString);
-    return Hull.fromJson(jsonHull);
+    original.updateFromJson(jsonHull);
+    return original;
   }
 
   return null;

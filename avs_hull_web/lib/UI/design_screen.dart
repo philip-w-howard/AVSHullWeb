@@ -232,10 +232,7 @@ class DesignScreen extends StatelessWidget {
     );
 
     if (result) {
-      Hull? tempHull = readHull(hullName);
-      if (tempHull != null) {
-        _myHull.updateFromHull(tempHull);
-      }
+      readHull(hullName, _myHull);
       resetScreen();
     }
   }
@@ -250,6 +247,7 @@ class DesignScreen extends StatelessWidget {
   }
 
   void _selectAndSaveFile() async {
+    _myHull.timeSaved = DateTime.now();
     final String jsonStr = json.encode(_myHull.toJson());
 
     await saveFile(jsonStr, _myHull.name, 'avsh');

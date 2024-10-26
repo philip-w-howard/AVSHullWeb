@@ -180,6 +180,7 @@ class RotatedHull extends Hull {
     newZ += _baseHull.mBulkheads[bulk].mPoints[chine].z;
 
     _baseHull.updateBulkhead(bulk, chine, newX, newY, newZ);
+    _baseHull.timeUpdated = DateTime.now();
   }
 
   void popLog() {

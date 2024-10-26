@@ -11,34 +11,72 @@ import 'UI/panels_screen.dart';
 import 'models/hull.dart';
 import 'IO/hull_logger.dart';
 import 'settings/settings.dart';
-import 'io/file_io.dart';
+import '../IO/file_io.dart';
+
+import 'dart:html' as html;
 
 void main() {
-  runApp(const MainApp());
+    Hull mainHull = Hull();
+
+    String hullName = fetchLastHullName();
+    if (hullName != unnamedHullName) {
+      Hull? tempHull = readHull(hullName, mainHull);
+      if (tempHull == null) {
+        HullParams params = HullParams();
+        mainHull.updateFromParams(params);
+      }
+    } else {
+      HullParams params = HullParams();
+      mainHull.updateFromParams(params);
+    }
+
+    // Setup the window close event
+    html.window.onBeforeUnload.listen((event) {
+      if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
+        print('saved: ${mainHull.timeSaved}');
+        print('updated: ${mainHull.timeUpdated}');
+        // Cast the event to BeforeUnloadEvent
+        final beforeUnloadEvent = event as html.BeforeUnloadEvent;
+          
+        // Custom logic to save files or handle cleanups
+        beforeUnloadEvent.returnValue = 'Are you sure you want to leave?';
+        // You can also add saving logic here.
+        saveFiles();
+      }
+    });
+
+  runApp(MainApp(mainHull: mainHull));
+}
+
+void saveFiles() {
+  print('Be sure to save files');
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final Hull mainHull;
+  MainApp({super.key, required this.mainHull});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'AVS Hull $version',
-      home: MainAppWindow(),
+      home: MainAppWindow(hull: mainHull),
     );
   }
 }
 
 class MainAppWindow extends StatefulWidget {
-  const MainAppWindow({super.key});
+  final Hull hull;
+  const MainAppWindow({super.key, required this.hull});
 
   @override
-  State<StatefulWidget> createState() => MainAppState();
+  // ignore: no_logic_in_create_state
+  State<StatefulWidget> createState() => MainAppState(hull);
 }
 
 class MainAppState extends State<MainAppWindow>
     with SingleTickerProviderStateMixin {
-  late final Hull _mainHull;
+  late final Hull mainHull;
   final HullLogger _hullLog = HullLogger();
 
   final List<Tab> myTabs = <Tab>[
@@ -53,29 +91,31 @@ class MainAppState extends State<MainAppWindow>
   late WaterlineScreen _waterlineScreen;
   late BuildContext _context;
 
+  MainAppState(this.mainHull) ;
+  
   @override
   void initState() {
     super.initState();
 
-    String hullName = fetchLastHullName();
-    if (hullName != unnamedHullName) {
-      Hull? tempHull = readHull(hullName);
-      if (tempHull != null) {
-        _mainHull = tempHull;
-      } else {
-        HullParams params = HullParams();
-        _mainHull = Hull.fromParams(params);
-      }
-    } else {
-      HullParams params = HullParams();
-      _mainHull = Hull.fromParams(params);
-    }
+    // String hullName = fetchLastHullName();
+    // if (hullName != unnamedHullName) {
+    //   Hull? tempHull = readHull(hullName);
+    //   if (tempHull != null) {
+    //     _mainHull = tempHull;
+    //   } else {
+    //     HullParams params = HullParams();
+    //     _mainHull = Hull.fromParams(params);
+    //   }
+    // } else {
+    //   HullParams params = HullParams();
+    //   _mainHull = Hull.fromParams(params);
+    // }
     _tabController = TabController(vsync: this, length: myTabs.length);
     _tabController.addListener(_handleTabSelection);
 
-    _designScreen = DesignScreen(mainHull: _mainHull, logger: _hullLog);
-    _panelsScreen = PanelsScreen(_mainHull);
-    _waterlineScreen = WaterlineScreen(_mainHull);
+    _designScreen = DesignScreen(mainHull: mainHull, logger: _hullLog);
+    _panelsScreen = PanelsScreen(mainHull);
+    _waterlineScreen = WaterlineScreen(mainHull);
   }
 
   void _handleTabSelection() {
