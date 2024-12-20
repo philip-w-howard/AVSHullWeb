@@ -4,6 +4,9 @@ Bugs:
 Features:
     change number of chines
     add/delete/move bulkhead
+    Bulkheads with fewer chines?
+    Curved bulkheads?
+    Direct edit points
     Redo 
     Undo/Redo for panel layouts
     closed-top 
@@ -33,7 +36,6 @@ Features:
     Allow Save to specify filename
         happens in "Create" dialog.
 
-    Show x,y,z coords in bottom line
     Zoom/Pan
 
 refactor Bulkhead to have rotate and getOffset methods like Spline

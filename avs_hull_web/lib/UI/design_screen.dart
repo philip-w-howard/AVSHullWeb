@@ -248,9 +248,10 @@ class DesignScreen extends StatelessWidget {
 
   void _selectAndSaveFile() async {
     _myHull.timeSaved = DateTime.now();
-    final String jsonStr = json.encode(_myHull.toJson());
+    const prettyJson = JsonEncoder.withIndent('  ');
+    final String prettyStr = prettyJson.convert(_myHull.toJson());
 
-    await saveFile(jsonStr, _myHull.name, 'avsh');
+    await saveFile(prettyStr, _myHull.name, 'avsh');
   }
 
   void _selectAndXmlFile() async {

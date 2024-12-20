@@ -54,7 +54,7 @@ void saveFiles() {
 
 class MainApp extends StatelessWidget {
   final Hull mainHull;
-  MainApp({super.key, required this.mainHull});
+  const MainApp({super.key, required this.mainHull});
 
   @override
   Widget build(BuildContext context) {
