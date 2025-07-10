@@ -13,7 +13,47 @@ import 'IO/hull_logger.dart';
 import 'settings/settings.dart';
 import '../IO/file_io.dart';
 
-import 'dart:html' as html;
+//import 'dart:html' as html;
+import 'dart:js_interop';
+
+//*********************************************************
+@JS('window')
+external Window get window;
+
+@JS()
+@staticInterop
+class Window {}
+
+extension WindowExtension on Window {
+  external set onbeforeunload(JSFunction handler);
+}
+
+@JS()
+@staticInterop
+class BeforeUnloadEvent {}
+
+extension BeforeUnloadEventExtension on BeforeUnloadEvent {
+  external set returnValue(String value);
+}
+
+//*********************************************************
+
+void setupBeforeUnloadPrompt(Hull mainHull) {
+  // Explicitly declare the function type to match JS interop constraints
+  void handler(JSAny event) {
+    if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
+      print('saved: ${mainHull.timeSaved}');
+      print('updated: ${mainHull.timeUpdated}');
+
+      final e = event as BeforeUnloadEvent;
+      e.returnValue = 'Are you sure you want to leave?';
+      saveFiles();
+    }
+  }
+
+  // Convert to JS-safe function
+  window.onbeforeunload = handler.toJS;
+}//*********************************************************
 
 void main() {
     Hull mainHull = Hull();
@@ -31,19 +71,20 @@ void main() {
     }
 
     // Setup the window close event
-    html.window.onBeforeUnload.listen((event) {
-      if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
-        print('saved: ${mainHull.timeSaved}');
-        print('updated: ${mainHull.timeUpdated}');
-        // Cast the event to BeforeUnloadEvent
-        final beforeUnloadEvent = event as html.BeforeUnloadEvent;
+    setupBeforeUnloadPrompt(mainHull);
+    // html.window.onBeforeUnload.listen((event) {
+    //   if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
+    //     print('saved: ${mainHull.timeSaved}');
+    //     print('updated: ${mainHull.timeUpdated}');
+    //     // Cast the event to BeforeUnloadEvent
+    //     final beforeUnloadEvent = event as html.BeforeUnloadEvent;
           
-        // Custom logic to save files or handle cleanups
-        beforeUnloadEvent.returnValue = 'Are you sure you want to leave?';
-        // You can also add saving logic here.
-        saveFiles();
-      }
-    });
+    //     // Custom logic to save files or handle cleanups
+    //     beforeUnloadEvent.returnValue = 'Are you sure you want to leave?';
+    //     // You can also add saving logic here.
+    //     saveFiles();
+    //   }
+    // });
 
   runApp(MainApp(mainHull: mainHull));
 }

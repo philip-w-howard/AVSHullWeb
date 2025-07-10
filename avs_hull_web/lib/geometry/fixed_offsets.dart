@@ -109,10 +109,7 @@ String formatPoint(Offset point, ExportOffsetsParams params, LayoutSettings layo
         case OffsetsPrecision.decimal4Digits:
             result = '${decimal(point.dx, 4)} ${decimal(point.dy, 4)}';
             break;
-        default:
-            result = '${point.dx} ${point.dy}';
-            break;
-    }
+      }
 
     return result;
 }
