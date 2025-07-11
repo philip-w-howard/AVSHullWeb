@@ -10,6 +10,7 @@ import '../models/hull.dart';
 import '../models/rotated_hull.dart';
 import 'hull_painter.dart';
 import '../IO/hull_logger.dart';
+import 'package:flutter/services.dart';
 
 class HullDrawDetails {
   double? height;
@@ -88,33 +89,37 @@ class HullWindow extends StatelessWidget {
       child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         _drawDetails.size = constraints.biggest;
-        return RawKeyboardListener(
-            focusNode: _focusNode,
-            onKey: _processKeypress,
-            child: Container(
-                height: _drawDetails.height,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.black, // Border color
-                    width: 1.0, // Border width
-                  ),
-                  color: Colors.yellow,
+        return KeyboardListener(
+          focusNode: _focusNode,
+          onKeyEvent: (KeyEvent event) {
+            _processKeypress(event); // Update _processKeypress to accept KeyEvent
+          },
+          child: Container(
+            height: _drawDetails.height,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 1.0,
+              ),
+              color: Colors.yellow,
+            ),
+            child: GestureDetector(
+              onDoubleTap: _selector,
+              onTapDown: _tapDown,
+              onTapUp: _tapUp,
+              onPanStart: _panStart,
+              onPanUpdate: _panUpdate,
+              onPanEnd: _panEnd,
+              child: MouseRegion(
+                onHover: _hover,
+                child: CustomPaint(
+                  painter: _painter,
+                  size: Size.infinite,
                 ),
-                child: GestureDetector(
-                  onDoubleTap: _selector,
-                  onTapDown: _tapDown,
-                  onTapUp: _tapUp,
-                  onPanStart: _panStart,
-                  onPanUpdate: _panUpdate,
-                  onPanEnd: _panEnd,
-                  child: MouseRegion(
-                    onHover: _hover,
-                    child: CustomPaint(
-                      painter: _painter,
-                      size: Size.infinite,
-                    ),
-                  ),
-                )));
+              ),
+            ),
+          ),
+        );
       }),
     );
   }
@@ -263,10 +268,10 @@ class HullWindow extends StatelessWidget {
     _painter.redraw();
   }
 
-  void _processKeypress(RawKeyEvent event) {
+  void _processKeypress(KeyEvent event) {
     //print('keypress: ${event.logicalKey.keyLabel}');
     if (_hullLogger != null &&
-        event.isControlPressed &&
+        HardwareKeyboard.instance.isControlPressed &&
         event.character == 'z') {
       _myHull.popLog();
       _updateScreen!();

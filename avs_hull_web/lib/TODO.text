@@ -8,6 +8,8 @@ Features:
     Curved bulkheads?
     Direct edit points
     Redo 
+    Undo needs to update timestamps to newer (time of undo)
+        exception for undoing back to layout setup?
     Undo/Redo for panel layouts
     closed-top 
     SaveAs formats

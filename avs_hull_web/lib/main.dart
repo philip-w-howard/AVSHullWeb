@@ -72,21 +72,8 @@ void main() {
 
     // Setup the window close event
     setupBeforeUnloadPrompt(mainHull);
-    // html.window.onBeforeUnload.listen((event) {
-    //   if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
-    //     print('saved: ${mainHull.timeSaved}');
-    //     print('updated: ${mainHull.timeUpdated}');
-    //     // Cast the event to BeforeUnloadEvent
-    //     final beforeUnloadEvent = event as html.BeforeUnloadEvent;
-          
-    //     // Custom logic to save files or handle cleanups
-    //     beforeUnloadEvent.returnValue = 'Are you sure you want to leave?';
-    //     // You can also add saving logic here.
-    //     saveFiles();
-    //   }
-    // });
-
-  runApp(MainApp(mainHull: mainHull));
+    
+    runApp(MainApp(mainHull: mainHull));
 }
 
 void saveFiles() {
