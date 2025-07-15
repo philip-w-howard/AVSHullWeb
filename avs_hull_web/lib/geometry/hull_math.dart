@@ -584,3 +584,47 @@ bool spansX(Offset p1, Offset p2, int fixedOffset)
 
     return false;
 }
+//***********************************************************
+Point3D? interpolateToZ(List<Point3D> points, double Z)
+{
+  if (points.isEmpty) return null;
+
+  // Find the two points that bracket the Z value
+  Point3D? p1, p2;
+  for (int i = 0; i < points.length - 1; i++) {
+    if ((points[i].z <= Z && points[i + 1].z >= Z) ||
+        (points[i].z >= Z && points[i + 1].z <= Z)) {
+      p1 = points[i];
+      p2 = points[i + 1];
+      break;
+    }
+  }
+
+  if (p1 == null || p2 == null) return null;
+
+  // Interpolate to find the X and Y at the given Z
+  double ratio = (Z - p1.z) / (p2.z - p1.z);
+  double x = p1.x + ratio * (p2.x - p1.x);
+  double y = p1.y + ratio * (p2.y - p1.y);
+
+  return Point3D(x, y, Z);
+}
+
+//***********************************************************
+Point3D interpolateBetween(Point3D prevPoint, Point3D currPoint, double height)
+{
+  if (prevPoint.y == currPoint.y) {
+    // If both points are at the same height, return the average
+    return Point3D(
+      (prevPoint.x + currPoint.x) / 2,
+      height,
+      (prevPoint.z + currPoint.z) / 2,
+   );
+  }
+
+  double ratio = (height - prevPoint.y) / (currPoint.y - prevPoint.y);
+  double x = prevPoint.x + ratio * (currPoint.x - prevPoint.x);
+  double z = prevPoint.z + ratio * (currPoint.z - prevPoint.z);
+
+  return Point3D(x, height, z);
+}

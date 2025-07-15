@@ -29,7 +29,7 @@ class HullWindow extends StatelessWidget {
 
   HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
       {super.key, HullLogger? logger, required this.xyz}) {
-    _myHull = RotatedHull(hull, hullLogger: logger, xyz: xyz);
+    _myHull = RotatedHull(hull, hullLogger: logger);
     _hullLogger = logger;
     _myHull.setView(view);
     if (view == HullView.rotated) {

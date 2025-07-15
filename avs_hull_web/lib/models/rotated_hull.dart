@@ -18,7 +18,6 @@ enum HullView { front, side, top, rotated }
 class RotatedHull extends Hull {
   final Hull _baseHull;
   final HullLogger? hullLogger;
-  late final XYZWidget xyz;
   HullView _mView = HullView.rotated;
   bool _static = false;
   double _rotateX = 0;
@@ -33,7 +32,7 @@ class RotatedHull extends Hull {
   int selectedBulkhead = -1;
 
   // move code to createFromBase() method
-  RotatedHull(this._baseHull, {this.hullLogger, required this.xyz}) {
+  RotatedHull(this._baseHull, {this.hullLogger}) {
     _createFromBase();
   }
 

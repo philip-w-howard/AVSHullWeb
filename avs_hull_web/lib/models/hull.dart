@@ -91,8 +91,14 @@ class Hull {
     for (Bulkhead bulk in source.mBulkheads) {
       mBulkheads.add(Bulkhead.copy(bulk));
     }
+  
+    // force a deep copy of chines.
+    mChines = [];
+    for (Spline spline in source.mChines) {
+      mChines.add(Spline.copy(spline));
+    }
 
-    _createChines();
+    //_createChines();
     timeUpdated = DateTime.now();
   }
 
@@ -252,7 +258,7 @@ class Hull {
     return builder.buildDocument();
   }
 
-bool isNearBulkhead(int bulk, double x, double y, double distance) {
+  bool isNearBulkhead(int bulk, double x, double y, double distance) {
     if (bulk < 0 || bulk >= mBulkheads.length) return false;
 
     return mBulkheads[bulk].isNearBulkhead(x, y, distance);
