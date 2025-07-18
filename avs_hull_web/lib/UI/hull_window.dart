@@ -8,6 +8,7 @@ import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
 import '../models/hull.dart';
 import '../models/rotated_hull.dart';
+import '../models/waterline_hull.dart';
 import 'hull_painter.dart';
 import '../IO/hull_logger.dart';
 import 'package:flutter/services.dart';
@@ -29,7 +30,14 @@ class HullWindow extends StatelessWidget {
 
   HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
       {super.key, HullLogger? logger, required this.xyz}) {
-    _myHull = RotatedHull(hull, hullLogger: logger);
+    if (hull is WaterlineHull) {
+      _myHull = WaterlineHull.copy(hull);
+    } else if (hull is RotatedHull) {
+      _myHull = RotatedHull.copy(hull);
+    } else {
+      _myHull = RotatedHull(hull, hullLogger: logger);
+    }
+
     _hullLogger = logger;
     _myHull.setView(view);
     if (view == HullView.rotated) {
@@ -87,40 +95,41 @@ class HullWindow extends StatelessWidget {
     if (_hullLogger != null) _focusNode.requestFocus();
     return Expanded(
       child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-        _drawDetails.size = constraints.biggest;
-        return KeyboardListener(
-          focusNode: _focusNode,
-          onKeyEvent: (KeyEvent event) {
-            _processKeypress(event); // Update _processKeypress to accept KeyEvent
-          },
-          child: Container(
-            height: _drawDetails.height,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black,
-                width: 1.0,
+        builder: (BuildContext context, BoxConstraints constraints) {
+          _drawDetails.size = constraints.biggest;
+          return KeyboardListener(
+            focusNode: _focusNode,
+            onKeyEvent: (KeyEvent event) {
+              _processKeypress(event);
+            },
+            child: Container(
+              height: _drawDetails.height,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1.0,
+                ),
+                color: Colors.yellow,
               ),
-              color: Colors.yellow,
-            ),
-            child: GestureDetector(
-              onDoubleTap: _selector,
-              onTapDown: _tapDown,
-              onTapUp: _tapUp,
-              onPanStart: _panStart,
-              onPanUpdate: _panUpdate,
-              onPanEnd: _panEnd,
-              child: MouseRegion(
-                onHover: _hover,
-                child: CustomPaint(
-                  painter: _painter,
-                  size: Size.infinite,
+              child: GestureDetector(
+                onDoubleTap: _selector,
+                onTapDown: _tapDown,
+                onTapUp: _tapUp,
+                onPanStart: _panStart,
+                onPanUpdate: _panUpdate,
+                onPanEnd: _panEnd,
+                child: MouseRegion(
+                  onHover: _hover,
+                  child: CustomPaint(
+                    painter: _painter,
+                    size: Size.infinite,
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 

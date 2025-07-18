@@ -29,6 +29,7 @@ class HullPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    
     final paint = Paint()
       ..color = const Color.fromARGB(255, 243, 33, 180)
       ..strokeWidth = 1
@@ -86,6 +87,22 @@ class HullPainter extends CustomPainter {
     Path drawPath = path.transform(xform.storage);
 
     canvas.drawPath(drawPath, paint);
+
+    if (_myHull.hasWaterlines()) {
+      paint.color = const Color.fromARGB(255, 0, 0, 255);
+      paint.style = PaintingStyle.fill;
+      print('Drawing waterlines');
+
+      for (List<Point3D> waterline in _myHull.getWaterlines()) {
+        Path waterlinePath = Path();
+        for (Point3D point in waterline) {
+          waterlinePath.lineTo(point.x * _scale + _translateX,
+              point.y * _scale + _translateY);
+        }
+        waterlinePath.close();
+        canvas.drawPath(waterlinePath, paint);
+      }
+    }
   }
 
   @override

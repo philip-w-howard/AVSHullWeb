@@ -21,12 +21,17 @@ class WaterlineParams {
 }
 
 class WaterlineHull extends RotatedHull {
-  final Hull _baseHull;
+  WaterlineHull.copy(WaterlineHull source)
+      : _params = source._params,
+        _waterlines = source._waterlines.map((wl) => wl.map((p) => Point3D(p.x, p.y, p.z)).toList()).toList(),
+        super.copy(source);
+  final WaterlineParams _params;
+  List<List<Point3D>> _waterlines = [];
 
   // move code to createFromBase() method
-  WaterlineHull(this._baseHull, WaterlineParams params) : super(_baseHull, hullLogger: null) {
+  WaterlineHull(Hull baseHull, this._params) : super(baseHull, hullLogger: null) {
     // super constructed the hull for us.
-    _generateWaterlines(params.heightIncrement, params.lengthIncrement);
+    _waterlines = _generateWaterlines(_params.heightIncrement, _params.lengthIncrement);
   }
 
   //*****************************************************************
@@ -147,4 +152,18 @@ class WaterlineHull extends RotatedHull {
 
     return waterlines;
   }
+
+  @override
+  bool hasWaterlines() {
+    return true; // This hull has waterlines
+  }
+
+  @override bool isEditable() {
+    return false; // Waterline hulls are not editable
+  }
+
+  @override List<List<Point3D>> getWaterlines() {
+    return _waterlines;
+  }
+
 }

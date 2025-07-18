@@ -16,6 +16,27 @@ import '../IO/hull_logger.dart';
 enum HullView { front, side, top, rotated }
 
 class RotatedHull extends Hull {
+  RotatedHull.copy(RotatedHull source)
+      : _baseHull = Hull.copy(source._baseHull),
+        hullLogger = source.hullLogger,
+        _mView = source._mView,
+        _static = source._static,
+        _rotateX = source._rotateX,
+        _rotateY = source._rotateY,
+        _rotateZ = source._rotateZ {
+    // Copy Hull fields
+    name = source.name;
+    timeUpdated = source.timeUpdated;
+    timeSaved = source.timeSaved;
+    mBulkheads = source.mBulkheads.map((b) => Bulkhead.copy(b)).toList();
+    mChines = source.mChines.map((s) => Spline.copy(s)).toList();
+    // Copy editing state
+    movingHandle = source.movingHandle;
+    movingHandleX = source.movingHandleX;
+    movingHandleY = source.movingHandleY;
+    bulkheadIsSelected = source.bulkheadIsSelected;
+    selectedBulkhead = source.selectedBulkhead;
+  }
   final Hull _baseHull;
   final HullLogger? hullLogger;
   HullView _mView = HullView.rotated;

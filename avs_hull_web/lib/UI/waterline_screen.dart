@@ -10,16 +10,19 @@ import '../models/hull.dart';
 import 'hull_window.dart';
 import 'waterline_params_editor.dart';
 import '../models/rotated_hull.dart';
+import '../models/waterline_hull.dart';
 
 class WaterlineScreen extends StatelessWidget {
-  WaterlineScreen(this._hull, {super.key}) {
+  WaterlineScreen(Hull hull, {super.key}) {
+    _hull = WaterlineHull(hull, WaterlineParams());
+    //_hull = RotatedHull(hull, hullLogger: null);
     _hullWindow = HullWindow(_hull, HullView.rotated, null, null, xyz: XYZWidget());
     _hullWindow.setRotatable();
 
     resetScreen();
   }
 
-  final Hull _hull;
+  late final RotatedHull _hull;
   late final HullWindow _hullWindow;
 
   @override
@@ -32,7 +35,7 @@ class WaterlineScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 200,
                   child: const WaterlineParamsEditor(),
                 ),

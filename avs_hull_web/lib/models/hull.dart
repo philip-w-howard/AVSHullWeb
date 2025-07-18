@@ -98,7 +98,6 @@ class Hull {
       mChines.add(Spline.copy(spline));
     }
 
-    //_createChines();
     timeUpdated = DateTime.now();
   }
 
@@ -274,5 +273,13 @@ class Hull {
     mBulkheads[bulk].updatePoint(chine, x, y, z);
     timeUpdated = DateTime.now();
     _createChines();
+  }
+
+  bool hasWaterlines() {
+    return false;
+  }
+
+  List<List<Point3D>> getWaterlines() {
+    return [];
   }
 }
