@@ -9,19 +9,17 @@ import 'package:vector_math/vector_math_64.dart';
 import 'dart:math' as math;
 import '../geometry/point_3d.dart';
 import '../models/bulkhead.dart';
-import '../models/rotated_hull.dart';
+import '../models/waterline_hull.dart';
 import '../geometry/spline.dart';
 
-class HullPainter extends CustomPainter {
-  static const double _nearnessDistance = 5;
-
-  final RotatedHull _myHull;
+class WaterlinePainter extends CustomPainter {
+  final WaterlineHull _myHull;
   BuildContext? _context;
   double _scale = 1.0;
   double _translateX = 0.0;
   double _translateY = 0.0;
 
-  HullPainter(this._myHull);
+  WaterlinePainter(this._myHull);
 
   void setContext(BuildContext context) {
     _context = context;
@@ -59,30 +57,7 @@ class HullPainter extends CustomPainter {
     Matrix4 xform = Matrix4.compose(Vector3(_translateX, _translateY, 0),
         Quaternion.identity(), Vector3(_scale, _scale, _scale));
 
-    // Add handles after computing the xform, so they don't impact scale.
-    if (_myHull.bulkheadIsSelected && _myHull.isEditable()) {
-      for (int index = 0;
-          index < _myHull.mBulkheads[_myHull.selectedBulkhead].numPoints();
-          index++) {
-        Point3D p = _myHull.mBulkheads[_myHull.selectedBulkhead].point(index);
-        Offset handleCenter = Offset(p.x, p.y);
-        Rect handle = Rect.fromCenter(
-            center: handleCenter,
-            width: _nearnessDistance / _scale,
-            height: _nearnessDistance / _scale);
-        path.addRect(handle);
-      }
 
-      if (_myHull.movingHandle) {
-        Offset handleCenter =
-            Offset(_myHull.movingHandleX, _myHull.movingHandleY);
-        Rect handle = Rect.fromCenter(
-            center: handleCenter,
-            width: _nearnessDistance / _scale,
-            height: _nearnessDistance / _scale);
-        path.addRect(handle);
-      }
-    }
 
     Path drawPath = path.transform(xform.storage);
 

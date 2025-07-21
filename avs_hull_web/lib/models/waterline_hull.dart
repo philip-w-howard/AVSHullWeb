@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:flutter/material.dart';
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
 import '../geometry/spline.dart';
@@ -31,7 +32,7 @@ class WaterlineHull extends RotatedHull {
   // move code to createFromBase() method
   WaterlineHull(Hull baseHull, this._params) : super(baseHull, hullLogger: null) {
     // super constructed the hull for us.
-    _waterlines = _generateWaterlines(_params.heightIncrement, _params.lengthIncrement);
+    generateWaterlines();
   }
 
   //*****************************************************************
@@ -128,7 +129,9 @@ class WaterlineHull extends RotatedHull {
     return points;
   }
   //*****************************************************************
-  List<List<Point3D>> _generateWaterlines(double heightIncrement, double lengthIncrement) {
+  @override void generateWaterlines() {
+    double heightIncrement = _params.heightIncrement;
+    double lengthIncrement = _params.lengthIncrement;
     List<List<Point3D>> waterlines = [];
     List<Spline> chines = mChines;
 
@@ -138,32 +141,47 @@ class WaterlineHull extends RotatedHull {
     double height = hullMin.y;
     double heightMax = height + hullSize.y;
 
+    _waterlines = []; // Clear existing waterlines
+
     while (height <= heightMax) {
       // Generate the waterline points
       List<Point3D>? points = _gererateWaterline(chines, height, lengthIncrement);
-      if (points == null) return waterlines; // This implies we started taking on water
+      if (points == null) return ; // This implies we started taking on water
 
       if (points.isNotEmpty) {
-        waterlines.add(points);
+        _waterlines.add(points);
       }
 
       height += heightIncrement;
     }
 
-    return waterlines;
-  }
+    return;
+ }
 
   @override
   bool hasWaterlines() {
     return true; // This hull has waterlines
   }
 
+  @override int getWaterlineCount() {
+    return _waterlines.length;
+  }
+
   @override bool isEditable() {
     return false; // Waterline hulls are not editable
   }
 
-  @override List<List<Point3D>> getWaterlines() {
-    return _waterlines;
+  // **************************************************
+  @override List<Offset> getWaterlineOffsets(int index) {
+    List<Offset> offsets = [];
+    if (index < 0 || index >= _waterlines.length) {
+      return offsets; // Return empty if index is out of bounds
+    }
+    for (Point3D point in _waterlines[index]) {
+      offsets.add(Offset(point.x, point.y));
+    }
+    
+    return offsets;
   }
 
 }

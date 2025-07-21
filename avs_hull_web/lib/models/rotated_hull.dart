@@ -91,6 +91,9 @@ class RotatedHull extends Hull {
         mChines[ii].rotate(rotate);
       }
       _zero();
+
+      if (hasWaterlines()) generateWaterlines();
+
     }
   }
 
@@ -116,6 +119,8 @@ class RotatedHull extends Hull {
         mChines[ii].rotate(rotate);
       }
       _zero();
+
+      if (hasWaterlines()) generateWaterlines();
     }
   }
 

@@ -7,7 +7,7 @@
 import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
 import '../models/hull.dart';
-import 'hull_window.dart';
+import 'waterline_window.dart';
 import 'waterline_params_editor.dart';
 import '../models/rotated_hull.dart';
 import '../models/waterline_hull.dart';
@@ -16,14 +16,13 @@ class WaterlineScreen extends StatelessWidget {
   WaterlineScreen(Hull hull, {super.key}) {
     _hull = WaterlineHull(hull, WaterlineParams());
     //_hull = RotatedHull(hull, hullLogger: null);
-    _hullWindow = HullWindow(_hull, HullView.rotated, null, null, xyz: XYZWidget());
-    _hullWindow.setRotatable();
-
+    _hullWindow = WaterlineWindow(_hull, HullView.rotated, xyz: XYZWidget());
+    
     resetScreen();
   }
 
-  late final RotatedHull _hull;
-  late final HullWindow _hullWindow;
+  late final WaterlineHull _hull;
+  late final WaterlineWindow _hullWindow;
 
   @override
   Widget build(BuildContext context) {
