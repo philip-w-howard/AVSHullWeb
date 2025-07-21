@@ -41,16 +41,18 @@ class WaterlinePainter extends CustomPainter {
     }
 
     for (Spline chine in _myHull.mChines) {
-      path.addPolygon(_myHull.getSplinesOffsets(chine), true);
+      path.addPolygon(_myHull.getSplinesOffsets(chine), false);
     }
 
+    Rect bounds = path.getBounds();
+
     // Scale to fit using the 'size' parameter
-    double scaleX = 0.9 * size.width / hullSize.x;
-    double scaleY = 0.9 * size.height / hullSize.y;
+    double scaleX = 0.9 * size.width / bounds.width;
+    double scaleY = 0.9 * size.height / bounds.height;
 
     _scale = math.min(scaleX, scaleY);
-    _translateX = 0.05 * size.width;
-    _translateY = 0.05 * size.height;
+    _translateX = 0.05 * size.width - bounds.left * _scale;
+    _translateY = 0.05 * size.height - bounds.top * _scale;
 
     Matrix4 xform = Matrix4.compose(Vector3(_translateX, _translateY, 0),
         Quaternion.identity(), Vector3(_scale, _scale, _scale));
@@ -62,20 +64,17 @@ class WaterlinePainter extends CustomPainter {
     canvas.drawPath(drawPath, paint);
 
     // Draw the waterlines if they exist
-    if (_myHull.hasWaterlines()) {
-      path = Path();
-      paint.color = const Color.fromARGB(255, 0, 0, 255);
-      paint.style = PaintingStyle.fill;
-      print('Drawing ${_myHull.getWaterlineCount()} waterlines');
+    path = Path();
+    paint.color = const Color.fromARGB(255, 0, 0, 255);
+    //paint.style = PaintingStyle.fill;
+    print('Drawing ${_myHull.getWaterlineCount()} waterlines');
 
-      for (int ii=0; ii<_myHull.getWaterlineCount(); ii++) {
-        path.addPolygon(_myHull.getWaterlineOffsets(ii), true);
-      }
-      
-      Path drawPath = path.transform(xform.storage);
-
-      canvas.drawPath(drawPath, paint);
+    for (int ii=0; ii<_myHull.getWaterlineCount(); ii++) {
+      path.addPolygon(_myHull.getWaterlineOffsets(ii), false);
     }
+    
+    drawPath = path.transform(xform.storage);
+    canvas.drawPath(drawPath, paint);
   }
 
   @override

@@ -31,6 +31,7 @@ class WaterlineHull extends Hull {
   WaterlineHull(Hull baseHull, this._params) : super.copy(baseHull) {
     // super constructed the hull for us.
     _generateWaterlines();
+    setView(HullView.side);
   }
   //*****************************************************************
   WaterlineHull.copy(WaterlineHull source)
@@ -175,10 +176,6 @@ class WaterlineHull extends Hull {
     return _waterlines.length;
   }
 
-  @override bool isEditable() {
-    return false; // Waterline hulls are not editable
-  }
-
   // **************************************************
   List<Offset> getWaterlineOffsets(int index) {
     List<Offset> offsets = [];
@@ -186,7 +183,13 @@ class WaterlineHull extends Hull {
       return offsets; // Return empty if index is out of bounds
     }
     for (Point3D point in _waterlines[index]) {
-      offsets.add(Offset(point.x, point.y));
+      if (_view == HullView.front) {
+        offsets.add(Offset(point.x, -point.y)); 
+      } else if (_view == HullView.side) {
+        offsets.add(Offset(point.z, -point.y)); 
+      } else if (_view == HullView.top) {
+        offsets.add(Offset(point.z, point.x)); 
+      }
     }
     
     return offsets;
