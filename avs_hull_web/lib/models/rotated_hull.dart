@@ -4,8 +4,6 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/UI/input_helpers.dart';
-
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
 import 'bulkhead.dart';

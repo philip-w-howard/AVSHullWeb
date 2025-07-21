@@ -33,7 +33,6 @@ class WaterlinePainter extends CustomPainter {
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
-    Point3D hullSize = _myHull.size();
     Path path = Path();
 
     for (Bulkhead bulkhead in _myHull.mBulkheads) {

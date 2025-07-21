@@ -6,11 +6,9 @@
 
 import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
-import '../models/hull.dart';
 import '../models/rotated_hull.dart';
 import '../models/waterline_hull.dart';
 import 'waterline_painter.dart';
-import 'package:flutter/services.dart';
 
 class WaterlineDrawDetails {
   double? height;
