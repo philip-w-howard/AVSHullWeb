@@ -67,6 +67,6 @@ class WaterlineScreen extends StatelessWidget {
   }
 
   void resetScreen() {
-    _hullWindow.resetView();
+    
   }
 }

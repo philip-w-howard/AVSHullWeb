@@ -33,20 +33,18 @@ class WaterlinePainter extends CustomPainter {
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 
-    if (_myHull.isEditable()) paint.color = const Color.fromARGB(255, 0, 0, 0);
-
     Point3D hullSize = _myHull.size();
     Path path = Path();
 
-    // Scale to fit using the 'size' parameter
     for (Bulkhead bulkhead in _myHull.mBulkheads) {
-      path.addPolygon(bulkhead.getOffsets(), false);
+      path.addPolygon(_myHull.getBulkheadOffsets(bulkhead), false);
     }
 
     for (Spline chine in _myHull.mChines) {
-      path.addPolygon(chine.getOffsets(), false);
+      path.addPolygon(_myHull.getSplinesOffsets(chine), true);
     }
 
+    // Scale to fit using the 'size' parameter
     double scaleX = 0.9 * size.width / hullSize.x;
     double scaleY = 0.9 * size.height / hullSize.y;
 

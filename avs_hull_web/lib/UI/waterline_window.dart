@@ -10,7 +10,6 @@ import '../models/hull.dart';
 import '../models/rotated_hull.dart';
 import '../models/waterline_hull.dart';
 import 'waterline_painter.dart';
-import '../IO/hull_logger.dart';
 import 'package:flutter/services.dart';
 
 class WaterlineDrawDetails {
@@ -38,23 +37,8 @@ class WaterlineWindow extends StatelessWidget {
     _drawDetails.height = height;
   }
 
-  void resetView() {
-    bool static = _myHull.isStatic();
-
-    _myHull.setDynamic();
-    _myHull.setView(_myHull.getView());
-    if (static) _myHull.setStatic();
-
-    _painter.redraw();
-  }
-
   void setView(HullView view) {
-    _myHull.setDynamic();
-    if (view == HullView.rotated) {
-      _myHull.rotateTo(10, 50, 190);
-    } else {
-      _myHull.setView(view);
-    }
+    _myHull.setView(view);
     _painter.redraw();
   }
 

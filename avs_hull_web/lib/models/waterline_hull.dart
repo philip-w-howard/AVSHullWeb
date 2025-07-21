@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
 import '../geometry/spline.dart';
+import 'bulkhead.dart';
 import 'hull.dart';
 import 'rotated_hull.dart';
 
@@ -21,19 +22,21 @@ class WaterlineParams {
   bool showAllWaterlines = false;
 }
 
-class WaterlineHull extends RotatedHull {
+class WaterlineHull extends Hull {
+  final WaterlineParams _params;
+  List<List<Point3D>> _waterlines = [];
+  HullView _view = HullView.side;
+
+  //*****************************************************************
+  WaterlineHull(Hull baseHull, this._params) : super.copy(baseHull) {
+    // super constructed the hull for us.
+    _generateWaterlines();
+  }
+  //*****************************************************************
   WaterlineHull.copy(WaterlineHull source)
       : _params = source._params,
         _waterlines = source._waterlines.map((wl) => wl.map((p) => Point3D(p.x, p.y, p.z)).toList()).toList(),
         super.copy(source);
-  final WaterlineParams _params;
-  List<List<Point3D>> _waterlines = [];
-
-  // move code to createFromBase() method
-  WaterlineHull(Hull baseHull, this._params) : super(baseHull, hullLogger: null) {
-    // super constructed the hull for us.
-    generateWaterlines();
-  }
 
   //*****************************************************************
   bool _takingOnWater(List<Spline> chines, double height, double length) {
@@ -91,7 +94,14 @@ class WaterlineHull extends RotatedHull {
     return null;
 
   }
-
+  //*****************************************************************
+  void setView(HullView view) {
+    _view = view;
+  }
+  //*****************************************************************
+  HullView getView() {
+    return _view;
+  }
   //*****************************************************************
   List<Point3D>? _gererateWaterline(List<Spline> chines, double height, double lenghtIncrement) {
     List<Point3D> leftPoints = [];
@@ -129,10 +139,9 @@ class WaterlineHull extends RotatedHull {
     return points;
   }
   //*****************************************************************
-  @override void generateWaterlines() {
+  void _generateWaterlines() {
     double heightIncrement = _params.heightIncrement;
     double lengthIncrement = _params.lengthIncrement;
-    List<List<Point3D>> waterlines = [];
     List<Spline> chines = mChines;
 
     Point3D hullSize = size();
@@ -156,14 +165,13 @@ class WaterlineHull extends RotatedHull {
     }
 
     return;
- }
+  }
 
-  @override
   bool hasWaterlines() {
     return true; // This hull has waterlines
   }
 
-  @override int getWaterlineCount() {
+  int getWaterlineCount() {
     return _waterlines.length;
   }
 
@@ -172,7 +180,7 @@ class WaterlineHull extends RotatedHull {
   }
 
   // **************************************************
-  @override List<Offset> getWaterlineOffsets(int index) {
+  List<Offset> getWaterlineOffsets(int index) {
     List<Offset> offsets = [];
     if (index < 0 || index >= _waterlines.length) {
       return offsets; // Return empty if index is out of bounds
@@ -181,6 +189,40 @@ class WaterlineHull extends RotatedHull {
       offsets.add(Offset(point.x, point.y));
     }
     
+    return offsets;
+  }
+  // **************************************************
+  List<Offset> getBulkheadOffsets(Bulkhead bulkhead) {
+    List<Offset> offsets = [];
+    for (Point3D point in bulkhead.mPoints) {
+      if (_view == HullView.front) {
+        offsets.add(Offset(point.x, -point.y)); 
+      } else if (_view == HullView.side) {
+        offsets.add(Offset(point.z, -point.y)); 
+      } else if (_view == HullView.top) {
+        offsets.add(Offset(point.z, point.x)); 
+      }
+    }
+
+    // // close the path for non-bow bulkheads
+    // if (bulkhead.mBulkheadType != BulkheadType.bow) {
+    //   offsets.add(Offset(bulkhead.mPoints[0].x, bulkhead.mPoints[0].y));
+    // }
+    return offsets;
+  }
+  // **************************************************
+  List<Offset> getSplinesOffsets(Spline spline) {
+    List<Offset> offsets = [];
+    for (Point3D point in spline.getPoints()) {
+      if (_view == HullView.front) {
+        offsets.add(Offset(point.x, -point.y));
+      } else if (_view == HullView.side) {
+        offsets.add(Offset(point.z, -point.y));
+      } else if (_view == HullView.top) {
+        offsets.add(Offset(point.z, point.x));
+      }
+    }
+    // Optionally close the path if needed (not always required for splines)
     return offsets;
   }
 

@@ -4,7 +4,6 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:avs_hull_web/geometry/hull_math.dart';
 import 'package:xml/xml.dart';
@@ -276,24 +275,4 @@ class Hull {
     _createChines();
   }
 
-  bool hasWaterlines() {
-    return false;
-  }
-
-  List<List<Point3D>> getWaterlines() {
-    return [];
-  }
-
-  int getWaterlineCount() {
-    return 0;
-  }
-
-  List<Offset> getWaterlineOffsets(int index) {
-      List<Offset> offsets = [];
-      return offsets;
-  }
-
-  void generateWaterlines() {
-    // No waterlines for base hull
-  }
 }

@@ -87,22 +87,6 @@ class HullPainter extends CustomPainter {
     Path drawPath = path.transform(xform.storage);
 
     canvas.drawPath(drawPath, paint);
-
-    // Draw the waterlines if they exist
-    if (_myHull.hasWaterlines()) {
-      path = Path();
-      paint.color = const Color.fromARGB(255, 0, 0, 255);
-      paint.style = PaintingStyle.fill;
-      print('Drawing ${_myHull.getWaterlineCount()} waterlines');
-
-      for (int ii=0; ii<_myHull.getWaterlineCount(); ii++) {
-        path.addPolygon(_myHull.getWaterlineOffsets(ii), true);
-      }
-      
-      Path drawPath = path.transform(xform.storage);
-
-      canvas.drawPath(drawPath, paint);
-    }
   }
 
   @override

@@ -8,7 +8,6 @@ import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
 import '../models/hull.dart';
 import '../models/rotated_hull.dart';
-import '../models/waterline_hull.dart';
 import 'hull_painter.dart';
 import '../IO/hull_logger.dart';
 import 'package:flutter/services.dart';
@@ -30,9 +29,7 @@ class HullWindow extends StatelessWidget {
 
   HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
       {super.key, HullLogger? logger, required this.xyz}) {
-    if (hull is WaterlineHull) {
-      _myHull = WaterlineHull.copy(hull);
-    } else if (hull is RotatedHull) {
+    if (hull is RotatedHull) {
       _myHull = RotatedHull.copy(hull);
     } else {
       _myHull = RotatedHull(hull, hullLogger: logger);
