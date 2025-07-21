@@ -103,7 +103,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
               ],
             ),
           ),
-          Expanded(child: _hullWindow),
+          _hullWindow,
         ],
       ),
     );
