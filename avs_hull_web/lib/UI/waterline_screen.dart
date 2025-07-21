@@ -12,17 +12,49 @@ import 'waterline_params_editor.dart';
 import '../models/rotated_hull.dart';
 import '../models/waterline_hull.dart';
 
-class WaterlineScreen extends StatelessWidget {
-  WaterlineScreen(Hull hull, {super.key}) {
-    _hull = WaterlineHull(hull, WaterlineParams());
-    //_hull = RotatedHull(hull, hullLogger: null);
-    _hullWindow = WaterlineWindow(_hull, HullView.rotated, xyz: XYZWidget());
-    
-    resetScreen();
+class WaterlineScreen extends StatefulWidget {
+  final Hull hull;
+  final WaterlineParams? params;
+  const WaterlineScreen(this.hull, {Key? key, this.params}) : super(key: key);
+
+  @override
+  State<WaterlineScreen> createState() => _WaterlineScreenState();
+}
+
+class _WaterlineScreenState extends State<WaterlineScreen> {
+  late WaterlineParams _params;
+
+  void _recomputeWaterlines() {
+    setState(() {
+      _hull = WaterlineHull(widget.hull, _params);
+      _hullWindow = WaterlineWindow(_hull, _hull.getView(), xyz: xyz);
+    });
+  }
+  late WaterlineHull _hull;
+  late WaterlineWindow _hullWindow;
+  late XYZWidget xyz;
+
+  @override
+  void initState() {
+    super.initState();
+    _params = widget.params ?? WaterlineParams();
+    _createWaterlineHull();
   }
 
-  late final WaterlineHull _hull;
-  late final WaterlineWindow _hullWindow;
+  @override
+  void didUpdateWidget(covariant WaterlineScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.hull != oldWidget.hull || widget.params != oldWidget.params) {
+      _params = widget.params ?? WaterlineParams();
+      _createWaterlineHull();
+    }
+  }
+
+  void _createWaterlineHull() {
+    xyz = XYZWidget();
+    _hull = WaterlineHull(widget.hull, _params);
+    _hullWindow = WaterlineWindow(_hull, HullView.side, xyz: xyz);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +66,22 @@ class WaterlineScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 200,
-                  child: const WaterlineParamsEditor(),
+                  child: WaterlineParamsEditor(
+                    initialParams: _params,
+                    onChanged: (params) {
+                      setState(() {
+                        _params = params;
+                      });
+                    },
+                  ),
                 ),
                 const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: _recomputeWaterlines,
+                  child: const Text('Recompute Waterlines'),
+                ),
                 TextButton(
                   onPressed: () {
                     _hullWindow.setView(HullView.front);
@@ -64,9 +107,5 @@ class WaterlineScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  void resetScreen() {
-    
   }
 }

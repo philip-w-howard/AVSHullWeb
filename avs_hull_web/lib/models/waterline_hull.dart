@@ -30,7 +30,7 @@ class WaterlineHull extends Hull {
   //*****************************************************************
   WaterlineHull(Hull baseHull, this._params) : super.copy(baseHull) {
     // super constructed the hull for us.
-    _generateWaterlines();
+    generateWaterlines();
     setView(HullView.side);
   }
   //*****************************************************************
@@ -140,7 +140,7 @@ class WaterlineHull extends Hull {
     return points;
   }
   //*****************************************************************
-  void _generateWaterlines() {
+  void generateWaterlines() {
     double heightIncrement = _params.heightIncrement;
     double lengthIncrement = _params.lengthIncrement;
     List<Spline> chines = mChines;
