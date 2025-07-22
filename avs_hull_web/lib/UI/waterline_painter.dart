@@ -7,7 +7,6 @@
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math' as math;
-import '../geometry/point_3d.dart';
 import '../models/bulkhead.dart';
 import '../models/waterline_hull.dart';
 import '../geometry/spline.dart';
@@ -63,8 +62,6 @@ class WaterlinePainter extends CustomPainter {
     // Draw the waterlines if they exist
     path = Path();
     paint.color = const Color.fromARGB(255, 0, 0, 255);
-    //paint.style = PaintingStyle.fill;
-    debugPrint('Drawing ${_myHull.getWaterlineCount()} waterlines');
 
     for (int ii=0; ii<_myHull.getWaterlineCount(); ii++) {
       path.addPolygon(_myHull.getWaterlineOffsets(ii), true);

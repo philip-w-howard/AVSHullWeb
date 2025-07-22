@@ -4,8 +4,6 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
@@ -115,17 +113,16 @@ class WaterlineHull extends Hull {
       }
     } else if (doLeft) {
       for (int ii=0; ii<bulkhead.numPoints() - 1; ii++) {
-        if (bulkhead.mPoints[ii].y <= height &&
-            bulkhead.mPoints[ii + 1].y >= height) {
+        if (bulkhead.mPoints[ii].y >= height &&
+            bulkhead.mPoints[ii + 1].y <= height) {
           point = interpolateBetween(
               bulkhead.mPoints[ii], bulkhead.mPoints[ii + 1], height);
-          
           return point;
         }
       }
     } else {
       // Find the right point
-      for (int ii=bulkhead.numPoints() - 1; ii>0; ii--) {
+      for (int ii=bulkhead.numPoints() - 2; ii>=0; ii--) {
         if (bulkhead.mPoints[ii].y <= height &&
             bulkhead.mPoints[ii + 1].y >= height) {
           point = interpolateBetween(
@@ -171,6 +168,12 @@ class WaterlineHull extends Hull {
 
       length += lenghtIncrement;
     }
+
+    point = getBulkheadPoint(bulkheads[bulkheads.length-1], height, true);
+    if (point != null) leftPoints.add(point);
+
+    point = getBulkheadPoint(bulkheads[bulkheads.length-1], height, false);
+    if (point != null) rightPoints.add(point); 
 
     // Now we have the left and right points, we need to join them up.
     List<Point3D> points = [];  
