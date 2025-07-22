@@ -15,7 +15,7 @@ import '../models/waterline_hull.dart';
 class WaterlineScreen extends StatefulWidget {
   final Hull hull;
   final WaterlineParams? params;
-  const WaterlineScreen(this.hull, {Key? key, this.params}) : super(key: key);
+  const WaterlineScreen(this.hull, {super.key, this.params});
 
   @override
   State<WaterlineScreen> createState() => _WaterlineScreenState();

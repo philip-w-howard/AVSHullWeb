@@ -6,7 +6,7 @@ class WaterlineParamsEditor extends StatefulWidget {
   final WaterlineParams? initialParams;
   final void Function(WaterlineParams)? onChanged;
 
-  const WaterlineParamsEditor({Key? key, this.initialParams, this.onChanged}) : super(key: key);
+  const WaterlineParamsEditor({super.key, this.initialParams, this.onChanged});
 
   @override
   State<WaterlineParamsEditor> createState() => _WaterlineParamsEditorState();

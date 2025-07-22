@@ -139,8 +139,8 @@ Future<String?> readFile(String extension) async {
     final reader = FileReader();
     reader.onloadend = ((JSAny _) {
       final result = reader.result;
-      if (result != null && result is JSString) {
-        completer.complete(result.toDart);
+      if (result != null && result.isA<JSString>()) {
+        completer.complete((result as JSString).toDart);
       } else {
         completer.complete(null);
       }

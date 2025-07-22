@@ -1,23 +1,23 @@
 name: avs_hull_web
 description: A Very Simple Hull editing program
 publish_to: 'none'
-version: 0.3.0
+version: 0.4.0
 
 environment:
-  sdk: '>=3.0.1 <4.0.0'
+  sdk: ^3.4.0
 
 dependencies:
   flutter:
     sdk: flutter
   tuple: ^2.0.2
   vector_math: ^2.0.0
-  cupertino_icons: ^1.0.6
+  cupertino_icons: ^1.0.8
   xml: ^6.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
