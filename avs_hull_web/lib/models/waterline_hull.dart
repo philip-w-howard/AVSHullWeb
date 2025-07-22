@@ -22,14 +22,16 @@ class WaterlineParams {
   bool showAllWaterlines = false;
 }
 
-class WaterlineHull extends Hull {
+class WaterlineHull extends RotatedHull {
   final WaterlineParams _params;
   List<List<Point3D>> _waterlines = [];
   HullView _view = HullView.side;
 
   //*****************************************************************
-  WaterlineHull(Hull baseHull, this._params) : super.copy(baseHull) {
+  WaterlineHull(Hull baseHull, this._params) : 
+    super.copy(baseHull is RotatedHull ? baseHull : RotatedHull(baseHull)) {
     // super constructed the hull for us.
+    rotateTo(_params.pitchAngle, 0, _params.heelAngle);
     _generateWaterlines();
     setView(HullView.side);
   }
