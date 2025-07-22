@@ -4,6 +4,8 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
@@ -50,7 +52,7 @@ class WaterlineHull extends Hull {
     return false; // No points below the waterline
   }
   //*****************************************************************
-  Point3D? _findWaterlinePoint(List<Bulkhead> bulkheads, List<Spline> chines, double height, double length, bool doLeft)
+  Point3D? _findWaterlinePoint(List<Spline> chines, double height, double length, bool doLeft)
   {
     int start, end, increment;
     int index;
@@ -96,68 +98,73 @@ class WaterlineHull extends Hull {
 
   }
   //*****************************************************************
+  Point3D? getBulkheadPoint(Bulkhead bulkhead, double height, bool doLeft) {
+    Point3D? point;
+
+      // Find the location of the height on bulkheads[0] and bulkheads[bulkheads.length-1] 
+    if (bulkhead.mBulkheadType == BulkheadType.bow) {
+      // left and right point are the same for bow bulkhead
+      for (int ii=0; ii<bulkhead.numPoints() - 1; ii++) {
+        if (bulkhead.mPoints[ii].y <= height &&
+            bulkhead.mPoints[ii + 1].y >= height) {
+          point = interpolateBetween(
+              bulkhead.mPoints[ii], bulkhead.mPoints[ii + 1], height);
+          
+          return point;
+        }
+      }
+    } else if (doLeft) {
+      for (int ii=0; ii<bulkhead.numPoints() - 1; ii++) {
+        if (bulkhead.mPoints[ii].y <= height &&
+            bulkhead.mPoints[ii + 1].y >= height) {
+          point = interpolateBetween(
+              bulkhead.mPoints[ii], bulkhead.mPoints[ii + 1], height);
+          
+          return point;
+        }
+      }
+    } else {
+      // Find the right point
+      for (int ii=bulkhead.numPoints() - 1; ii>0; ii--) {
+        if (bulkhead.mPoints[ii].y <= height &&
+            bulkhead.mPoints[ii + 1].y >= height) {
+          point = interpolateBetween(
+              bulkhead.mPoints[ii], bulkhead.mPoints[ii + 1], height);
+          
+          return point;
+        }
+      }
+    }
+    return point;
+  }
+  //*****************************************************************
   List<Point3D>? _gererateWaterline(List<Bulkhead> bulkheads, List<Spline> chines, double height, double lenghtIncrement) {
     List<Point3D> leftPoints = [];
     List<Point3D> rightPoints = [];
     Point3D? point;
 
     Point3D hullSize = size();
-    Point3D hullMin = min();
+    Point3D hullMin = super.min();
 
+    point = getBulkheadPoint(bulkheads[0], height, true);
+    if (point != null) leftPoints.add(point);
+    
+    point = getBulkheadPoint(bulkheads[0], height, false);
+    if (point != null) rightPoints.add(point);
+    
     double length = hullMin.z;
 
-    // Find the location of the height on bulkheads[0] and bulkheads[bulkheads.length-1] 
-    if (bulkheads[0].mBulkheadType == BulkheadType.bow) {
-      // left and right point are the same for bow bulkhead
-      for (int ii=0; ii<bulkheads[0].numPoints() - 1; ii++) {
-        if (bulkheads[0].mPoints[ii].y <= height &&
-            bulkheads[0].mPoints[ii + 1].y >= height) {
-          point = interpolateBetween(
-              bulkheads[0].mPoints[ii], bulkheads[0].mPoints[ii + 1], height);
-          
-          leftPoints.add(point);
-          rightPoints.add(point);
-          
-          break;
-        }
-      }
-    } else {
-      // Find the left point
-      for (int ii=0; ii<bulkheads[0].numPoints() - 1; ii++) {
-        if (bulkheads[0].mPoints[ii].y <= height &&
-            bulkheads[0].mPoints[ii + 1].y >= height) {
-          point = interpolateBetween(
-              bulkheads[0].mPoints[ii], bulkheads[0].mPoints[ii + 1], height);
-          
-          leftPoints.add(point);
-          break;
-        }
-      }
-
-      // Find the right point
-      for (int ii=bulkheads[0].numPoints() - 1; ii>0; ii--) {
-        if (bulkheads[0].mPoints[ii].y <= height &&
-            bulkheads[0].mPoints[ii + 1].y >= height) {
-          point = interpolateBetween(
-              bulkheads[0].mPoints[ii], bulkheads[0].mPoints[ii + 1], height);
-          
-          rightPoints.add(point);
-          break;
-        }
-      }
-
-    }
     while (length < hullSize.z) {
       if (_takingOnWater(chines, height, length)) return null;
 
       // Find the left point
-      point = _findWaterlinePoint(bulkheads, chines, height, length, true);
+      point = _findWaterlinePoint(chines, height, length, true);
       if (point != null) {
         leftPoints.add(point);
       }
 
       // Find the right point
-      point = _findWaterlinePoint(bulkheads, chines, height, length, false);
+      point = _findWaterlinePoint(chines, height, length, false);
       if (point != null) {
         rightPoints.add(point);
       }
@@ -179,7 +186,7 @@ class WaterlineHull extends Hull {
     double lengthIncrement = _params.lengthIncrement;
     
     Point3D hullSize = size();
-    Point3D hullMin = min();
+    Point3D hullMin = super.min();
 
     double height = hullMin.y;
     double heightMax = height + hullSize.y;
