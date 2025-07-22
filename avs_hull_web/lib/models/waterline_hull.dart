@@ -50,7 +50,7 @@ class WaterlineHull extends Hull {
     return false; // No points below the waterline
   }
   //*****************************************************************
-  Point3D? _findWaterlinePoint(List<Spline> chines, double height, double length, bool doLeft)
+  Point3D? _findWaterlinePoint(List<Bulkhead> bulkheads, List<Spline> chines, double height, double length, bool doLeft)
   {
     int start, end, increment;
     int index;
@@ -73,7 +73,7 @@ class WaterlineHull extends Hull {
     prevPoint = null;
     currPoint = null;
 
-    // Loop through looking for one point below and and adjacent one above the height.
+    // Loop through looking for one point below and an adjacent one above the height.
     while (index != end)
     {
         if (currPoint != null) prevPoint = currPoint;
@@ -96,15 +96,7 @@ class WaterlineHull extends Hull {
 
   }
   //*****************************************************************
-  void setView(HullView view) {
-    _view = view;
-  }
-  //*****************************************************************
-  HullView getView() {
-    return _view;
-  }
-  //*****************************************************************
-  List<Point3D>? _gererateWaterline(List<Spline> chines, double height, double lenghtIncrement) {
+  List<Point3D>? _gererateWaterline(List<Bulkhead> bulkheads, List<Spline> chines, double height, double lenghtIncrement) {
     List<Point3D> leftPoints = [];
     List<Point3D> rightPoints = [];
     Point3D? point;
@@ -114,17 +106,58 @@ class WaterlineHull extends Hull {
 
     double length = hullMin.z;
 
+    // Find the location of the height on bulkheads[0] and bulkheads[bulkheads.length-1] 
+    if (bulkheads[0].mBulkheadType == BulkheadType.bow) {
+      // left and right point are the same for bow bulkhead
+      for (int ii=0; ii<bulkheads[0].numPoints() - 1; ii++) {
+        if (bulkheads[0].mPoints[ii].y <= height &&
+            bulkheads[0].mPoints[ii + 1].y >= height) {
+          point = interpolateBetween(
+              bulkheads[0].mPoints[ii], bulkheads[0].mPoints[ii + 1], height);
+          
+          leftPoints.add(point);
+          rightPoints.add(point);
+          
+          break;
+        }
+      }
+    } else {
+      // Find the left point
+      for (int ii=0; ii<bulkheads[0].numPoints() - 1; ii++) {
+        if (bulkheads[0].mPoints[ii].y <= height &&
+            bulkheads[0].mPoints[ii + 1].y >= height) {
+          point = interpolateBetween(
+              bulkheads[0].mPoints[ii], bulkheads[0].mPoints[ii + 1], height);
+          
+          leftPoints.add(point);
+          break;
+        }
+      }
+
+      // Find the right point
+      for (int ii=bulkheads[0].numPoints() - 1; ii>0; ii--) {
+        if (bulkheads[0].mPoints[ii].y <= height &&
+            bulkheads[0].mPoints[ii + 1].y >= height) {
+          point = interpolateBetween(
+              bulkheads[0].mPoints[ii], bulkheads[0].mPoints[ii + 1], height);
+          
+          rightPoints.add(point);
+          break;
+        }
+      }
+
+    }
     while (length < hullSize.z) {
       if (_takingOnWater(chines, height, length)) return null;
 
       // Find the left point
-      point = _findWaterlinePoint(chines, height, length, true);
+      point = _findWaterlinePoint(bulkheads, chines, height, length, true);
       if (point != null) {
         leftPoints.add(point);
       }
 
       // Find the right point
-      point = _findWaterlinePoint(chines, height, length, false);
+      point = _findWaterlinePoint(bulkheads, chines, height, length, false);
       if (point != null) {
         rightPoints.add(point);
       }
@@ -144,8 +177,7 @@ class WaterlineHull extends Hull {
     double weight = 0;
     double heightIncrement = _params.heightIncrement;
     double lengthIncrement = _params.lengthIncrement;
-    List<Spline> chines = mChines;
-
+    
     Point3D hullSize = size();
     Point3D hullMin = min();
 
@@ -156,7 +188,7 @@ class WaterlineHull extends Hull {
 
     while (height <= heightMax && weight < _params.weight) {
       // Generate the waterline points
-      List<Point3D>? points = _gererateWaterline(chines, height, lengthIncrement);
+      List<Point3D>? points = _gererateWaterline(mBulkheads, mChines, height, lengthIncrement);
       if (points == null) return ; // This implies we started taking on water
       AreaData areaData = computeFlatArea(points);
       if (areaData.area > 0) {
@@ -248,5 +280,12 @@ class WaterlineHull extends Hull {
     // Optionally close the path if needed (not always required for splines)
     return offsets;
   }
-
+  //*****************************************************************
+  void setView(HullView view) {
+    _view = view;
+  }
+  //*****************************************************************
+  HullView getView() {
+    return _view;
+  }
 }

@@ -1,6 +1,7 @@
 TODO.text
 Bugs:
     Waterlines: start/stop at bulkhead, not lower chine
+    Waterlines: save/restore params, orientation. session only.
 Features:
     change number of chines
     add/delete/move bulkhead
