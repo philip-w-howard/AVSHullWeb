@@ -30,7 +30,7 @@ class WaterlineHull extends Hull {
   //*****************************************************************
   WaterlineHull(Hull baseHull, this._params) : super.copy(baseHull) {
     // super constructed the hull for us.
-    generateWaterlines();
+    _generateWaterlines();
     setView(HullView.side);
   }
   //*****************************************************************
@@ -140,7 +140,8 @@ class WaterlineHull extends Hull {
     return points;
   }
   //*****************************************************************
-  void generateWaterlines() {
+  void _generateWaterlines() {
+    double weight = 0;
     double heightIncrement = _params.heightIncrement;
     double lengthIncrement = _params.lengthIncrement;
     List<Spline> chines = mChines;
@@ -153,12 +154,18 @@ class WaterlineHull extends Hull {
 
     _waterlines = []; // Clear existing waterlines
 
-    while (height <= heightMax) {
+    while (height <= heightMax && weight < _params.weight) {
       // Generate the waterline points
       List<Point3D>? points = _gererateWaterline(chines, height, lengthIncrement);
       if (points == null) return ; // This implies we started taking on water
+      AreaData areaData = computeFlatArea(points);
+      if (areaData.area > 0) {
+        double sliceWeight = areaData.area * heightIncrement * _params.waterDensity ;
+        sliceWeight /= (12*12*12); // Convert to cubic feet
+        weight += sliceWeight;
+      } 
 
-      if (points.isNotEmpty) {
+      if (points.isNotEmpty && weight < _params.weight) {
         _waterlines.add(points);
       }
 
@@ -168,30 +175,43 @@ class WaterlineHull extends Hull {
     return;
   }
 
-  bool hasWaterlines() {
-    return true; // This hull has waterlines
-  }
-
   int getWaterlineCount() {
-    return _waterlines.length;
+    if (_params.showAllWaterlines) {
+      return _waterlines.length;
+    } else if (_waterlines.isNotEmpty) {    
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   // **************************************************
   List<Offset> getWaterlineOffsets(int index) {
     List<Offset> offsets = [];
-    if (index < 0 || index >= _waterlines.length) {
-      return offsets; // Return empty if index is out of bounds
-    }
-    for (Point3D point in _waterlines[index]) {
-      if (_view == HullView.front) {
-        offsets.add(Offset(point.x, -point.y)); 
-      } else if (_view == HullView.side) {
-        offsets.add(Offset(point.z, -point.y)); 
-      } else if (_view == HullView.top) {
-        offsets.add(Offset(point.z, point.x)); 
+    if (_params.showAllWaterlines) {
+      if (index < 0 || index >= _waterlines.length) {
+        return offsets; // Return empty if index is out of bounds
+      }
+      for (Point3D point in _waterlines[index]) {
+        if (_view == HullView.front) {
+          offsets.add(Offset(point.x, -point.y)); 
+        } else if (_view == HullView.side) {
+          offsets.add(Offset(point.z, -point.y)); 
+        } else if (_view == HullView.top) {
+          offsets.add(Offset(point.z, point.x)); 
+        }
+      }
+    } else if (_waterlines.isNotEmpty) {
+      for (Point3D point in _waterlines[_waterlines.length - 1]) {
+        if (_view == HullView.front) {
+          offsets.add(Offset(point.x, -point.y)); 
+        } else if (_view == HullView.side) {
+          offsets.add(Offset(point.z, -point.y)); 
+        } else if (_view == HullView.top) {
+          offsets.add(Offset(point.z, point.x)); 
+        }
       }
     }
-    
     return offsets;
   }
   // **************************************************

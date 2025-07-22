@@ -43,7 +43,9 @@ void setupBeforeUnloadPrompt(Hull mainHull) {
   void handler(JSAny event) {
     if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
       print('saved: ${mainHull.timeSaved}');
+      debugPrint('saved: ${mainHull.timeSaved}');
       print('updated: ${mainHull.timeUpdated}');
+      debugPrint('updated: ${mainHull.timeUpdated}');
 
       final e = event as BeforeUnloadEvent;
       e.returnValue = 'Are you sure you want to leave?';
@@ -78,6 +80,7 @@ void main() {
 
 void saveFiles() {
   print('Be sure to save files');
+  debugPrint('Be sure to save files');
 }
 
 class MainApp extends StatelessWidget {

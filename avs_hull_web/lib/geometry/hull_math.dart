@@ -628,3 +628,66 @@ Point3D interpolateBetween(Point3D prevPoint, Point3D currPoint, double height)
 
   return Point3D(x, height, z);
 }
+
+//***********************************************************
+class AreaData {
+  double area = 0;
+  double centroidX = 0;
+  double centroidZ = 0;
+
+  AreaData(this.area, this.centroidX, this.centroidZ);
+} 
+// Compute the area and centroid of a shape.
+// Assumptions: 
+//      1) The shape is "flat" meaning the Y coordinate of each point is the same
+//      2) The shape is symetric on Z meaining that point[ii].Z == point[count-ii-1].Z
+// These assumptions are met for waterlines computed on a hull with no heel.
+AreaData computeFlatArea(List<Point3D> boundary) {
+  double area = 0;
+  double centroidX = 0;
+  double centroidZ = 0;
+
+  if (boundary.isEmpty) {
+    return AreaData(0, 0, 0);
+  }
+
+  int limit = boundary.length ~/ 2;
+
+  if (boundary.length > 3) // need at least 4 points: two on each side
+  {
+    Point3D lastLeft = boundary[0];
+    Point3D lastRight = boundary[boundary.length - 1];
+    Point3D left, right;
+
+    for (int ii = 1; ii < limit; ii++) {
+      left = boundary[ii];
+      right = boundary[boundary.length - ii - 1];
+
+      if (left.z != right.z) {
+        debugPrint("Z offset error: ${left.z}, ${right.z}");
+      }
+
+      double width =
+          ((left.x - right.x).abs() + (lastLeft.x - lastRight.x).abs())/2;
+      double length = (left.z - lastLeft.z).abs();
+      area += width * length;
+      centroidX += ((left.x + right.x + lastLeft.x + lastRight.x) / 4) *
+          width *
+          length; // Approx: need to do the triangle thing for the ends
+      centroidZ += ((left.z + right.z + lastLeft.z + lastRight.z) / 4) *
+          width *
+          length; // Approx: Need to do the triangle thing for the ends
+
+      lastLeft = left;
+      lastRight = right;
+    }
+
+    if (area != 0) {
+      centroidX /= area;
+      centroidZ /= area;
+    }
+  }
+
+  return AreaData(area, centroidX, centroidZ);
+}
+

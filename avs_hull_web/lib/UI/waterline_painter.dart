@@ -56,8 +56,6 @@ class WaterlinePainter extends CustomPainter {
     Matrix4 xform = Matrix4.compose(Vector3(_translateX, _translateY, 0),
         Quaternion.identity(), Vector3(_scale, _scale, _scale));
 
-
-
     Path drawPath = path.transform(xform.storage);
 
     canvas.drawPath(drawPath, paint);
@@ -66,10 +64,10 @@ class WaterlinePainter extends CustomPainter {
     path = Path();
     paint.color = const Color.fromARGB(255, 0, 0, 255);
     //paint.style = PaintingStyle.fill;
-    print('Drawing ${_myHull.getWaterlineCount()} waterlines');
+    debugPrint('Drawing ${_myHull.getWaterlineCount()} waterlines');
 
     for (int ii=0; ii<_myHull.getWaterlineCount(); ii++) {
-      path.addPolygon(_myHull.getWaterlineOffsets(ii), false);
+      path.addPolygon(_myHull.getWaterlineOffsets(ii), true);
     }
     
     drawPath = path.transform(xform.storage);

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'dart:async';
 //import 'dart:html' as html;
@@ -87,7 +88,7 @@ void printLocalStorageKeys() {
   for (int i = 0; i < localStorage.length; i++) {
     final JSString? jsKey = localStorage.key(i);
     final String? key = jsKey?.toDart;
-    print('Key: $key');
+    debugPrint('Key: $key');
   }
 }
 // **********************************************************

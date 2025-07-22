@@ -1,6 +1,6 @@
 TODO.text
 Bugs:
-
+    Waterlines: start/stop at bulkhead, not lower chine
 Features:
     change number of chines
     add/delete/move bulkhead
@@ -13,7 +13,6 @@ Features:
     Undo/Redo for panel layouts
     closed-top 
     SaveAs formats
-    waterlines
     Save/Export layouts
         Layout menu bar (follow design layout)
             Save
