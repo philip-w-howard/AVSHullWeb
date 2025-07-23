@@ -13,6 +13,7 @@ import 'models/hull.dart';
 import 'IO/hull_logger.dart';
 import 'settings/settings.dart';
 import '../IO/file_io.dart';
+import 'UI/info_tab.dart';
 
 //import 'dart:html' as html;
 import 'dart:js_interop';
@@ -105,15 +106,40 @@ class MainAppWindow extends StatefulWidget {
 
 class MainAppState extends State<MainAppWindow>
     with SingleTickerProviderStateMixin {
-  late final Hull mainHull;
-  final HullLogger _hullLog = HullLogger();
 
   final List<Tab> myTabs = <Tab>[
     const Tab(text: 'Design'),
     const Tab(text: 'Layout'),
     const Tab(text: 'Waterlines'),
+    const Tab(text: 'Info'), // Added Info tab
   ];
 
+  @override
+  Widget build(BuildContext context) {
+    _context = context;
+    return Scaffold(
+        appBar: AppBar(
+            toolbarHeight: 20.0,
+            title: const Text('AVS Hull $version'),
+            bottom: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              tabs: myTabs,
+            )),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            Center(child: _designScreen),
+            Center(child: _panelsScreen),
+            Center(child: _waterlineScreen),
+            const InfoTab(), // Added InfoTab to the TabBarView
+          ],
+        ));
+  }
+  late final Hull mainHull;
+  final HullLogger _hullLog = HullLogger();
+
+  
   late TabController _tabController;
   late DesignScreen _designScreen;
   late PanelsScreen _panelsScreen;
@@ -175,25 +201,4 @@ class MainAppState extends State<MainAppWindow>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _context = context;
-    return Scaffold(
-        appBar: AppBar(
-            toolbarHeight: 20.0,
-            title: const Text('AVS Hull $version'),
-            bottom: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              tabs: myTabs,
-            )),
-        body: TabBarView(
-          controller: _tabController,
-          children: [
-            Center(child: _designScreen),
-            Center(child: _panelsScreen),
-            Center(child: _waterlineScreen),
-          ],
-        ));
   }
-}

@@ -17,7 +17,7 @@ const layoutSettingsKey = 'LayoutSettings';
 const exportOffsetsParamsKey = 'ExportOffsetsParams';
 const lastHullKey = 'LastHullName';
 const unnamedHullName = 'unnamed';
-const version = '0.4.1';
+const version = '0.4.2';
 
 // ***********************************************************
 // ***********************************************************

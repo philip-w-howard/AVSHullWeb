@@ -36,10 +36,10 @@ class WaterlineHull extends RotatedHull {
     setView(_params.view);
   }
   //*****************************************************************
-  WaterlineHull.copy(WaterlineHull source)
+  WaterlineHull.copy(WaterlineHull super.source)
       : _params = source._params,
         _waterlines = source._waterlines.map((wl) => wl.map((p) => Point3D(p.x, p.y, p.z)).toList()).toList(),
-        super.copy(source);
+        super.copy();
 
   //*****************************************************************
   bool _takingOnWater(List<Spline> chines, double height, double length) {
