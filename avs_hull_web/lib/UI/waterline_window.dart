@@ -23,11 +23,10 @@ class WaterlineWindow extends StatelessWidget {
   final WaterlineDrawDetails _drawDetails = WaterlineDrawDetails();
   final FocusNode _focusNode = FocusNode();
 
-  WaterlineWindow(WaterlineHull hull, HullView view,
+  WaterlineWindow(WaterlineHull hull, 
       {super.key, required this.xyz}) {
     _myHull = WaterlineHull.copy(hull);
 
-    _myHull.setView(view);
     _painter = WaterlinePainter(_myHull);
   }
 

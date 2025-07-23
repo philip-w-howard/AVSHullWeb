@@ -1,7 +1,10 @@
 TODO.text
 Bugs:
-    Waterlines: save/restore params, orientation. session only.
+    glitch in computeFlatArea for heel of 5.
 Features:
+    Waterlines: save/restore params, orientation. session only.
+    Waterlines: show centroid and righting moment.
+    
     change number of chines
     add/delete/move bulkhead
     Bulkheads with fewer chines?

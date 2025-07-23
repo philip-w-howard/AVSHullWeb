@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/models/waterline_hull.dart';
 import 'package:flutter/material.dart';
 import 'UI/design_screen.dart';
 import 'UI/waterline_screen.dart';
@@ -118,6 +119,7 @@ class MainAppState extends State<MainAppWindow>
   late PanelsScreen _panelsScreen;
   late WaterlineScreen _waterlineScreen;
   late BuildContext _context;
+  WaterlineParams _waterlineParams = WaterlineParams();
 
   MainAppState(this.mainHull) ;
   
@@ -143,9 +145,15 @@ class MainAppState extends State<MainAppWindow>
 
     _designScreen = DesignScreen(mainHull: mainHull, logger: _hullLog);
     _panelsScreen = PanelsScreen(mainHull);
-    _waterlineScreen = WaterlineScreen(mainHull);
+    _waterlineScreen = WaterlineScreen(mainHull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
   }
 
+  void _waterlineParamsChanged(WaterlineParams params) {
+    setState(() {
+      _waterlineParams = params;
+      _waterlineScreen = WaterlineScreen(mainHull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
+    });
+  }
   void _handleTabSelection() {
     if (_tabController.indexIsChanging) {
       switch (_tabController.index) {

@@ -13,19 +13,19 @@ import 'hull.dart';
 import 'rotated_hull.dart';
 
 class WaterlineParams {
-  double heightIncrement = 0.25;  // Height increment for waterlines
+  double heightIncrement = .25;  // Height increment for waterlines
   double lengthIncrement = 0.25;  // Length increment for waterlines
   double weight = 200;            // Weight of the loaded hull in pounds   
   double waterDensity = 62.4;     // lb/ft^3
   double heelAngle = 0;           // Angle of heel in degrees
   double pitchAngle = 0;          // Angle of pitch in degrees
   bool showAllWaterlines = false;
+  HullView view = HullView.top;
 }
 
 class WaterlineHull extends RotatedHull {
   final WaterlineParams _params;
   List<List<Point3D>> _waterlines = [];
-  HullView _view = HullView.side;
 
   //*****************************************************************
   WaterlineHull(Hull baseHull, this._params) : 
@@ -33,7 +33,7 @@ class WaterlineHull extends RotatedHull {
     // super constructed the hull for us.
     rotateTo(_params.pitchAngle, 0, _params.heelAngle);
     _generateWaterlines();
-    setView(HullView.side);
+    setView(_params.view);
   }
   //*****************************************************************
   WaterlineHull.copy(WaterlineHull source)
@@ -84,12 +84,15 @@ class WaterlineHull extends RotatedHull {
 
         if (currPoint != null && prevPoint != null)
         {
-            // If we have a point above and one below, we can interpolate
-            if ((currPoint.y >= height && prevPoint.y <= height) ||
-                (currPoint.y <= height && prevPoint.y >= height))
-            {
-                return interpolateBetween(prevPoint, currPoint, height);
-            }
+          //if (!doLeft && height == 4 && (length < 10 || length > 93.5)) debugPrint("Checking length $index, $length, height $height, doLeft $doLeft, currPoint: ${currPoint.toString()}, prevPoint: ${prevPoint.toString()}");
+          // If we have a point above and one below, we can interpolate
+          if ((currPoint.y >= height && prevPoint.y <= height) ||
+              (currPoint.y <= height && prevPoint.y >= height))
+          {
+              Point3D point = interpolateBetween(prevPoint, currPoint, height);
+              //if (height == 4 /*&& (length < 20 || length > 93)*/) debugPrint("Found point at, $index, $height, $length, $doLeft, ${point.x}, ${point.y}, ${point.z}");
+              return point;
+          }
         }
         index += increment;
     }
@@ -237,21 +240,21 @@ class WaterlineHull extends RotatedHull {
         return offsets; // Return empty if index is out of bounds
       }
       for (Point3D point in _waterlines[index]) {
-        if (_view == HullView.front) {
+        if (_params.view == HullView.front) {
           offsets.add(Offset(point.x, -point.y)); 
-        } else if (_view == HullView.side) {
+        } else if (_params.view == HullView.side) {
           offsets.add(Offset(point.z, -point.y)); 
-        } else if (_view == HullView.top) {
+        } else if (_params.view == HullView.top) {
           offsets.add(Offset(point.z, point.x)); 
         }
       }
     } else if (_waterlines.isNotEmpty) {
       for (Point3D point in _waterlines[_waterlines.length - 1]) {
-        if (_view == HullView.front) {
+        if (_params.view == HullView.front) {
           offsets.add(Offset(point.x, -point.y)); 
-        } else if (_view == HullView.side) {
+        } else if (_params.view == HullView.side) {
           offsets.add(Offset(point.z, -point.y)); 
-        } else if (_view == HullView.top) {
+        } else if (_params.view == HullView.top) {
           offsets.add(Offset(point.z, point.x)); 
         }
       }
@@ -262,11 +265,11 @@ class WaterlineHull extends RotatedHull {
   List<Offset> getBulkheadOffsets(Bulkhead bulkhead) {
     List<Offset> offsets = [];
     for (Point3D point in bulkhead.mPoints) {
-      if (_view == HullView.front) {
+      if (_params.view == HullView.front) {
         offsets.add(Offset(point.x, -point.y)); 
-      } else if (_view == HullView.side) {
+      } else if (_params.view == HullView.side) {
         offsets.add(Offset(point.z, -point.y)); 
-      } else if (_view == HullView.top) {
+      } else if (_params.view == HullView.top) {
         offsets.add(Offset(point.z, point.x)); 
       }
     }
@@ -281,11 +284,11 @@ class WaterlineHull extends RotatedHull {
   List<Offset> getSplinesOffsets(Spline spline) {
     List<Offset> offsets = [];
     for (Point3D point in spline.getPoints()) {
-      if (_view == HullView.front) {
+      if (_params.view == HullView.front) {
         offsets.add(Offset(point.x, -point.y));
-      } else if (_view == HullView.side) {
+      } else if (_params.view == HullView.side) {
         offsets.add(Offset(point.z, -point.y));
-      } else if (_view == HullView.top) {
+      } else if (_params.view == HullView.top) {
         offsets.add(Offset(point.z, point.x));
       }
     }
@@ -293,11 +296,11 @@ class WaterlineHull extends RotatedHull {
     return offsets;
   }
   //*****************************************************************
-  void setView(HullView view) {
-    _view = view;
+  @override void setView(HullView view) {
+    _params.view = view;
   }
   //*****************************************************************
-  HullView getView() {
-    return _view;
+  @override HullView getView() {
+    return _params.view;
   }
 }

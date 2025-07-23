@@ -15,7 +15,8 @@ import '../models/waterline_hull.dart';
 class WaterlineScreen extends StatefulWidget {
   final Hull hull;
   final WaterlineParams? params;
-  const WaterlineScreen(this.hull, {super.key, this.params});
+  final void Function(WaterlineParams) onParamsChanged;
+  const WaterlineScreen(this.hull, {super.key, this.params, required this.onParamsChanged});
 
   @override
   State<WaterlineScreen> createState() => _WaterlineScreenState();
@@ -27,7 +28,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
   void _recomputeWaterlines() {
     setState(() {
       _hull = WaterlineHull(widget.hull, _params);
-      _hullWindow = WaterlineWindow(_hull, _hull.getView(), xyz: xyz);
+      _hullWindow = WaterlineWindow(_hull, xyz: xyz);
     });
   }
   late WaterlineHull _hull;
@@ -53,7 +54,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
   void _createWaterlineHull() {
     xyz = XYZWidget();
     _hull = WaterlineHull(widget.hull, _params);
-    _hullWindow = WaterlineWindow(_hull, HullView.side, xyz: xyz);
+    _hullWindow = WaterlineWindow(_hull, xyz: xyz);
   }
 
   @override
@@ -74,6 +75,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
                       setState(() {
                         _params = params;
                       });
+                      widget.onParamsChanged(_params);
                     },
                   ),
                 ),

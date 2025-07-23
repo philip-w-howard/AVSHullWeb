@@ -1,7 +1,7 @@
 name: avs_hull_web
 description: A Very Simple Hull editing program
 publish_to: 'none'
-version: 0.4.0
+version: 0.4.1
 
 environment:
   sdk: ^3.4.0
