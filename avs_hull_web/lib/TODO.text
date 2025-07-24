@@ -1,19 +1,21 @@
 TODO.text
 Bugs:
     glitch in computeFlatArea for heel of 5.
+    Undo needs to update timestamps to newer (time of undo)
+        exception for undoing back to layout setup?
 Features:
     Waterlines: show centroid and righting moment.
     
-    change number of chines
-    add/delete/move bulkhead
+    Important:
+        change number of chines
+        add/delete/move bulkhead
+        Undo/Redo for panel layouts
+        closed-top 
+    
     Bulkheads with fewer chines?
     Curved bulkheads?
     Direct edit points
     Redo 
-    Undo needs to update timestamps to newer (time of undo)
-        exception for undoing back to layout setup?
-    Undo/Redo for panel layouts
-    closed-top 
     SaveAs formats
     Save/Export layouts
         Layout menu bar (follow design layout)
@@ -36,8 +38,6 @@ Features:
                     values for creating a hull (reset on startup?)
                     layout config                    done
                     waterline params
-    Allow Save to specify filename
-        happens in "Create" dialog.
 
     Zoom/Pan
 

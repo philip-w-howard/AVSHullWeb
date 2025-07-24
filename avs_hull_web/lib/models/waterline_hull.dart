@@ -21,6 +21,13 @@ class WaterlineParams {
   double pitchAngle = 0;          // Angle of pitch in degrees
   bool showAllWaterlines = false;
   HullView view = HullView.top;
+
+  // Hull params computed based on WaterlineParams
+  double freeboard = 0;
+  double centroidX = 0;
+  double centroidY = 0;
+  double centroidZ = 0;
+  double rightingMoment = 0;
 }
 
 class WaterlineHull extends RotatedHull {
@@ -192,6 +199,11 @@ class WaterlineHull extends RotatedHull {
     double weight = 0;
     double heightIncrement = _params.heightIncrement;
     double lengthIncrement = _params.lengthIncrement;
+
+    double sumArea = 0;
+    double sumMomentX = 0;
+    double sumMomentY = 0;
+    double sumMomentZ = 0;
     
     Point3D hullSize = size();
     Point3D hullMin = super.min();
@@ -210,6 +222,11 @@ class WaterlineHull extends RotatedHull {
         double sliceWeight = areaData.area * heightIncrement * _params.waterDensity ;
         sliceWeight /= (12*12*12); // Convert to cubic feet
         weight += sliceWeight;
+
+        sumArea += areaData.area;
+        sumMomentX += areaData.area * areaData.centroidX;
+        sumMomentY += areaData.area * height;
+        sumMomentZ += areaData.area * areaData.centroidZ;
       } 
 
       if (points.isNotEmpty && weight < _params.weight) {
@@ -219,6 +236,14 @@ class WaterlineHull extends RotatedHull {
       height += heightIncrement;
     }
 
+    if (sumArea != 0)
+    {
+      _params.freeboard = height;
+      _params.centroidX = sumMomentX / sumArea;
+      _params.centroidY = sumMomentY / sumArea;
+      _params.centroidZ = sumMomentZ / sumArea;
+      _params.rightingMoment = _params.centroidX / 12 * weight; // convert inches to feet
+    }
     return;
   }
 
