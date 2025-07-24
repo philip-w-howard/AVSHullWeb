@@ -3,9 +3,10 @@ Bugs:
     glitch in computeFlatArea for heel of 5.
     Undo needs to update timestamps to newer (time of undo)
         exception for undoing back to layout setup?
+    Fix centroid computation
+    Fix righting moment computation
+    Fix freeboard computation
 Features:
-    Waterlines: show centroid and righting moment.
-    
     Important:
         change number of chines
         add/delete/move bulkhead

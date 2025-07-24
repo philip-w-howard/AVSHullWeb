@@ -224,9 +224,9 @@ class WaterlineHull extends RotatedHull {
         weight += sliceWeight;
 
         sumArea += areaData.area;
-        sumMomentX += areaData.area * areaData.centroidX;
+        sumMomentX += areaData.centroidX;
         sumMomentY += areaData.area * height;
-        sumMomentZ += areaData.area * areaData.centroidZ;
+        sumMomentZ += areaData.centroidZ;
       } 
 
       if (points.isNotEmpty && weight < _params.weight) {

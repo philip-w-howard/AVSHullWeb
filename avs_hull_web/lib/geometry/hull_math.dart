@@ -672,11 +672,9 @@ AreaData computeFlatArea(List<Point3D> boundary) {
       double length = (left.z - lastLeft.z).abs();
       area += width * length;
       centroidX += ((left.x + right.x + lastLeft.x + lastRight.x) / 4) *
-          width *
-          length; // Approx: need to do the triangle thing for the ends
+          width * length; // Approx: need to do the triangle thing for the ends
       centroidZ += ((left.z + right.z + lastLeft.z + lastRight.z) / 4) *
-          width *
-          length; // Approx: Need to do the triangle thing for the ends
+          width * length; // Approx: Need to do the triangle thing for the ends
 
       lastLeft = left;
       lastRight = right;
