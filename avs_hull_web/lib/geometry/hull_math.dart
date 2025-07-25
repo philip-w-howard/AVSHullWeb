@@ -642,7 +642,7 @@ class AreaData {
 //      1) The shape is "flat" meaning the Y coordinate of each point is the same
 //      2) The shape is symetric on Z meaining that point[ii].Z == point[count-ii-1].Z
 // These assumptions are met for waterlines computed on a hull with no heel.
-AreaData computeFlatArea(List<Point3D> boundary) {
+AreaData computeFlatArea(List<Point3D> boundary, Point3D centerline) {
   double area = 0;
   double centroidX = 0;
   double centroidZ = 0;
@@ -650,6 +650,8 @@ AreaData computeFlatArea(List<Point3D> boundary) {
   if (boundary.isEmpty) {
     return AreaData(0, 0, 0);
   }
+
+  debugPrint("\nComputing area for waterline");
 
   int limit = boundary.length ~/ 2;
 
@@ -670,8 +672,12 @@ AreaData computeFlatArea(List<Point3D> boundary) {
       double width =
           ((left.x - right.x).abs() + (lastLeft.x - lastRight.x).abs())/2;
       double length = (left.z - lastLeft.z).abs();
+      // debugPrint("Width: $width, Length: $length points: "
+      //   "(${left.x}, ${left.z}), (${right.x}, ${right.z}), "
+      //   "(${lastLeft.x}, ${lastLeft.z}), (${lastRight.x}, ${lastRight.z})");
+    
       area += width * length;
-      centroidX += ((left.x + right.x + lastLeft.x + lastRight.x) / 4) *
+      centroidX += (((left.x + right.x + lastLeft.x + lastRight.x) / 4) - centerline.x) *
           width * length; // Approx: need to do the triangle thing for the ends
       centroidZ += ((left.z + right.z + lastLeft.z + lastRight.z) / 4) *
           width * length; // Approx: Need to do the triangle thing for the ends
@@ -686,6 +692,7 @@ AreaData computeFlatArea(List<Point3D> boundary) {
     }
   }
 
+  debugPrint("Area: $area, Centroid: ($centroidX, $centroidZ)");
   return AreaData(area, centroidX, centroidZ);
 }
 

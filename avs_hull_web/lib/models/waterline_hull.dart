@@ -13,7 +13,7 @@ import 'hull.dart';
 import 'rotated_hull.dart';
 
 class WaterlineParams {
-  double heightIncrement = .25;  // Height increment for waterlines
+  double heightIncrement = 2;  // Height increment for waterlines
   double lengthIncrement = 0.25;  // Length increment for waterlines
   double weight = 200;            // Weight of the loaded hull in pounds   
   double waterDensity = 62.4;     // lb/ft^3
@@ -206,7 +206,10 @@ class WaterlineHull extends RotatedHull {
     double sumMomentZ = 0;
     
     Point3D hullSize = size();
-    Point3D hullMin = super.min();
+    Point3D hullMin = min();
+    Point3D centerline = Point3D(hullSize.x / 2, hullMin.y / 2, hullSize.z / 2);
+
+    debugPrint("Min: ${hullMin.toString()}, Size: ${hullSize.toString()}");
 
     double height = hullMin.y;
     double heightMax = height + hullSize.y;
@@ -216,21 +219,26 @@ class WaterlineHull extends RotatedHull {
     while (height <= heightMax && weight < _params.weight) {
       // Generate the waterline points
       List<Point3D>? points = _gererateWaterline(mBulkheads, mChines, height, lengthIncrement);
-      if (points == null) return ; // This implies we started taking on water
-      AreaData areaData = computeFlatArea(points);
+      if (points == null) break ; // This implies we started taking on water
+      AreaData areaData = computeFlatArea(points, centerline);
       if (areaData.area > 0) {
         double sliceWeight = areaData.area * heightIncrement * _params.waterDensity ;
         sliceWeight /= (12*12*12); // Convert to cubic feet
         weight += sliceWeight;
-
-        sumArea += areaData.area;
-        sumMomentX += areaData.centroidX;
-        sumMomentY += areaData.area * height;
-        sumMomentZ += areaData.centroidZ;
+      } 
+      else {
+        debugPrint("No area computed for height $height, points: ${points.length}");
       } 
 
       if (points.isNotEmpty && weight < _params.weight) {
+        sumArea += areaData.area;
+        sumMomentX += areaData.centroidX * areaData.area;
+        sumMomentY += areaData.area * (height - centerline.y);
+        sumMomentZ += areaData.centroidZ * areaData.area;
         _waterlines.add(points);
+      }
+      else if (weight >= _params.weight) {
+        debugPrint("Weight exceeded: $weight, stopping waterline generation at height $height");
       }
 
       height += heightIncrement;
@@ -238,11 +246,16 @@ class WaterlineHull extends RotatedHull {
 
     if (sumArea != 0)
     {
+      debugPrint("Area: $sumArea, MomentX: $sumMomentX, MomentY: $sumMomentY, MomentZ: $sumMomentZ");
       _params.freeboard = height;
       _params.centroidX = sumMomentX / sumArea;
       _params.centroidY = sumMomentY / sumArea;
       _params.centroidZ = sumMomentZ / sumArea;
       _params.rightingMoment = _params.centroidX / 12 * weight; // convert inches to feet
+      debugPrint("Freeboard: ${_params.freeboard}, Centroid: (${_params.centroidX}, ${_params.centroidY}, ${_params.centroidZ}), Righting Moment: ${_params.rightingMoment}");  
+    }
+    else {
+      debugPrint("No waterlines generated, sumArea is zero.");
     }
     return;
   }
