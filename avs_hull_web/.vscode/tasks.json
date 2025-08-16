@@ -1,17 +1,29 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "shell",
-			"label": "Flutter build web",
-			"command": "flutter",
-			"args": [
-				"build",
-				"web"
-			],
-			"problemMatcher": [],
-			"group": "build",
-			"isBackground": false
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+	{
+	  "type": "shell",
+	  "label": "Update build info",
+	  "command": "powershell",
+	  "args": [
+		"-ExecutionPolicy", "Bypass", "-File", "./update_build_info.ps1"
+	  ],
+	  "problemMatcher": [],
+	  "group": "build",
+	  "isBackground": false
+	},
+	{
+	  "type": "shell",
+	  "label": "Flutter build web",
+	  "command": "flutter",
+	  "args": [
+		"build",
+		"web"
+	  ],
+	  "problemMatcher": [],
+	  "group": "build",
+	  "isBackground": false,
+	  "dependsOn": ["Update build info"]
+	}
+  ]
 }

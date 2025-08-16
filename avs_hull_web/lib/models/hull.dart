@@ -275,4 +275,34 @@ class Hull {
     _createChines();
   }
 
+  double minBulkheadPos() {
+    Bulkhead bulkhead = mBulkheads[0];
+    int nPoints = bulkhead.numPoints()~/2;
+
+    if (bulkhead.type() == BulkheadType.vertical) {
+      return 0;
+    } else if (bulkhead.type() == BulkheadType.bow) {
+      return bulkhead.mPoints[nPoints-1].z;
+    } else if (bulkhead.mTransomAngle < 90) {
+      return bulkhead.mPoints[0].z;
+    } else {    
+      return bulkhead.mPoints[nPoints - 1].z;
+    }
+  }
+
+  double maxBulkheadPos() {
+    Bulkhead bulkhead = mBulkheads[mBulkheads.length - 1];
+    int nPoints = bulkhead.numPoints()~/2;
+
+    if (bulkhead.type() == BulkheadType.vertical) {
+      return bulkhead.mPoints[0].z;
+    } else if (bulkhead.type() == BulkheadType.bow) {
+      return bulkhead.mPoints[nPoints-1].z;
+    } else if (bulkhead.mTransomAngle > 90) {
+      return bulkhead.mPoints[0].z;
+    } else {    
+      return bulkhead.mPoints[nPoints - 1].z;
+    }
+  }
+
 }

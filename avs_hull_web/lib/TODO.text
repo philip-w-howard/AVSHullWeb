@@ -11,7 +11,9 @@ Features:
         change number of chines
         add/delete/move bulkhead
         Undo/Redo for panel layouts
+        Save/Restore panel layouts
         closed-top 
+        In waterline screen, report when taking on water
     
     Bulkheads with fewer chines?
     Curved bulkheads?

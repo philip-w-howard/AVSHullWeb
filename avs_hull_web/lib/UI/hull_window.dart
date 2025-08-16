@@ -115,6 +115,9 @@ class HullWindow extends StatelessWidget {
                 onPanStart: _panStart,
                 onPanUpdate: _panUpdate,
                 onPanEnd: _panEnd,
+                onLongPressStart: (LongPressStartDetails details) {
+                  _longPress(details, context);
+                },
                 child: MouseRegion(
                   onHover: _hover,
                   child: CustomPaint(
@@ -128,6 +131,30 @@ class HullWindow extends StatelessWidget {
         },
       ),
     );
+  }
+  
+  void _longPress(LongPressStartDetails details, BuildContext context) {
+    debugPrint('Long press at ${details.localPosition}');
+    bool needsRedraw = false;
+    double x, y;
+    if (_drawDetails.editable && _myHull.isEditable()) {
+      if (_drawDetails.dragStart.dx == details.localPosition.dx &&
+          _drawDetails.dragStart.dy == details.localPosition.dy) {
+        (x, y) = _painter.toHullCoords(_drawDetails.dragStart);
+        _myHull.bulkheadIsSelected = false;
+
+        for (int ii = 0; ii < _myHull.numBulkheads(); ii++) {
+          if (_myHull.isNearBulkhead(
+              ii, x, y, _nearnessDistance / _painter.scale())) {
+            _myHull.bulkheadIsSelected = true;
+            _myHull.selectedBulkhead = ii;
+            _painter.redraw();
+            debugPrint('Display bulkhead edit menu');
+            break;
+          }
+        }
+      }    
+    }
   }
 
   void _hover(PointerEvent details) {

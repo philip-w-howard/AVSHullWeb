@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:avs_hull_web/settings/build_info.dart';
+import '../settings/settings.dart';
 // InfoTab: non-editable program description
 class InfoTab extends StatelessWidget {
   const InfoTab({super.key});
@@ -9,13 +11,13 @@ class InfoTab extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text(
+        children: [
+          const Text(
             'Program Description',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 12),
-          Text(
+          const SizedBox(height: 12),
+          const Text(
             'AVS Hull is a program for designing and analyzing plywood hulls for boats. \n'
             '\n'
             'AVS Hull is released under the MIT license. The source is available at https://github.com/philip-w-howard/AVSHullWeb.git\n'
@@ -24,6 +26,12 @@ class InfoTab extends StatelessWidget {
             '\n'
             'Under some conditions, the waterlines are not properly computed near their ends (near the bow and stern). This only seems to happen when there is a non-zero heel angle.\n'
             , style: TextStyle(fontSize: 16),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Version: $version\n'
+            'Build: $kBuildTimestamp',
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ],
       ),

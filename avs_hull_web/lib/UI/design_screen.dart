@@ -126,6 +126,8 @@ class DesignScreen extends StatelessWidget {
                     _processResize(context);
                   } else if (choice == 'Chines') {
                     _processChines(context);
+                  } else if (choice == 'Bulkheads') {
+                    _processBulkheads(context);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -216,6 +218,80 @@ class DesignScreen extends StatelessWidget {
 
   Future _processChines(BuildContext context) async {
     return _processResize(context);
+  }
+
+
+
+  Future _processBulkheads(BuildContext context) async {
+    TextEditingController locationController = TextEditingController();
+    bool okPressed = false;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enter New Bulkhead Location'),
+          content: TextField(
+            controller: locationController,
+            keyboardType: TextInputType.numberWithOptions(decimal: true),
+            decoration: const InputDecoration(hintText: 'Location'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                okPressed = true;
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    if (okPressed) {
+      double? location = double.tryParse(locationController.text);
+      if (location != null && location > _myHull.minBulkheadPos() && location < _myHull.maxBulkheadPos()) {
+        _onBulkheadLocationEntered(location);
+        resetScreen();
+      } else {
+        await showErrorDialog(context, 'Invalid bulkhead location: '
+            '	$location\nValid range: '
+            '${_myHull.minBulkheadPos()} to ${_myHull.maxBulkheadPos()}');
+      }
+    }
+  }
+
+  // Helper to show an error dialog
+  Future<void> showErrorDialog(BuildContext context, String message) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _onBulkheadLocationEntered(double location) {
+    int n = _myHull.mBulkheads.length - 1;
+    debugPrint('Bulkhead location entered: $location '
+    '${_myHull.mBulkheads[0].type()} ${_myHull.mBulkheads[0].mTransomAngle}  '
+    '${_myHull.mBulkheads[n].type()} ${_myHull.mBulkheads[n].mTransomAngle}');
   }
 
   void _selectAndLoadFile(BuildContext context) async {
