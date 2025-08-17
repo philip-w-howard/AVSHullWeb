@@ -126,8 +126,10 @@ class DesignScreen extends StatelessWidget {
                     _processResize(context);
                   } else if (choice == 'Chines') {
                     _processChines(context);
-                  } else if (choice == 'Bulkheads') {
-                    _processBulkheads(context);
+                  } else if (choice == 'AddBulkhead') {
+                    _addBulkhead(context);
+                  } else if (choice == 'DeleteBulkhead') {
+                    _deleteBulkhead(context);
                   }
                 },
                 itemBuilder: (BuildContext context) {
@@ -141,8 +143,12 @@ class DesignScreen extends StatelessWidget {
                       child: Text('Chines'),
                     ),
                     const PopupMenuItem<String>(
-                      value: 'Bulkheads',
-                      child: Text('Bulkheads'),
+                      value: 'AddBulkhead',
+                      child: Text('Add Bulkhead'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'DeleteBulkhead',
+                      child: Text('Delete Bulkhead'),
                     ),
                   ];
                 },
@@ -226,7 +232,7 @@ class DesignScreen extends StatelessWidget {
 
 
 
-  Future _processBulkheads(BuildContext context) async {
+  Future _addBulkhead(BuildContext context) async {
     TextEditingController locationController = TextEditingController();
     bool okPressed = false;
     await showDialog(
@@ -268,6 +274,53 @@ class DesignScreen extends StatelessWidget {
             '${_myHull.minBulkheadPos()} to ${_myHull.maxBulkheadPos()}');
       }
     }
+  }
+
+  Future _deleteBulkhead(BuildContext context) async {
+    TextEditingController bulkheadController = TextEditingController();
+    bool okPressed = false;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Bulkhead'),
+          content: TextField(
+            controller: bulkheadController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(hintText: 'Bulkhead number'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                okPressed = true;
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    if (okPressed) {
+      int? bulkheadNum = int.tryParse(bulkheadController.text);
+      if (bulkheadNum != null &&
+          bulkheadNum > 0 &&
+          bulkheadNum < _myHull.numBulkheads() - 1) {
+        _myHull.deleteBulkhead(bulkheadNum);
+        resetScreen(null);
+      } else {
+        await showErrorDialog(
+            context,
+            'Invalid bulkhead number: $bulkheadNum\n'
+            'Valid range: 1 to ${_myHull.numBulkheads() - 2}');
+      }
+    }    
   }
 
   // Helper to show an error dialog

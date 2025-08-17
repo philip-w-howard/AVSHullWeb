@@ -6,6 +6,7 @@
 
 import 'dart:math' as math;
 import 'package:avs_hull_web/geometry/hull_math.dart';
+import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
 import '../geometry/point_3d.dart';
@@ -340,6 +341,7 @@ class Hull {
     // Can't delete bow nor stern bulkheads
     if (bulk < 1 || bulk >= mBulkheads.length - 1) return;
 
+    debugPrint('Deleting bulkhead $bulk');
     if (mBulkheads.length > 2) {
       mBulkheads.removeAt(bulk);
       timeUpdated = DateTime.now();
