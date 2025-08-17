@@ -277,50 +277,20 @@ class DesignScreen extends StatelessWidget {
   }
 
   Future _deleteBulkhead(BuildContext context) async {
-    TextEditingController bulkheadController = TextEditingController();
-    bool okPressed = false;
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Bulkhead'),
-          content: TextField(
-            controller: bulkheadController,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(hintText: 'Bulkhead number'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                okPressed = true;
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-    if (okPressed) {
-      int? bulkheadNum = int.tryParse(bulkheadController.text);
-      if (bulkheadNum != null &&
-          bulkheadNum > 0 &&
-          bulkheadNum < _myHull.numBulkheads() - 1) {
+    if (_editWindow.bulkheadIsSelected()) {
+      // If a bulkhead is selected, delete it
+      int bulkheadNum = _editWindow.selectedBulkhead();
+      if (bulkheadNum > 0 && bulkheadNum < _myHull.numBulkheads() - 1) {
         _myHull.deleteBulkhead(bulkheadNum);
         resetScreen(null);
       } else {
-        await showErrorDialog(
-            context,
-            'Invalid bulkhead number: $bulkheadNum\n'
-            'Valid range: 1 to ${_myHull.numBulkheads() - 2}');
+        await showErrorDialog(context, 'Cannot delete the first or last bulkhead.');
       }
-    }    
+      return;
+    } else {
+      // If no bulkhead is selected, prompt the user to select one
+      await showErrorDialog(context, 'Please select a bulkhead to delete.');
+    }
   }
 
   // Helper to show an error dialog
