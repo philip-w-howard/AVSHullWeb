@@ -174,15 +174,11 @@ class DesignScreen extends StatelessWidget {
     );
   }
 
-  void resetScreen(Hull? newHull) {
-    if (newHull != null) {
-      //_myHull.updateFromHull(newHull);
-      debugPrint('resetScreen called with ${newHull.numBulkheads()} bulkheads');
-    }
-    _frontWindow.resetView(newHull);
-    _sideWindow.resetView(newHull);
-    _topWindow.resetView(newHull);
-    _editWindow.resetView(newHull);
+  void resetScreen() {
+      _frontWindow.resetView();
+    _sideWindow.resetView();
+    _topWindow.resetView();
+    _editWindow.resetView();
   }
 
   void _selectFront() {
@@ -220,7 +216,7 @@ class DesignScreen extends StatelessWidget {
 
     if (result) {
       _myHull.resize(xSize, ySize, zSize);
-      resetScreen(null);
+      resetScreen();
     }
 
     return result;
@@ -267,7 +263,7 @@ class DesignScreen extends StatelessWidget {
       double? location = double.tryParse(locationController.text);
       if (location != null && location > _myHull.minBulkheadPos() && location < _myHull.maxBulkheadPos()) {
         _myHull.insertBulkhead(location);
-        resetScreen(null);
+        resetScreen();
       } else {
         await showErrorDialog(context, 'Invalid bulkhead location: '
             '	$location\nValid range: '
@@ -282,7 +278,7 @@ class DesignScreen extends StatelessWidget {
       int bulkheadNum = _editWindow.selectedBulkhead();
       if (bulkheadNum > 0 && bulkheadNum < _myHull.numBulkheads() - 1) {
         _myHull.deleteBulkhead(bulkheadNum);
-        resetScreen(null);
+        resetScreen();
       } else {
         await showErrorDialog(context, 'Cannot delete the first or last bulkhead.');
       }
@@ -329,7 +325,7 @@ class DesignScreen extends StatelessWidget {
 
     if (result) {
       readHull(hullName, _myHull);
-      resetScreen(null);
+      resetScreen();
     }
   }
 
@@ -338,7 +334,7 @@ class DesignScreen extends StatelessWidget {
     if (contents != null) {
       Map<String, dynamic> jsonData = json.decode(contents);
       _myHull.updateFromJson(jsonData);
-      resetScreen(null);
+      resetScreen();
     }
   }
 
@@ -373,7 +369,7 @@ class DesignScreen extends StatelessWidget {
 
     if (result) {
       _myHull.updateFromParams(params);
-      resetScreen(null);
+      resetScreen();
     }
   }
 

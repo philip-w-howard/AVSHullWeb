@@ -50,7 +50,7 @@ class HullWindow extends StatelessWidget {
   late final RotatedHull _myHull;
   late final HullLogger? _hullLogger;
   final void Function()? _selector;
-  final void Function(Hull? newHull)? _updateScreen;
+  final void Function()? _updateScreen;
   final HullDrawDetails _drawDetails = HullDrawDetails();
   final FocusNode _focusNode = FocusNode();
 
@@ -66,11 +66,7 @@ class HullWindow extends StatelessWidget {
     _drawDetails.rotatable = true;
   }
 
-  void resetView(Hull? newHull) {
-    if (newHull != null) {
-      //_myHull.updateFromHull(newHull);
-    }
-    
+  void resetView() {
     bool static = _myHull.isStatic();
 
     _myHull.setDynamic();
@@ -119,9 +115,9 @@ class HullWindow extends StatelessWidget {
                 onPanStart: _panStart,
                 onPanUpdate: _panUpdate,
                 onPanEnd: _panEnd,
-                onLongPressStart: (LongPressStartDetails details) {
-                  _longPress(details, context);
-                },
+                // onLongPressStart: (LongPressStartDetails details) {
+                //   _longPress(details, context);
+                // },
                 child: MouseRegion(
                   onHover: _hover,
                   child: CustomPaint(
@@ -137,31 +133,6 @@ class HullWindow extends StatelessWidget {
     );
   }
   
-  void _longPress(LongPressStartDetails details, BuildContext context) {
-    debugPrint('Long press at ${details.localPosition}');
-    bool needsRedraw = false;
-    double x, y;
-    if (_drawDetails.editable && _myHull.isEditable()) {
-      if (_drawDetails.dragStart.dx == details.localPosition.dx &&
-          _drawDetails.dragStart.dy == details.localPosition.dy) {
-        (x, y) = _painter.toHullCoords(_drawDetails.dragStart);
-        _myHull.bulkheadIsSelected = false;
-
-        for (int ii = 0; ii < _myHull.numBulkheads(); ii++) {
-          if (_myHull.isNearBulkhead(
-              ii, x, y, _nearnessDistance / _painter.scale())) {
-            _myHull.bulkheadIsSelected = true;
-            _myHull.selectedBulkhead = ii;
-            debugPrint('Display bulkhead edit menu');
-            _showDeleteBulkheadDialog(context, ii);
-            _painter.redraw();
-            break;
-          }
-        }
-      }    
-    }
-  }
-
   void _hover(PointerEvent details) {
     double rawX,rawY;
     double x,y,z;
@@ -298,7 +269,7 @@ class HullWindow extends StatelessWidget {
           startY - _myHull.movingHandleY);
 
       _myHull.movingHandle = false;
-      _updateScreen!(null);
+      _updateScreen!();
     }
   }
 
@@ -312,7 +283,7 @@ class HullWindow extends StatelessWidget {
         HardwareKeyboard.instance.isControlPressed &&
         event.character == 'z') {
       _myHull.popLog();
-      _updateScreen!(null);
+      _updateScreen!();
     }
     //print('Keypress $event');
   }
@@ -341,7 +312,7 @@ class HullWindow extends StatelessWidget {
     if (shouldDelete == true) {
       _myHull.deleteBulkhead(bulkheadIndex);
       //_myHull.rotateTo(0, 0, 0);
-      _updateScreen!(_myHull);
+      _updateScreen!();
     }
   }
 
