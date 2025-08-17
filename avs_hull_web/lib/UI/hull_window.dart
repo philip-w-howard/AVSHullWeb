@@ -50,7 +50,7 @@ class HullWindow extends StatelessWidget {
   late final RotatedHull _myHull;
   late final HullLogger? _hullLogger;
   final void Function()? _selector;
-  final void Function()? _updateScreen;
+  final void Function(Hull? newHull)? _updateScreen;
   final HullDrawDetails _drawDetails = HullDrawDetails();
   final FocusNode _focusNode = FocusNode();
 
@@ -66,7 +66,11 @@ class HullWindow extends StatelessWidget {
     _drawDetails.rotatable = true;
   }
 
-  void resetView() {
+  void resetView(Hull? newHull) {
+    if (newHull != null) {
+      //_myHull.updateFromHull(newHull);
+    }
+    
     bool static = _myHull.isStatic();
 
     _myHull.setDynamic();
@@ -148,8 +152,9 @@ class HullWindow extends StatelessWidget {
               ii, x, y, _nearnessDistance / _painter.scale())) {
             _myHull.bulkheadIsSelected = true;
             _myHull.selectedBulkhead = ii;
-            _painter.redraw();
             debugPrint('Display bulkhead edit menu');
+            _showDeleteBulkheadDialog(context, ii);
+            _painter.redraw();
             break;
           }
         }
@@ -293,7 +298,7 @@ class HullWindow extends StatelessWidget {
           startY - _myHull.movingHandleY);
 
       _myHull.movingHandle = false;
-      _updateScreen!();
+      _updateScreen!(null);
     }
   }
 
@@ -307,8 +312,37 @@ class HullWindow extends StatelessWidget {
         HardwareKeyboard.instance.isControlPressed &&
         event.character == 'z') {
       _myHull.popLog();
-      _updateScreen!();
+      _updateScreen!(null);
     }
     //print('Keypress $event');
   }
+
+  // Show a dialog to confirm bulkhead deletion
+Future<void> _showDeleteBulkheadDialog(BuildContext context, int bulkheadIndex) async {
+  bool? shouldDelete = await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Delete Bulkhead'),
+        content: Text('Delete bulkhead #$bulkheadIndex?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
+  if (shouldDelete == true) {
+    _myHull.deleteBulkhead(bulkheadIndex);
+    //_myHull.rotateTo(0, 0, 0);
+    _updateScreen!(_myHull);
+  }
+}
+
 }

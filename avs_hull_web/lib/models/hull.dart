@@ -11,6 +11,7 @@ import 'package:xml/xml.dart';
 import '../geometry/point_3d.dart';
 import 'bulkhead.dart';
 import '../geometry/spline.dart';
+//import '../geometry/hull_math.dart';
 import '../settings/settings.dart';
 
 class HullParams {
@@ -305,4 +306,44 @@ class Hull {
     }
   }
 
+  // create a bulkhead at the specified position
+  void insertBulkhead(double position) {
+    int bulk = mBulkheads.length-1;
+
+    // find the bulkhead to insert before
+    for (int ii=1; ii<mBulkheads.length-1; ii++) {
+      if (mBulkheads[ii].mPoints[0].z > position) {
+        bulk = ii;
+        break;  // <<<<<<<<<<<<<<<<<<<<<<<
+      }
+    }
+    // create a new bulkhead
+    Bulkhead newBulkhead = Bulkhead.copy(mBulkheads[bulk]);
+    for (int ii=0; ii<newBulkhead.numPoints(); ii++) {
+      Point3D? point = interpolateToZ(mChines[ii].getPoints(), position);
+      if (point != null) {
+        newBulkhead.mPoints[ii] = point;
+      } else {
+        newBulkhead.mPoints[ii] = Point3D(0, 0, position);
+      }
+    }
+    
+    // insert the new bulkhead
+    mBulkheads.insert(bulk, newBulkhead);
+    
+    timeUpdated = DateTime.now();
+    _createChines();
+  }
+
+  // delete specified bulkhead
+  void deleteBulkhead(int bulk) {
+    // Can't delete bow nor stern bulkheads
+    if (bulk < 1 || bulk >= mBulkheads.length - 1) return;
+
+    if (mBulkheads.length > 2) {
+      mBulkheads.removeAt(bulk);
+      timeUpdated = DateTime.now();
+      _createChines();
+    }
+  }
 }

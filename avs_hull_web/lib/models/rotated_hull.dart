@@ -55,6 +55,11 @@ class RotatedHull extends Hull {
     _createFromBase();
   }
 
+  // @override void updateFromHull(Hull source) {
+  //   _baseHull.updateFromHull(source);
+  //   _createFromBase();
+  // }
+
   void _createFromBase() {
     mBulkheads = List<Bulkhead>.from(_baseHull.mBulkheads);
 

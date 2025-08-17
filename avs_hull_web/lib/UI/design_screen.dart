@@ -168,11 +168,15 @@ class DesignScreen extends StatelessWidget {
     );
   }
 
-  void resetScreen() {
-    _frontWindow.resetView();
-    _sideWindow.resetView();
-    _topWindow.resetView();
-    _editWindow.resetView();
+  void resetScreen(Hull? newHull) {
+    if (newHull != null) {
+      //_myHull.updateFromHull(newHull);
+      debugPrint('resetScreen called with ${newHull.numBulkheads()} bulkheads');
+    }
+    _frontWindow.resetView(newHull);
+    _sideWindow.resetView(newHull);
+    _topWindow.resetView(newHull);
+    _editWindow.resetView(newHull);
   }
 
   void _selectFront() {
@@ -210,7 +214,7 @@ class DesignScreen extends StatelessWidget {
 
     if (result) {
       _myHull.resize(xSize, ySize, zSize);
-      resetScreen();
+      resetScreen(null);
     }
 
     return result;
@@ -256,8 +260,8 @@ class DesignScreen extends StatelessWidget {
     if (okPressed) {
       double? location = double.tryParse(locationController.text);
       if (location != null && location > _myHull.minBulkheadPos() && location < _myHull.maxBulkheadPos()) {
-        _onBulkheadLocationEntered(location);
-        resetScreen();
+        _myHull.insertBulkhead(location);
+        resetScreen(null);
       } else {
         await showErrorDialog(context, 'Invalid bulkhead location: '
             '	$location\nValid range: '
@@ -267,7 +271,7 @@ class DesignScreen extends StatelessWidget {
   }
 
   // Helper to show an error dialog
-  Future<void> showErrorDialog(BuildContext context, String message) {
+  Future<void> showErrorDialog(BuildContext context, String message) async{
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -287,13 +291,6 @@ class DesignScreen extends StatelessWidget {
     );
   }
 
-  void _onBulkheadLocationEntered(double location) {
-    int n = _myHull.mBulkheads.length - 1;
-    debugPrint('Bulkhead location entered: $location '
-    '${_myHull.mBulkheads[0].type()} ${_myHull.mBulkheads[0].mTransomAngle}  '
-    '${_myHull.mBulkheads[n].type()} ${_myHull.mBulkheads[n].mTransomAngle}');
-  }
-
   void _selectAndLoadFile(BuildContext context) async {
     String hullName = unnamedHullName;
 
@@ -309,7 +306,7 @@ class DesignScreen extends StatelessWidget {
 
     if (result) {
       readHull(hullName, _myHull);
-      resetScreen();
+      resetScreen(null);
     }
   }
 
@@ -318,7 +315,7 @@ class DesignScreen extends StatelessWidget {
     if (contents != null) {
       Map<String, dynamic> jsonData = json.decode(contents);
       _myHull.updateFromJson(jsonData);
-      resetScreen();
+      resetScreen(null);
     }
   }
 
@@ -353,7 +350,7 @@ class DesignScreen extends StatelessWidget {
 
     if (result) {
       _myHull.updateFromParams(params);
-      resetScreen();
+      resetScreen(null);
     }
   }
 

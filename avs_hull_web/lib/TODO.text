@@ -1,5 +1,6 @@
 TODO.text
 Bugs:
+    Delete Bulkhead only updates the bottom window
     glitch in computeFlatArea for heel of 5.
     Undo needs to update timestamps to newer (time of undo)
         exception for undoing back to layout setup?
