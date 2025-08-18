@@ -41,6 +41,9 @@ class Bulkhead {
   // **************************************************
   Bulkhead.round(double z, double width, double height, double top,
       int numChines, double transomAngle, bool flatBottomed, bool closedTop) {
+    mFlatBottomed = flatBottomed;
+    mClosedTop = closedTop;
+    
     if (transomAngle == 90) {
       mBulkheadType = BulkheadType.vertical;
       mTransomAngle = 90;
