@@ -9,6 +9,7 @@ import 'package:xml/xml.dart';
 import 'dart:math' as math;
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
+import '../geometry/spline.dart';
 
 enum BulkheadType { bow, vertical, transom }
 
@@ -293,4 +294,42 @@ class Bulkhead {
     }
     return offsets;
   }
+
+  // **************************************************
+  void setNumChines(int numChines) {
+    // Recreate points based on the new number of chines
+    const int precision = 23; // Oversample rate for curve
+    List<Point3D> newPoints = [];
+    List<Point3D> curvePoints = [];
+    int useableChines = numPoints() ~/ 2;
+    if (!mFlatBottomed) useableChines += 1;
+    
+    for (int ii=0; ii<useableChines; ii++) {
+      double x = mPoints[ii].x;
+      double y = mPoints[ii].y;
+      double z = mPoints[ii].z;
+      curvePoints.add(Point3D(x, y, z));
+    }
+
+    Spline shape = Spline(curvePoints, (numChines + 1) * precision);
+    List<Point3D> points = shape.getPoints();
+
+    int index = 0;
+    for (int ii = 0; ii <= numChines; ii++) {
+      newPoints.add(points[index]);
+      index += precision;
+    }
+
+    // Add the bottom point
+    newPoints.add(mPoints[mPoints.length ~/ 2]);
+
+    // Add the other side points
+    index = precision * numChines;
+    for (int ii = 0; ii < numChines; ii++) {
+      index -= precision;
+      newPoints.add(Point3D(-points[index].x, points[index].y, points[index].z));
+    }
+    
+    mPoints = newPoints;
+  } 
 }

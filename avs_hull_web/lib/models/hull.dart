@@ -348,4 +348,16 @@ class Hull {
       _createChines();
     }
   }
+
+  void setNumChines(int numChines) {
+    if (numChines < 2) numChines = 2;
+    if (numChines > 50) numChines = 50;
+
+    for (Bulkhead bulkhead in mBulkheads) {
+      bulkhead.setNumChines(numChines);
+    }
+
+    _createChines();
+    timeUpdated = DateTime.now();
+  }
 }

@@ -223,7 +223,47 @@ class DesignScreen extends StatelessWidget {
   }
 
   Future _processChines(BuildContext context) async {
-    return _processResize(context);
+    int defaultChines = _myHull.mBulkheads[0].numPoints() ~/2;
+    TextEditingController chinesController = TextEditingController(
+      text: defaultChines.toString());
+    bool okPressed = false;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Number of Chines'),
+          content: TextField(
+            controller: chinesController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(hintText: 'Number of chines'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                okPressed = true;
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    if (okPressed) {
+      int? numChines = int.tryParse(chinesController.text);
+      if (numChines != null && numChines > 1 && numChines < 100) {
+        _myHull.setNumChines(numChines);
+        resetScreen();
+      } else {
+        await showErrorDialog(context, 'Invalid number of chines: ${chinesController.text}');
+      }
+    }
   }
 
 
