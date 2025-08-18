@@ -288,34 +288,6 @@ class HullWindow extends StatelessWidget {
     //print('Keypress $event');
   }
 
-  // Show a dialog to confirm bulkhead deletion
-  Future<void> _showDeleteBulkheadDialog(BuildContext context, int bulkheadIndex) async {
-    bool? shouldDelete = await showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Delete Bulkhead'),
-          content: Text('Delete bulkhead #$bulkheadIndex?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
-    if (shouldDelete == true) {
-      _myHull.deleteBulkhead(bulkheadIndex);
-      //_myHull.rotateTo(0, 0, 0);
-      _updateScreen!();
-    }
-  }
-
   bool bulkheadIsSelected() {
     return _myHull.bulkheadIsSelected;
   }

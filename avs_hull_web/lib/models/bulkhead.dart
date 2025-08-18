@@ -297,9 +297,10 @@ class Bulkhead {
 
   // **************************************************
   void setNumChines(int numChines) {
+    debugPrint('setNumChines before: ${mPoints.length}, numChines: $numChines, flatBottomed: $mFlatBottomed');
+
     // Recreate points based on the new number of chines
     const int precision = 23; // Oversample rate for curve
-    List<Point3D> newPoints = [];
     List<Point3D> curvePoints = [];
     int useableChines = numPoints() ~/ 2;
     if (!mFlatBottomed) useableChines += 1;
@@ -314,14 +315,18 @@ class Bulkhead {
     Spline shape = Spline(curvePoints, (numChines + 1) * precision);
     List<Point3D> points = shape.getPoints();
 
+    List<Point3D> newPoints = [];
     int index = 0;
-    for (int ii = 0; ii <= numChines; ii++) {
+    for (int ii = 0; ii < numChines; ii++) {
       newPoints.add(points[index]);
       index += precision;
     }
 
     // Add the bottom point
-    newPoints.add(mPoints[mPoints.length ~/ 2]);
+    if (!mFlatBottomed) {
+      debugPrint('Adding center point');
+      newPoints.add(mPoints[mPoints.length ~/ 2]);
+    }
 
     // Add the other side points
     index = precision * numChines;
@@ -329,7 +334,8 @@ class Bulkhead {
       index -= precision;
       newPoints.add(Point3D(-points[index].x, points[index].y, points[index].z));
     }
-    
+
     mPoints = newPoints;
+    debugPrint('setNumChines after: ${mPoints.length}, numChines: $numChines, flatBottomed: $mFlatBottomed');
   } 
 }
