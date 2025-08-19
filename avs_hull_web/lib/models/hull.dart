@@ -165,28 +165,41 @@ class Hull {
   }
 
   Point3D min() {
+    Point3D minPoint, maxPoint;
     Point3D minSize =
         Point3D(double.infinity, double.infinity, double.infinity);
 
     for (Bulkhead bulkhead in mBulkheads) {
-      for (Point3D point in bulkhead.mPoints) {
-        minSize.x = math.min(minSize.x, point.x);
-        minSize.y = math.min(minSize.y, point.y);
-        minSize.z = math.min(minSize.z, point.z);
-      }
+      (minPoint, maxPoint) = getMinMax(bulkhead.mPoints);
+      minSize = min3D(minSize, minPoint);
+    }
+    // Check all chine points (if any)
+    for (Spline spline in mChines) {
+      List<Point3D> points = spline.getPoints();
+      (minPoint, maxPoint) = getMinMax(points);
+      minSize = min3D(minPoint, minSize);
     }
 
     return minSize;
   }
 
   Point3D size() {
-    Point3D min = Point3D.zero();
-    Point3D max = Point3D.zero();
-    Point3D sizeMin = Point3D.zero();
-    Point3D sizeMax = Point3D.zero();
+    Point3D min = Point3D(double.infinity, double.infinity, double.infinity);
+    Point3D max = Point3D(double.negativeInfinity, double.negativeInfinity, double.negativeInfinity);
+    Point3D sizeMin = Point3D(double.infinity, double.infinity, double.infinity);
+    Point3D sizeMax = Point3D(double.negativeInfinity, double.negativeInfinity, double.negativeInfinity);
 
     for (Bulkhead bulkhead in mBulkheads) {
       (min, max) = getMinMax(bulkhead.mPoints);
+
+      sizeMin = min3D(min, sizeMin);
+      sizeMax = max3D(max, sizeMax);
+    }
+
+    // Check all chine points (if any)
+    for (Spline spline in mChines) {
+      List<Point3D> points = spline.getPoints();
+      (min, max) = getMinMax(points);
 
       sizeMin = min3D(min, sizeMin);
       sizeMax = max3D(max, sizeMax);

@@ -13,7 +13,7 @@ import 'hull.dart';
 import 'rotated_hull.dart';
 
 class WaterlineParams {
-  double heightIncrement = 2;  // Height increment for waterlines
+  double heightIncrement = 0.25;  // Height increment for waterlines
   double lengthIncrement = 0.25;  // Length increment for waterlines
   double weight = 200;            // Weight of the loaded hull in pounds   
   double waterDensity = 62.4;     // lb/ft^3

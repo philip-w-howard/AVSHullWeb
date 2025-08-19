@@ -17,8 +17,8 @@ class Bulkhead {
   List<Point3D> mPoints = [];
   BulkheadType mBulkheadType = BulkheadType.vertical;
   double mTransomAngle = 90;
-  bool mFlatBottomed = false;
-  bool mClosedTop = false;
+  bool _mFlatBottomed = false;
+  bool _mClosedTop = false;
 
   // **************************************************
   Bulkhead(int numChines, this.mBulkheadType) {
@@ -29,8 +29,8 @@ class Bulkhead {
   Bulkhead.copy(Bulkhead source) {
     mBulkheadType = source.mBulkheadType;
     mTransomAngle = source.mTransomAngle;
-    mFlatBottomed = source.mFlatBottomed;
-    mClosedTop = source.mClosedTop;
+    _mFlatBottomed = source._mFlatBottomed;
+    _mClosedTop = source._mClosedTop;
 
     // need a deep copy
     for (Point3D point in source.mPoints) {
@@ -41,8 +41,8 @@ class Bulkhead {
   // **************************************************
   Bulkhead.round(double z, double width, double height, double top,
       int numChines, double transomAngle, bool flatBottomed, bool closedTop) {
-    mFlatBottomed = flatBottomed;
-    mClosedTop = closedTop;
+    _mFlatBottomed = flatBottomed;
+    _mClosedTop = closedTop;
     
     if (transomAngle == 90) {
       mBulkheadType = BulkheadType.vertical;
@@ -72,8 +72,8 @@ class Bulkhead {
 
     mBulkheadType = BulkheadType.bow;
     mTransomAngle = 90;
-    mFlatBottomed = flatBottomed;
-    mClosedTop = closedTop;
+    _mFlatBottomed = flatBottomed;
+    _mClosedTop = closedTop;
 
     for (int ii = 0; ii <= numChines; ii++) {
       var angle = math.pi + math.pi / 2 * (ii / numChines);
@@ -100,8 +100,8 @@ class Bulkhead {
 
     mBulkheadType = BulkheadType.bow;
     mTransomAngle = 90;
-    mFlatBottomed = flatBottomed;
-    mClosedTop = closedTop;
+    _mFlatBottomed = flatBottomed;
+    _mClosedTop = closedTop;
 
     for (int ii = 0; ii <= numChines; ii++) {
       var angle = math.pi + math.pi / 2 * (ii / numChines);
@@ -128,8 +128,8 @@ class Bulkhead {
     mBulkheadType = type;
     mPoints = [...points];
     mTransomAngle = 90;
-    mFlatBottomed = false;
-    mClosedTop = false;
+    _mFlatBottomed = false;
+    _mClosedTop = false;
   }
 
   // **************************************************
@@ -143,8 +143,8 @@ class Bulkhead {
     mBulkheadType = BulkheadType.values.firstWhere(
         (type) => type.toString() == 'BulkheadType.${json['mBulkheadType']}');
     mTransomAngle = json['mTransomAngle'] ?? 90;
-    mFlatBottomed = json['mFlatBottomed'] ?? false;
-    mClosedTop = json['mClosedTop'] ?? false;
+    _mFlatBottomed = json['mFlatBottomed'] ?? false;
+    _mClosedTop = json['mClosedTop'] ?? false;
   }
 
   // **************************************************
@@ -187,8 +187,8 @@ class Bulkhead {
       'mPoints': mPoints,
       'mBulkheadType': mBulkheadType.toString().split('.').last,
       'mTransomAngle': mTransomAngle,
-      'mFlatBottomed': mFlatBottomed,
-      'mClosedTop': mClosedTop,
+      'mFlatBottomed': _mFlatBottomed,
+      'mClosedTop': _mClosedTop,
     };
   }
 
@@ -211,8 +211,8 @@ class Bulkhead {
 
       builder.element('BulkheadType', nest: mBulkheadType.toString().split('.').last);
       builder.element('TransomAngle', nest: mTransomAngle);
-      builder.element('FlatBottomed', nest: mFlatBottomed);
-      builder.element('ClosedTop', nest: mClosedTop);
+      builder.element('FlatBottomed', nest: _mFlatBottomed);
+      builder.element('ClosedTop', nest: _mClosedTop);
     });
   }
 
@@ -300,13 +300,13 @@ class Bulkhead {
 
   // **************************************************
   void setNumChines(int numChines) {
-    debugPrint('setNumChines before: ${mPoints.length}, numChines: $numChines, flatBottomed: $mFlatBottomed');
+    debugPrint('setNumChines before: ${mPoints.length}, numChines: $numChines, flatBottomed: $_mFlatBottomed');
 
     // Recreate points based on the new number of chines
     const int precision = 23; // Oversample rate for curve
     List<Point3D> curvePoints = [];
     int useableChines = numPoints() ~/ 2;
-    if (!mFlatBottomed) useableChines += 1;
+    if (!_mFlatBottomed) useableChines += 1;
     
     for (int ii=0; ii<useableChines; ii++) {
       double x = mPoints[ii].x;
@@ -326,7 +326,7 @@ class Bulkhead {
     }
 
     // Add the bottom point
-    if (!mFlatBottomed) {
+    if (!_mFlatBottomed) {
       debugPrint('Adding center point');
       newPoints.add(mPoints[mPoints.length ~/ 2]);
     }
@@ -339,6 +339,6 @@ class Bulkhead {
     }
 
     mPoints = newPoints;
-    debugPrint('setNumChines after: ${mPoints.length}, numChines: $numChines, flatBottomed: $mFlatBottomed');
+    debugPrint('setNumChines after: ${mPoints.length}, numChines: $numChines, flatBottomed: $_mFlatBottomed');
   } 
 }

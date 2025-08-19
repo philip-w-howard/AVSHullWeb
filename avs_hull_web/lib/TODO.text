@@ -1,8 +1,5 @@
 TODO.text
 Bugs:
-    Delete Bulkhead sometimes leaves selected view over sized
-    Changing chines adds an extra chine on one side and makes it flat bottomed
-    Changing chines on a flatbottom, places on on the center line
     glitch in computeFlatArea for heel of 5.
     Undo needs to update timestamps to newer (time of undo)
         exception for undoing back to layout setup?
