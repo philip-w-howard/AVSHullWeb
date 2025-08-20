@@ -123,6 +123,11 @@ class Hull {
       timeSaved = DateTime.now();
     }
 
+    if (json['name'] != null) {
+      name = json['name'];
+    } else {
+      name = unnamedHullName;
+    }
     _createChines();
   }
 
@@ -266,6 +271,7 @@ class Hull {
   XmlDocument toXml() {
     final builder = XmlBuilder();
     builder.element('hull', nest: () {
+      builder.element('name', nest: name);
       builder.element('bulkheads', nest: () {
         for (var bulkhead in mBulkheads) {
           bulkhead.addXmlContent(builder);
@@ -273,6 +279,7 @@ class Hull {
       });
 
       builder.element('timeUpdated', nest: timeUpdated.toIso8601String());
+      builder.element('timeSaved', nest: timeSaved.toIso8601String());
     });
     return builder.buildDocument();
   }
