@@ -336,19 +336,20 @@ class Hull {
         break;  // <<<<<<<<<<<<<<<<<<<<<<<
       }
     }
-    // create a new bulkhead
-    Bulkhead newBulkhead = Bulkhead.copy(mBulkheads[bulk]);
-    for (int ii=0; ii<newBulkhead.numPoints(); ii++) {
+
+    List<Point3D> points = [];
+    int numPoints = mBulkheads[bulk].numPoints();
+    for (int ii=0; ii<numPoints; ii++) {
       Point3D? point = interpolateToZ(mChines[ii].getPoints(), position);
       if (point != null) {
-        newBulkhead.mPoints[ii] = point;
+        points.add(point);
       } else {
-        newBulkhead.mPoints[ii] = Point3D(0, 0, position);
+        points.add(Point3D(0, 0, position));
       }
     }
     
     // insert the new bulkhead
-    mBulkheads.insert(bulk, newBulkhead);
+    mBulkheads.insert(bulk, Bulkhead.fromPoints(points, BulkheadType.vertical) );
     
     timeUpdated = DateTime.now();
     _createChines();

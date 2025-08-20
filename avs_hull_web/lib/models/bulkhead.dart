@@ -128,7 +128,7 @@ class Bulkhead {
     mBulkheadType = type;
     mPoints = [...points];
     mTransomAngle = 90;
-    _mFlatBottomed = false;
+    _mFlatBottomed = points.length % 2 == 0; // even number of points means flat bottomed
     _mClosedTop = false;
   }
 
