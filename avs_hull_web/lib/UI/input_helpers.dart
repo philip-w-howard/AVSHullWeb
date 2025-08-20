@@ -116,12 +116,14 @@ class CustomCheckbox extends StatefulWidget {
   final String label;
   final bool initValue;
   final ValueChanged<bool> onChanged;
+  final bool isFeatureEnabled;
 
   const CustomCheckbox({
     super.key, 
     required this.label,
     required this.onChanged,
     required this.initValue,
+    this.isFeatureEnabled = true,
   });
 
   @override
@@ -151,9 +153,14 @@ class CustomCheckboxState extends State<CustomCheckbox> {
       children: [
         Checkbox(
           value: isChecked,
-          onChanged: _onCheckboxChanged,
+          onChanged: widget.isFeatureEnabled ? _onCheckboxChanged : null,
         ),
-        Text(widget.label),
+        Text(
+          widget.label,
+          style: widget.isFeatureEnabled
+              ? null
+              : TextStyle(color: Theme.of(context).disabledColor),
+        ),
       ],
     );
   }

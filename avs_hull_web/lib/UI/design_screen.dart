@@ -175,7 +175,7 @@ class DesignScreen extends StatelessWidget {
   }
 
   void resetScreen() {
-      _frontWindow.resetView();
+    _frontWindow.resetView();
     _sideWindow.resetView();
     _topWindow.resetView();
     _editWindow.resetView();
@@ -258,6 +258,7 @@ class DesignScreen extends StatelessWidget {
     if (okPressed) {
       int? numChines = int.tryParse(chinesController.text);
       if (numChines != null && numChines > 1 && numChines < 100) {
+        _hullLogger.logHull(_myHull);
         _myHull.setNumChines(numChines);
         resetScreen();
       } else {
@@ -302,6 +303,7 @@ class DesignScreen extends StatelessWidget {
     if (okPressed) {
       double? location = double.tryParse(locationController.text);
       if (location != null && location > _myHull.minBulkheadPos() && location < _myHull.maxBulkheadPos()) {
+        _hullLogger.logHull(_myHull);
         _myHull.insertBulkhead(location);
         resetScreen();
       } else {
@@ -317,6 +319,7 @@ class DesignScreen extends StatelessWidget {
       // If a bulkhead is selected, delete it
       int bulkheadNum = _editWindow.selectedBulkhead();
       if (bulkheadNum > 0 && bulkheadNum < _myHull.numBulkheads() - 1) {
+        _hullLogger.logHull(_myHull);
         _myHull.deleteBulkhead(bulkheadNum);
         resetScreen();
       } else {

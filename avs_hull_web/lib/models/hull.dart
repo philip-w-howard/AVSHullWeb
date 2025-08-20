@@ -134,7 +134,12 @@ class Hull {
       mBulkheads.add(Bulkhead.copy(bulk));
     }
 
-    timeUpdated = source.timeUpdated;
+    if (timeSaved  == source.timeUpdated) {
+      timeUpdated = source.timeUpdated;
+    } else {
+      timeUpdated = DateTime.now();
+    }
+
     _createChines();
   }
 

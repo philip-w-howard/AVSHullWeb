@@ -106,7 +106,8 @@ class ResizeDialogState extends State<NewHullDialog> {
             initValue: _params.closedTop,
             onChanged: (bool value) {
               _params.closedTop = value;
-            }
+            },
+            isFeatureEnabled: false,
           ),
           CustomCheckbox(
             label: 'Flat Bottomed', 
