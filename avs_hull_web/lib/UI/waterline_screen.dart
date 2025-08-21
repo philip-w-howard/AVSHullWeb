@@ -64,51 +64,53 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 200,
-                  child: WaterlineParamsEditor(
-                    initialParams: _params,
-                    onChanged: (params) {
-                      setState(() {
-                        _params = params;
-                      });
-                      widget.onParamsChanged(_params);
-                    },
-                  ),
+            child: SizedBox(
+              width: 200,
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    WaterlineParamsEditor(
+                      initialParams: _params,
+                      onChanged: (params) {
+                        setState(() {
+                          _params = params;
+                        });
+                        widget.onParamsChanged(_params);
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _recomputeWaterlines,
+                      child: const Text('Recompute Waterlines'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _hullWindow.setView(HullView.front);
+                      },
+                      child: const Text('Show Front'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _hullWindow.setView(HullView.side);
+                      },
+                      child: const Text('Show Side'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        _hullWindow.setView(HullView.top);
+                      },
+                      child: const Text('Show Top'),
+                    ),
+                    const SizedBox(height: 16),
+                    Text('Freeboard: ${_params.freeboard.toStringAsFixed(2)}'),
+                    Text('Centroid X: ${_params.centroidX.toStringAsFixed(2)}'),
+                    Text('Centroid Y: ${_params.centroidY.toStringAsFixed(2)}'),
+                    Text('Centroid Z: ${_params.centroidZ.toStringAsFixed(2)}'),
+                    Text('Righting Moment: ${_params.rightingMoment.toStringAsFixed(2)}'),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _recomputeWaterlines,
-                  child: const Text('Recompute Waterlines'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _hullWindow.setView(HullView.front);
-                  },
-                  child: const Text('Show Front'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _hullWindow.setView(HullView.side);
-                  },
-                  child: const Text('Show Side'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    _hullWindow.setView(HullView.top);
-                  },
-                  child: const Text('Show Top'),
-                ),
-                const SizedBox(height: 16),
-                Text('Freeboard: ${_params.freeboard.toStringAsFixed(2)}'),
-                Text('Centroid X: ${_params.centroidX.toStringAsFixed(2)}'),
-                Text('Centroid Y: ${_params.centroidY.toStringAsFixed(2)}'),
-                Text('Centroid Z: ${_params.centroidZ.toStringAsFixed(2)}'),
-                Text('Righting Moment: ${_params.rightingMoment.toStringAsFixed(2)}'),
-              ],
+              ),
             ),
           ),
           _hullWindow,
