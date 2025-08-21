@@ -1,15 +1,25 @@
 TODO.text
 Bugs:
-    When importing a JSON, the hull name does not seem to get imported.
+    Fix freeboard computation
     glitch in computeFlatArea for heel of 5.
     Need to test this: Undo needs to update timestamps to newer (time of undo)
         exception for undoing back to layout setup?
     Fix centroid computation
     Fix righting moment computation
-    Fix freeboard computation
+    Saved files don't always load as default in web version.
 Features:
     Important:
         Save/Restore panel layouts
+        Save/Export layouts
+            Layout menu bar (follow design layout)
+                Save
+                Open
+                Export as
+                    offsets         done
+                    gcode
+                    STL  
+                    SVG
+        Ability to set name of saved files
         Undo/Redo for panel layouts
         closed-top 
         In waterline screen, report when taking on water
@@ -19,15 +29,6 @@ Features:
     Direct edit points
     Redo 
     SaveAs formats
-    Save/Export layouts
-        Layout menu bar (follow design layout)
-            Save
-            Open
-            Export as
-                offsets         done
-                gcode
-                STL  
-                SVG
         Some way to save export params at least for the session.
             LocalStorage
                 Settings module:

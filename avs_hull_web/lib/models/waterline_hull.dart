@@ -204,6 +204,8 @@ class WaterlineHull extends RotatedHull {
     double sumMomentX = 0;
     double sumMomentY = 0;
     double sumMomentZ = 0;
+	
+	bool takingOnWater = false;
     
     Point3D hullSize = size();
     Point3D hullMin = min();
@@ -212,42 +214,43 @@ class WaterlineHull extends RotatedHull {
     debugPrint("Min: ${hullMin.toString()}, Size: ${hullSize.toString()}");
 
     double height = hullMin.y;
+	double waterlineHeight = hullMin.y;
     double heightMax = height + hullSize.y;
 
     _waterlines = []; // Clear existing waterlines
 
-    while (height <= heightMax && weight < _params.weight) {
+    while (!takingOnWater) {
       // Generate the waterline points
       List<Point3D>? points = _gererateWaterline(mBulkheads, mChines, height, lengthIncrement);
-      if (points == null) break ; // This implies we started taking on water
-      AreaData areaData = computeFlatArea(points, centerline);
-      if (areaData.area > 0) {
-        double sliceWeight = areaData.area * heightIncrement * _params.waterDensity ;
-        sliceWeight /= (12*12*12); // Convert to cubic feet
-        weight += sliceWeight;
-      } 
-      else {
-        debugPrint("No area computed for height $height, points: ${points.length}");
-      } 
+      if (points == null) { // This implies we started taking on water
+        takingOnWater = true;
+	    } else {
+	      if (weight < _params.weight) {
+          AreaData areaData = computeFlatArea(points, centerline);
+          if (areaData.area > 0) {
+            double sliceWeight = areaData.area * heightIncrement * _params.waterDensity ;
+            sliceWeight /= (12*12*12); // Convert to cubic feet
+            weight += sliceWeight;
+          } 
 
-      if (points.isNotEmpty && weight < _params.weight) {
-        sumArea += areaData.area;
-        sumMomentX += areaData.centroidX * areaData.area;
-        sumMomentY += areaData.area * (height - centerline.y);
-        sumMomentZ += areaData.centroidZ * areaData.area;
-        _waterlines.add(points);
-      }
-      else if (weight >= _params.weight) {
-        debugPrint("Weight exceeded: $weight, stopping waterline generation at height $height");
-      }
+          if (points.isNotEmpty && weight < _params.weight) {
+            sumArea += areaData.area;
+            sumMomentX += areaData.centroidX * areaData.area;
+            sumMomentY += areaData.area * (height - centerline.y);
+            sumMomentZ += areaData.centroidZ * areaData.area;
+            _waterlines.add(points);
 
-      height += heightIncrement;
+      		  waterlineHeight = height;
+          }
+        }
+
+        height += heightIncrement;
+      }
     }
-
     if (sumArea != 0)
     {
       debugPrint("Area: $sumArea, MomentX: $sumMomentX, MomentY: $sumMomentY, MomentZ: $sumMomentZ");
-      _params.freeboard = height;
+      _params.freeboard = height - waterlineHeight;
       _params.centroidX = sumMomentX / sumArea;
       _params.centroidY = sumMomentY / sumArea;
       _params.centroidZ = sumMomentZ / sumArea;
