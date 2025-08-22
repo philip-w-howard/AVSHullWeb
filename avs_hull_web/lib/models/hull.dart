@@ -4,9 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'dart:math' as math;
 import 'package:avs_hull_web/geometry/hull_math.dart';
-import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
 import '../geometry/point_3d.dart';

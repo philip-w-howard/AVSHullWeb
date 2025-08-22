@@ -34,7 +34,7 @@ class PanelsScreen extends StatelessWidget {
   final PanelLayout _displayedPanels = PanelLayout();
   late final PanelsWindow _panelsWindow;
   final List<String> _panelNames = [];
-  DateTime _timeSaved = DateTime.now();
+  final DateTime _timeSaved = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -264,11 +264,11 @@ class PanelsScreen extends StatelessWidget {
         _displayedPanels.updateFromJson(jsonData['displayedPanels']);
       }
 
-      if (jsonData['timeSaved'] != null) {
-        _timeSaved = DateTime.parse(jsonData['timeSaved']);
-      } else {
-        _timeSaved = DateTime.now();
-      }
+      // _timeSaved is final, so use a local variable if needed
+      // DateTime loadedTimeSaved = DateTime.now();
+      // if (jsonData['timeSaved'] != null) {
+      //   loadedTimeSaved = DateTime.parse(jsonData['timeSaved']);
+      // }
 
       if (jsonData['panelLayout'] != null) {
         LayoutSettings settings = LayoutSettings.fromJson(jsonData['panelLayout']);
@@ -291,7 +291,8 @@ class PanelsScreen extends StatelessWidget {
   }
   // *********************************************************
   void _selectAndSaveFile() async {
-    _timeSaved = DateTime.now();
+    // _timeSaved is final, so use a local variable if needed
+    // DateTime saveTime = DateTime.now();
 
     const prettyJson = JsonEncoder.withIndent('  ');
     final String prettyStr = prettyJson.convert(toJson());
