@@ -44,9 +44,6 @@ void setupBeforeUnloadPrompt(Hull mainHull) {
   // Explicitly declare the function type to match JS interop constraints
   void handler(JSAny event) {
     if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
-      debugPrint('saved: ${mainHull.timeSaved}');
-      debugPrint('updated: ${mainHull.timeUpdated}');
-
       final e = event as BeforeUnloadEvent;
       e.returnValue = 'Are you sure you want to leave?';
       saveFiles();

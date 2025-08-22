@@ -91,13 +91,11 @@ class WaterlineHull extends RotatedHull {
 
         if (currPoint != null && prevPoint != null)
         {
-          //if (!doLeft && height == 4 && (length < 10 || length > 93.5)) debugPrint("Checking length $index, $length, height $height, doLeft $doLeft, currPoint: ${currPoint.toString()}, prevPoint: ${prevPoint.toString()}");
           // If we have a point above and one below, we can interpolate
           if ((currPoint.y >= height && prevPoint.y <= height) ||
               (currPoint.y <= height && prevPoint.y >= height))
           {
               Point3D point = interpolateBetween(prevPoint, currPoint, height);
-              //if (height == 4 /*&& (length < 20 || length > 93)*/) debugPrint("Found point at, $index, $height, $length, $doLeft, ${point.x}, ${point.y}, ${point.z}");
               return point;
           }
         }
@@ -205,17 +203,14 @@ class WaterlineHull extends RotatedHull {
     double sumMomentY = 0;
     double sumMomentZ = 0;
 	
-	bool takingOnWater = false;
+	  bool takingOnWater = false;
     
     Point3D hullSize = size();
     Point3D hullMin = min();
     Point3D centerline = Point3D(hullSize.x / 2, hullMin.y / 2, hullSize.z / 2);
 
-    debugPrint("Min: ${hullMin.toString()}, Size: ${hullSize.toString()}");
-
     double height = hullMin.y;
-	double waterlineHeight = hullMin.y;
-    double heightMax = height + hullSize.y;
+	  double waterlineHeight = hullMin.y;
 
     _waterlines = []; // Clear existing waterlines
 
@@ -247,18 +242,21 @@ class WaterlineHull extends RotatedHull {
         height += heightIncrement;
       }
     }
-    if (sumArea != 0)
+    if (waterlineHeight < height - heightIncrement)
     {
-      debugPrint("Area: $sumArea, MomentX: $sumMomentX, MomentY: $sumMomentY, MomentZ: $sumMomentZ");
       _params.freeboard = height - waterlineHeight;
       _params.centroidX = sumMomentX / sumArea;
       _params.centroidY = sumMomentY / sumArea;
       _params.centroidZ = sumMomentZ / sumArea;
       _params.rightingMoment = _params.centroidX / 12 * weight; // convert inches to feet
-      debugPrint("Freeboard: ${_params.freeboard}, Centroid: (${_params.centroidX}, ${_params.centroidY}, ${_params.centroidZ}), Righting Moment: ${_params.rightingMoment}");  
     }
     else {
-      debugPrint("No waterlines generated, sumArea is zero.");
+      _waterlines = [];
+      _params.freeboard = waterlineHeight - height;
+      _params.centroidX = 0;
+      _params.centroidY = 0;
+      _params.centroidZ = 0;
+      _params.rightingMoment = 0;
     }
     return;
   }

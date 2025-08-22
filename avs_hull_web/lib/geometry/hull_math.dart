@@ -651,8 +651,6 @@ AreaData computeFlatArea(List<Point3D> boundary, Point3D centerline) {
     return AreaData(0, 0, 0);
   }
 
-  debugPrint("\nComputing area for waterline");
-
   int limit = boundary.length ~/ 2;
 
   if (boundary.length > 3) // need at least 4 points: two on each side
@@ -672,9 +670,6 @@ AreaData computeFlatArea(List<Point3D> boundary, Point3D centerline) {
       double width =
           ((left.x - right.x).abs() + (lastLeft.x - lastRight.x).abs())/2;
       double length = (left.z - lastLeft.z).abs();
-      // debugPrint("Width: $width, Length: $length points: "
-      //   "(${left.x}, ${left.z}), (${right.x}, ${right.z}), "
-      //   "(${lastLeft.x}, ${lastLeft.z}), (${lastRight.x}, ${lastRight.z})");
     
       area += width * length;
       centroidX += (((left.x + right.x + lastLeft.x + lastRight.x) / 4) - centerline.x) *

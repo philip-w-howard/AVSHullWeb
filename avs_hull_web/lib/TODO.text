@@ -26,6 +26,7 @@ Features:
     Bulkheads with fewer chines?
     Curved bulkheads?
     Direct edit points
+        Can use longPress for this.
     Redo 
     SaveAs formats
         Some way to save export params at least for the session.
@@ -42,6 +43,8 @@ Features:
                     waterline params
 
     Zoom/Pan
+        InteractiveViewer supplies this functionality, but it conflicts with
+        using GestureDetector Pan handlers to do rotations.
 
 refactor Bulkhead to have rotate and getOffset methods like Spline
     have getOffsets return List<Point3D>?

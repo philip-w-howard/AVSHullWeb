@@ -367,7 +367,6 @@ class Hull {
     // Can't delete bow nor stern bulkheads
     if (bulk < 1 || bulk >= mBulkheads.length - 1) return;
 
-    debugPrint('Deleting bulkhead $bulk');
     if (mBulkheads.length > 2) {
       mBulkheads.removeAt(bulk);
       timeUpdated = DateTime.now();

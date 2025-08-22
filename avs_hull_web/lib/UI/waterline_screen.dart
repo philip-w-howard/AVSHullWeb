@@ -24,6 +24,9 @@ class WaterlineScreen extends StatefulWidget {
 
 class _WaterlineScreenState extends State<WaterlineScreen> {
   late WaterlineParams _params;
+  late WaterlineHull _hull;
+  late WaterlineWindow _hullWindow;
+  late XYZWidget xyz;
 
   void _recomputeWaterlines() {
     setState(() {
@@ -31,9 +34,6 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
       _hullWindow = WaterlineWindow(_hull, xyz: xyz);
     });
   }
-  late WaterlineHull _hull;
-  late WaterlineWindow _hullWindow;
-  late XYZWidget xyz;
 
   @override
   void initState() {

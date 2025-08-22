@@ -28,7 +28,9 @@ class WaterlinePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     
     final paint = Paint()
-      ..color = const Color.fromARGB(255, 243, 33, 180)
+      ..color = _myHull.getWaterlineCount() > 0 ? 
+        const Color.fromARGB(255, 243, 33, 180) :
+        const Color.fromARGB(255, 0, 0, 0)
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
 

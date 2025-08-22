@@ -300,8 +300,6 @@ class Bulkhead {
 
   // **************************************************
   void setNumChines(int numChines) {
-    debugPrint('setNumChines before: ${mPoints.length}, numChines: $numChines, flatBottomed: $_mFlatBottomed');
-
     // Recreate points based on the new number of chines
     const int precision = 23; // Oversample rate for curve
     List<Point3D> curvePoints = [];
@@ -327,7 +325,6 @@ class Bulkhead {
 
     // Add the bottom point
     if (!_mFlatBottomed) {
-      debugPrint('Adding center point');
       newPoints.add(mPoints[mPoints.length ~/ 2]);
     }
 
@@ -339,6 +336,5 @@ class Bulkhead {
     }
 
     mPoints = newPoints;
-    debugPrint('setNumChines after: ${mPoints.length}, numChines: $numChines, flatBottomed: $_mFlatBottomed');
   } 
 }
