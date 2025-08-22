@@ -1,6 +1,5 @@
 TODO.text
 Bugs:
-    Fix freeboard computation
     glitch in computeFlatArea for heel of 5.
     Need to test this: Undo needs to update timestamps to newer (time of undo)
         exception for undoing back to layout setup?
@@ -9,21 +8,21 @@ Bugs:
     Saved files don't always load as default in web version.
 Features:
     Important:
-        Save/Restore panel layouts
-        Save/Export layouts
-            Layout menu bar (follow design layout)
-                Save
-                Open
-                Export as
-                    offsets         done
-                    gcode
-                    STL  
-                    SVG
+        Check layout timestamps on exit
         Ability to set name of saved files
         Undo/Redo for panel layouts
         closed-top 
         In waterline screen, report when taking on water
     
+    Save/Export layouts
+        Layout menu bar (follow design layout)
+            Save                done
+            Open                done
+            Export as
+                offsets         done
+                gcode
+                STL  
+                SVG
     Bulkheads with fewer chines?
     Curved bulkheads?
     Direct edit points

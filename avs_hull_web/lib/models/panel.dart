@@ -216,6 +216,7 @@ class Panel {
     mPoints = rotate2D(mPoints, -angle);
   }
 
+
   // void moveBy(double x, double y) {
   //   origin = Offset(origin.dx + x, origin.dy + y);
   // }
@@ -231,4 +232,31 @@ class Panel {
   //     mPoints[ii] = Offset(-mPoints[ii].dx, mPoints[ii].dy);
   //   }
   // }
+
+    // **************************************************
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'points': mPoints.map((pt) => {'x': pt.dx, 'y': pt.dy}).toList(),
+      'origin': {'x': origin.dx, 'y': origin.dy}
+    };
+  }
+
+  // *******************************
+  factory Panel.fromJson(Map<String, dynamic> json) {
+    Panel panel = Panel();
+    if (json['name'] != null) {
+      panel.name = json['name'];
+    }
+    if (json['origin'] != null) {
+      var o = json['origin'];
+      panel.origin = Offset((o['x'] ?? 0.0).toDouble(), (o['y'] ?? 0.0).toDouble());
+    }
+    if (json['points'] != null) {
+      panel.mPoints = (json['points'] as List)
+          .map((pt) => Offset((pt['x'] ?? 0.0).toDouble(), (pt['y'] ?? 0.0).toDouble()))
+          .toList();
+    }
+    return panel;
+  }
 }

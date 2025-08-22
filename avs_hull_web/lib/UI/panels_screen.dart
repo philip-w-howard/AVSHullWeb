@@ -5,6 +5,7 @@
 // ***************************************************************
 
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 import '../models/hull.dart';
 import '../models/panel.dart';
@@ -16,6 +17,7 @@ import 'export_offsets_dialog.dart';
 import 'panel_layout_dialog.dart';
 import '../IO/export_offsets.dart';
 import '../geometry/hull_math.dart';
+import '../IO/file_io.dart';
 
 class PanelsScreen extends StatelessWidget {
   static final GlobalKey<ScaffoldState> scaffoldKey =
@@ -32,6 +34,7 @@ class PanelsScreen extends StatelessWidget {
   final PanelLayout _displayedPanels = PanelLayout();
   late final PanelsWindow _panelsWindow;
   final List<String> _panelNames = [];
+  DateTime _timeSaved = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +57,11 @@ class PanelsScreen extends StatelessWidget {
                     return [
                       const PopupMenuItem<String>(
                         value: 'Open',
-                        enabled: false,
-                        child: Text('Open'),
+                        child: Text('Load from Json'),
                       ),
                       const PopupMenuItem<String>(
                         value: 'Save',
-                        enabled: false,
-                        child: Text('Save'),
+                        child: Text('Save to Json'),
                       ),
                       const PopupMenuItem<String>(
                         value: 'Offsets',
@@ -254,7 +255,48 @@ class PanelsScreen extends StatelessWidget {
   }
 
   // *********************************************************
-  void _selectAndReadFile() async {}
+  void _selectAndReadFile() async {
+    String? contents = await readFile('avshpanels');
+    if (contents != null) {
+      Map<String, dynamic> jsonData = json.decode(contents);
+
+      if (jsonData['displayedPanels'] != null) {
+        _displayedPanels.updateFromJson(jsonData['displayedPanels']);
+      }
+
+      if (jsonData['timeSaved'] != null) {
+        _timeSaved = DateTime.parse(jsonData['timeSaved']);
+      } else {
+        _timeSaved = DateTime.now();
+      }
+
+      if (jsonData['panelLayout'] != null) {
+        LayoutSettings settings = LayoutSettings.fromJson(jsonData['panelLayout']);
+        saveLayoutSettings(settings);
+      }
+
+      _panelsWindow.updateLayout();
+      _panelsWindow.redraw();
+    }
+  }
+  
+  Map<String, dynamic> toJson() {
+    LayoutSettings layout = loadLayoutSettings();
+    return {
+      'displayedPanels': _displayedPanels,
+      'panelLayout': layout,
+      // _displayedPanels.map((panel) => panel.toJson()).toList(),
+      'timeSaved': _timeSaved.toIso8601String(),
+    };
+  }
   // *********************************************************
-  void _selectAndSaveFile() async {}
+  void _selectAndSaveFile() async {
+    _timeSaved = DateTime.now();
+
+    const prettyJson = JsonEncoder.withIndent('  ');
+    final String prettyStr = prettyJson.convert(toJson());
+
+    await saveFile(prettyStr, _hull.name, 'avshpanels');
+
+  }
 }

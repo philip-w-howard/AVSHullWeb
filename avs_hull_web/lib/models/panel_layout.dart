@@ -12,10 +12,6 @@ class PanelLayout {
   final List<Panel> _panels = [];
   DateTime _timeUpdated = DateTime.now();
 
-  int length() {
-    return _panels.length;
-  }
-
   void addPanel(Panel panel) {
     _panels.add(panel);
     _timeUpdated = DateTime.now();
@@ -70,4 +66,30 @@ class PanelLayout {
       }
     }
   }
+
+  void updateFromJson(Map<String, dynamic> json) {
+    _panels.clear();
+    if (json['panels'] != null) {
+      for (var panelJson in json['panels']) {
+        _panels.add(Panel.fromJson(panelJson));
+      }
+    }
+    if (json['timeUpdated'] != null) {
+      _timeUpdated = DateTime.parse(json['timeUpdated']);
+    } else {
+      _timeUpdated = DateTime.now();
+    }
+  }
+
+  int length() {
+    return _panels.length;
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'panels': _panels.map((panel) => panel.toJson()).toList(),
+      'timeUpdated': _timeUpdated.toIso8601String(),
+    };
+  }
+
 }
