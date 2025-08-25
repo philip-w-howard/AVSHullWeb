@@ -35,8 +35,8 @@ class WaterlineHull extends RotatedHull {
   List<List<Point3D>> _waterlines = [];
 
   //*****************************************************************
-  WaterlineHull(Hull baseHull, this._params) : 
-    super.copy(baseHull is RotatedHull ? baseHull : RotatedHull(baseHull)) {
+  WaterlineHull(this._params) : 
+    super.copy(RotatedHull()) {
     // super constructed the hull for us.
     rotateTo(_params.pitchAngle, 0, _params.heelAngle);
     _generateWaterlines();

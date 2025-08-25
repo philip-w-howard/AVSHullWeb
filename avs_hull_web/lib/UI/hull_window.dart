@@ -33,7 +33,7 @@ class HullWindow extends StatelessWidget {
     if (hull is RotatedHull) {
       _myHull = RotatedHull.copy(hull);
     } else {
-      _myHull = RotatedHull(hull, hullLogger: logger);
+      _myHull = RotatedHull(hullLogger: logger);
     }
 
     _hullLogger = logger;

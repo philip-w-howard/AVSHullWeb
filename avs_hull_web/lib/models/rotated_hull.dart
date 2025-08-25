@@ -9,14 +9,14 @@ import '../geometry/hull_math.dart';
 import 'bulkhead.dart';
 import '../geometry/spline.dart';
 import 'hull.dart';
+import 'hull_manager.dart';
 import '../IO/hull_logger.dart';
 
 enum HullView { front, side, top, rotated }
 
 class RotatedHull extends Hull {
   RotatedHull.copy(RotatedHull source)
-      : _baseHull = Hull.copy(source._baseHull),
-        hullLogger = source.hullLogger,
+      : hullLogger = source.hullLogger,
         _mView = source._mView,
         _static = source._static,
         _rotateX = source._rotateX,
@@ -35,7 +35,6 @@ class RotatedHull extends Hull {
     bulkheadIsSelected = source.bulkheadIsSelected;
     selectedBulkhead = source.selectedBulkhead;
   }
-  final Hull _baseHull;
   final HullLogger? hullLogger;
   HullView _mView = HullView.rotated;
   bool _static = false;
@@ -51,21 +50,16 @@ class RotatedHull extends Hull {
   int selectedBulkhead = -1;
 
   // move code to createFromBase() method
-  RotatedHull(this._baseHull, {this.hullLogger}) {
+  RotatedHull({this.hullLogger}) {
     _createFromBase();
   }
 
-  // @override void updateFromHull(Hull source) {
-  //   _baseHull.updateFromHull(source);
-  //   _createFromBase();
-  // }
-
   void _createFromBase() {
-    mBulkheads = List<Bulkhead>.from(_baseHull.mBulkheads);
+    mBulkheads = List<Bulkhead>.from(HullManager().hull.mBulkheads);
 
     // force a deep copy of chines.
     mChines = [];
-    for (Spline spline in _baseHull.mChines) {
+    for (Spline spline in HullManager().hull.mChines) {
       mChines.add(Spline.copy(spline));
     }
   }
@@ -176,7 +170,7 @@ class RotatedHull extends Hull {
     double newY = 0;
     double newZ = 0;
 
-    if (deltaX != 0 || deltaY != 0) hullLogger?.logHull(_baseHull);
+    if (deltaX != 0 || deltaY != 0) hullLogger?.logHull(HullManager().hull);
 
     switch (_mView) {
       case HullView.front:
@@ -198,19 +192,19 @@ class RotatedHull extends Hull {
         // Can't update a rotated hull
         break;
     }
-    newX += _baseHull.mBulkheads[bulk].mPoints[chine].x;
-    newY += _baseHull.mBulkheads[bulk].mPoints[chine].y;
-    newZ += _baseHull.mBulkheads[bulk].mPoints[chine].z;
+    newX += HullManager().hull.mBulkheads[bulk].mPoints[chine].x;
+    newY += HullManager().hull.mBulkheads[bulk].mPoints[chine].y;
+    newZ += HullManager().hull.mBulkheads[bulk].mPoints[chine].z;
 
-    _baseHull.updateBulkhead(bulk, chine, newX, newY, newZ);
-    _baseHull.timeUpdated = DateTime.now();
+    HullManager().hull.updateBulkhead(bulk, chine, newX, newY, newZ);
+    HullManager().hull.timeUpdated = DateTime.now();
   }
 
   void popLog() {
     Hull? previous;
     previous = hullLogger?.popLog();
 
-    if (previous != null) _baseHull.updateFromHull(previous);
+    if (previous != null) HullManager().hull.updateFromHull(previous);
     _createFromBase();
   }
 }

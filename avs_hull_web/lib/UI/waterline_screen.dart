@@ -30,7 +30,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
 
   void _recomputeWaterlines() {
     setState(() {
-      _hull = WaterlineHull(widget.hull, _params);
+      _hull = WaterlineHull(_params);
       _hullWindow = WaterlineWindow(_hull, xyz: xyz);
     });
   }
@@ -53,7 +53,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
 
   void _createWaterlineHull() {
     xyz = XYZWidget();
-    _hull = WaterlineHull(widget.hull, _params);
+    _hull = WaterlineHull(_params);
     _hullWindow = WaterlineWindow(_hull, xyz: xyz);
   }
 
