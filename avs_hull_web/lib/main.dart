@@ -10,6 +10,7 @@ import 'UI/design_screen.dart';
 import 'UI/waterline_screen.dart';
 import 'UI/panels_screen.dart';
 import 'models/hull.dart';
+import 'models/hull_manager.dart';
 import 'IO/hull_logger.dart';
 import 'settings/settings.dart';
 import '../IO/file_io.dart';
@@ -40,10 +41,10 @@ extension BeforeUnloadEventExtension on BeforeUnloadEvent {
 
 //*********************************************************
 
-void setupBeforeUnloadPrompt(Hull mainHull) {
+void setupBeforeUnloadPrompt() {
   // Explicitly declare the function type to match JS interop constraints
   void handler(JSAny event) {
-    if (mainHull.timeSaved.isBefore(mainHull.timeUpdated)) {
+    if (HullManager().hull.timeSaved.isBefore(HullManager().hull.timeUpdated)) {
       final e = event as BeforeUnloadEvent;
       e.returnValue = 'Are you sure you want to leave?';
       saveFiles();
@@ -55,24 +56,22 @@ void setupBeforeUnloadPrompt(Hull mainHull) {
 }//*********************************************************
 
 void main() {
-    Hull mainHull = Hull();
-
     String hullName = fetchLastHullName();
     if (hullName != unnamedHullName) {
-      Hull? tempHull = readHull(hullName, mainHull);
+      Hull? tempHull = readHull(hullName, HullManager().hull);
       if (tempHull == null) {
         HullParams params = HullParams();
-        mainHull.updateFromParams(params);
+        HullManager().hull.updateFromParams(params);
       }
     } else {
       HullParams params = HullParams();
-      mainHull.updateFromParams(params);
+      HullManager().hull.updateFromParams(params);
     }
 
     // Setup the window close event
-    setupBeforeUnloadPrompt(mainHull);
+    setupBeforeUnloadPrompt();
     
-    runApp(MainApp(mainHull: mainHull));
+    runApp(MainApp());
 }
 
 void saveFiles() {
@@ -80,14 +79,13 @@ void saveFiles() {
 }
 
 class MainApp extends StatelessWidget {
-  final Hull mainHull;
-  const MainApp({super.key, required this.mainHull});
+  const MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'AVS Hull $version',
-      home: MainAppWindow(hull: mainHull),
+      home: MainAppWindow(hull: HullManager().hull),
     );
   }
 }
@@ -98,7 +96,7 @@ class MainAppWindow extends StatefulWidget {
 
   @override
   // ignore: no_logic_in_create_state
-  State<StatefulWidget> createState() => MainAppState(hull);
+  State<StatefulWidget> createState() => MainAppState();
 }
 
 class MainAppState extends State<MainAppWindow>
@@ -133,7 +131,6 @@ class MainAppState extends State<MainAppWindow>
           ],
         ));
   }
-  late final Hull mainHull;
   final HullLogger _hullLog = HullLogger();
 
   
@@ -144,7 +141,7 @@ class MainAppState extends State<MainAppWindow>
   late BuildContext _context;
   WaterlineParams _waterlineParams = WaterlineParams();
 
-  MainAppState(this.mainHull) ;
+  MainAppState() ;
   
   @override
   void initState() {
@@ -154,27 +151,27 @@ class MainAppState extends State<MainAppWindow>
     // if (hullName != unnamedHullName) {
     //   Hull? tempHull = readHull(hullName);
     //   if (tempHull != null) {
-    //     _mainHull = tempHull;
+    //     HullManager().hull = tempHull;
     //   } else {
     //     HullParams params = HullParams();
-    //     _mainHull = Hull.fromParams(params);
+    //     HullManager().hull = Hull.fromParams(params);
     //   }
     // } else {
     //   HullParams params = HullParams();
-    //   _mainHull = Hull.fromParams(params);
+    //   HullManager().hull = Hull.fromParams(params);
     // }
     _tabController = TabController(vsync: this, length: myTabs.length);
     _tabController.addListener(_handleTabSelection);
 
-    _designScreen = DesignScreen(mainHull: mainHull, logger: _hullLog);
-    _panelsScreen = PanelsScreen(mainHull);
-    _waterlineScreen = WaterlineScreen(mainHull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
+    _designScreen = DesignScreen(logger: _hullLog);
+    _panelsScreen = PanelsScreen(HullManager().hull);
+    _waterlineScreen = WaterlineScreen(HullManager().hull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
   }
 
   void _waterlineParamsChanged(WaterlineParams params) {
     setState(() {
       _waterlineParams = params;
-      _waterlineScreen = WaterlineScreen(mainHull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
+      _waterlineScreen = WaterlineScreen(HullManager().hull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
     });
   }
   void _handleTabSelection() {

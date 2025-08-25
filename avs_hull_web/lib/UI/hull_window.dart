@@ -7,6 +7,7 @@
 import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
 import '../models/hull.dart';
+import '../models/bulkhead.dart';
 import '../models/rotated_hull.dart';
 import 'hull_painter.dart';
 import '../IO/hull_logger.dart';
@@ -115,9 +116,9 @@ class HullWindow extends StatelessWidget {
                 onPanStart: _panStart,
                 onPanUpdate: _panUpdate,
                 onPanEnd: _panEnd,
-                // onLongPressStart: (LongPressStartDetails details) {
-                //   _longPress(details, context);
-                // },
+                onLongPressStart: (LongPressStartDetails details) {
+                   _longPress(details, context);
+                },
                 child: MouseRegion(
                   onHover: _hover,
                   child: CustomPaint(
@@ -270,6 +271,131 @@ class HullWindow extends StatelessWidget {
 
       _myHull.movingHandle = false;
       _updateScreen!();
+    }
+  }
+
+  void _longPress(LongPressStartDetails details, BuildContext context) {
+    // Check if a bulkhead is selected and a point is near the press location
+    if (bulkheadIsSelected()) {
+      double rawX, rawY;
+      (rawX, rawY) = _painter.toHullCoords(details.localPosition);
+      int pointIndex = _myHull.isNearBulkheadPoint(
+        _myHull.selectedBulkhead,
+        rawX,
+        rawY,
+        _nearnessDistance / _painter.scale() / 1.5,
+      );
+      if (pointIndex >= 0) {
+        // Get the current coordinates
+        var bulkhead = _myHull.getBulkhead(_myHull.selectedBulkhead);
+        var pt = bulkhead.mPoints[pointIndex];
+
+        bool xEnabled = false, yEnabled = false, zEnabled = false;
+
+        switch (_myHull.getView()) {
+          case HullView.front:
+            switch (bulkhead.mBulkheadType) {
+              case BulkheadType.bow:
+                yEnabled = true;
+                break;
+              case BulkheadType.vertical:
+                xEnabled = true;
+                yEnabled = true;
+                break;
+              case BulkheadType.transom:
+                yEnabled = true;
+                break;
+            }
+            break;
+          case HullView.side:
+            switch (bulkhead.mBulkheadType) {
+              case BulkheadType.bow:
+                yEnabled = true;
+                zEnabled = true;
+                break;
+              case BulkheadType.vertical:
+                yEnabled = true;
+                break;
+              case BulkheadType.transom:
+                yEnabled = true;
+                break;
+            }
+            break;
+          case HullView.top:
+            switch (bulkhead.mBulkheadType) {
+              case BulkheadType.bow:
+                zEnabled = true;
+                break;
+              case BulkheadType.vertical:
+                xEnabled = true;
+                break;
+              case BulkheadType.transom:
+                xEnabled = true;
+                break;
+            }
+            break;
+          default:
+        }
+        
+        TextEditingController xController = TextEditingController(text: pt.x.toStringAsFixed(3));
+        TextEditingController yController = TextEditingController(text: pt.y.toStringAsFixed(3));
+        TextEditingController zController = TextEditingController(text: pt.z.toStringAsFixed(3));
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Edit Bulkhead Point'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: xController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(labelText: 'X'),
+                    enabled: xEnabled,
+                  ),
+                  TextField(
+                    controller: yController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(labelText: 'Y'),
+                    enabled: yEnabled,
+                  ),
+                  TextField(
+                    controller: zController,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(labelText: 'Z'),
+                    enabled: zEnabled,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    double? newX = double.tryParse(xController.text);
+                    double? newY = double.tryParse(yController.text);
+                    double? newZ = double.tryParse(zController.text);
+                    if (newX != null && newY != null && newZ != null) {
+                      pt.x = newX;
+                      pt.y = newY;
+                      pt.z = newZ;
+                      _updateScreen?.call();
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
     }
   }
 

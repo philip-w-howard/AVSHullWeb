@@ -8,6 +8,11 @@ Bugs:
     Saved files don't always load as default in web version.
 Features:
     Important:
+        Direct edit points
+            Can use longPress for this.
+            Need to rotateTo(0,0,0), get locations, then rotate back.
+            Need to validate input
+            Need to update point on OK
         Check layout timestamps on exit. 
             Note panels_screen.timeSaved is final. It can't be updated. Meaning it is useless.
         Ability to set name of saved files
@@ -25,8 +30,6 @@ Features:
                 SVG
     Bulkheads with fewer chines?
     Curved bulkheads?
-    Direct edit points
-        Can use longPress for this.
     Redo 
     SaveAs formats
         Some way to save export params at least for the session.

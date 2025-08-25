@@ -11,6 +11,7 @@ import 'package:xml/xml.dart';
 import 'dart:convert';
 import 'dart:async';
 import '../models/hull.dart';
+import '../models/hull_manager.dart';
 import '../IO/hull_logger.dart';
 import 'hull_window.dart';
 import '../models/rotated_hull.dart';
@@ -22,21 +23,19 @@ import 'package:avs_hull_web/UI/input_helpers.dart';
 
 class DesignScreen extends StatelessWidget {
 
-  DesignScreen({super.key, required Hull mainHull, required HullLogger logger})
-      : _myHull = mainHull,
-        _hullLogger = logger {
+  DesignScreen({super.key, required HullLogger logger})
+      : _hullLogger = logger {
     xyz = XYZWidget();
-    _frontWindow = HullWindow(_myHull, HullView.front, _selectFront, null, xyz: xyz,);
-    _sideWindow = HullWindow(_myHull, HullView.side, _selectSide, null, xyz: xyz,);
-    _topWindow = HullWindow(_myHull, HullView.top, _selectTop, null, xyz: xyz,);
-    _editWindow = HullWindow(_myHull, HullView.rotated, null, resetScreen,
+    _frontWindow = HullWindow(HullManager().hull, HullView.front, _selectFront, null, xyz: xyz,);
+    _sideWindow = HullWindow(HullManager().hull, HullView.side, _selectSide, null, xyz: xyz,);
+    _topWindow = HullWindow(HullManager().hull, HullView.top, _selectTop, null, xyz: xyz,);
+    _editWindow = HullWindow(HullManager().hull, HullView.rotated, null, resetScreen,
         logger: _hullLogger, xyz: xyz,);
     _editWindow.setRotatable();
     _editWindow.setEditable();
   }
 
   //final Hull myHull = Hull(length: 200, width: 50, height:20, numBulkheads:5 numChines:5);
-  final Hull _myHull;
   final HullLogger _hullLogger;
 
   late final HullWindow _frontWindow;
@@ -71,7 +70,7 @@ class DesignScreen extends StatelessWidget {
                   if (choice == 'Load') {
                     _selectAndLoadFile(context);
                   } else if (choice == 'Save') {
-                    writeHull(_myHull);
+                    writeHull(HullManager().hull);
                   }
                   else if (choice == 'ExportJSON') {
                     _selectAndSaveFile();
@@ -194,7 +193,7 @@ class DesignScreen extends StatelessWidget {
   }
 
   Future _processResize(BuildContext context) async {
-    var size = _myHull.size();
+    var size = HullManager().hull.size();
     double xSize = size.x;
     double ySize = size.y;
     double zSize = size.z;
@@ -215,7 +214,7 @@ class DesignScreen extends StatelessWidget {
     );
 
     if (result) {
-      _myHull.resize(xSize, ySize, zSize);
+      HullManager().hull.resize(xSize, ySize, zSize);
       resetScreen();
     }
 
@@ -223,7 +222,7 @@ class DesignScreen extends StatelessWidget {
   }
 
   Future _processChines(BuildContext context) async {
-    int defaultChines = _myHull.mBulkheads[0].numPoints() ~/2;
+    int defaultChines = HullManager().hull.mBulkheads[0].numPoints() ~/2;
     TextEditingController chinesController = TextEditingController(
       text: defaultChines.toString());
     bool okPressed = false;
@@ -258,8 +257,8 @@ class DesignScreen extends StatelessWidget {
     if (okPressed) {
       int? numChines = int.tryParse(chinesController.text);
       if (numChines != null && numChines > 1 && numChines < 100) {
-        _hullLogger.logHull(_myHull);
-        _myHull.setNumChines(numChines);
+        _hullLogger.logHull(HullManager().hull);
+        HullManager().hull.setNumChines(numChines);
         resetScreen();
       } else {
         await showErrorDialog(context, 'Invalid number of chines: ${chinesController.text}');
@@ -302,14 +301,14 @@ class DesignScreen extends StatelessWidget {
     );
     if (okPressed) {
       double? location = double.tryParse(locationController.text);
-      if (location != null && location > _myHull.minBulkheadPos() && location < _myHull.maxBulkheadPos()) {
-        _hullLogger.logHull(_myHull);
-        _myHull.insertBulkhead(location);
+      if (location != null && location > HullManager().hull.minBulkheadPos() && location < HullManager().hull.maxBulkheadPos()) {
+        _hullLogger.logHull(HullManager().hull);
+        HullManager().hull.insertBulkhead(location);
         resetScreen();
       } else {
         await showErrorDialog(context, 'Invalid bulkhead location: '
             '	$location\nValid range: '
-            '${_myHull.minBulkheadPos()} to ${_myHull.maxBulkheadPos()}');
+            '${HullManager().hull.minBulkheadPos()} to ${HullManager().hull.maxBulkheadPos()}');
       }
     }
   }
@@ -318,9 +317,9 @@ class DesignScreen extends StatelessWidget {
     if (_editWindow.bulkheadIsSelected()) {
       // If a bulkhead is selected, delete it
       int bulkheadNum = _editWindow.selectedBulkhead();
-      if (bulkheadNum > 0 && bulkheadNum < _myHull.numBulkheads() - 1) {
-        _hullLogger.logHull(_myHull);
-        _myHull.deleteBulkhead(bulkheadNum);
+      if (bulkheadNum > 0 && bulkheadNum < HullManager().hull.numBulkheads() - 1) {
+        _hullLogger.logHull(HullManager().hull);
+        HullManager().hull.deleteBulkhead(bulkheadNum);
         resetScreen();
       } else {
         await showErrorDialog(context, 'Cannot delete the first or last bulkhead.');
@@ -367,7 +366,7 @@ class DesignScreen extends StatelessWidget {
     );
 
     if (result) {
-      readHull(hullName, _myHull);
+      readHull(hullName, HullManager().hull);
       resetScreen();
     }
   }
@@ -376,24 +375,24 @@ class DesignScreen extends StatelessWidget {
     String? contents = await readFile('avsh');
     if (contents != null) {
       Map<String, dynamic> jsonData = json.decode(contents);
-      _myHull.updateFromJson(jsonData);
+      HullManager().hull.updateFromJson(jsonData);
       resetScreen();
     }
   }
 
   void _selectAndSaveFile() async {
-    _myHull.timeSaved = DateTime.now();
+    HullManager().hull.timeSaved = DateTime.now();
     const prettyJson = JsonEncoder.withIndent('  ');
-    final String prettyStr = prettyJson.convert(_myHull.toJson());
+    final String prettyStr = prettyJson.convert(HullManager().hull.toJson());
 
-    await saveFile(prettyStr, _myHull.name, 'avsh');
+    await saveFile(prettyStr, HullManager().hull.name, 'avsh');
   }
 
   void _selectAndXmlFile() async {
-    XmlDocument xml = _myHull.toXml();
+    XmlDocument xml = HullManager().hull.toXml();
 
     final String xmlStr = xml.toXmlString(pretty: true);
-    await saveFile(xmlStr, _myHull.name, 'xml');
+    await saveFile(xmlStr, HullManager().hull.name, 'xml');
   }
 
   void _createHull(BuildContext context) async {
@@ -411,7 +410,7 @@ class DesignScreen extends StatelessWidget {
     );
 
     if (result) {
-      _myHull.updateFromParams(params);
+      HullManager().hull.updateFromParams(params);
       resetScreen();
     }
   }
