@@ -5,6 +5,7 @@
 // ***************************************************************
 
 import 'package:avs_hull_web/UI/input_helpers.dart';
+import 'package:avs_hull_web/models/hull_manager.dart';
 import 'package:flutter/material.dart';
 import '../models/hull.dart';
 import '../models/bulkhead.dart';
@@ -283,8 +284,8 @@ class HullWindow extends StatelessWidget {
       );
       if (pointIndex >= 0) {
         // Get the current coordinates
-        var bulkhead = _myHull.getBulkhead(_myHull.selectedBulkhead);
-        var pt = bulkhead.mPoints[pointIndex];
+        var bulkhead = HullManager().hull.getBulkhead(_myHull.selectedBulkhead);
+        var pt = bulkhead.mPoints[pointIndex].copy();
 
         bool xEnabled = false, yEnabled = false, zEnabled = false;
 
@@ -376,10 +377,23 @@ class HullWindow extends StatelessWidget {
                     double? newX = double.tryParse(xController.text);
                     double? newY = double.tryParse(yController.text);
                     double? newZ = double.tryParse(zController.text);
-                    if (newX != null && newY != null && newZ != null) {
+
+                    bool needUpdate = false;
+                    if (newX != null && xEnabled) {
                       pt.x = newX;
+                      needUpdate = true;
+                    }
+                    if (newY != null && yEnabled) {
                       pt.y = newY;
+                      needUpdate = true;
+                    }
+                    if (newZ != null && zEnabled) {
                       pt.z = newZ;
+                      needUpdate = true;
+                    }
+
+                    if (needUpdate) {
+                      HullManager().hull.updateBulkhead(_myHull.selectedBulkhead, pointIndex, pt.x, pt.y, pt.z);
                       _updateScreen?.call();
                     }
                     Navigator.of(context).pop();

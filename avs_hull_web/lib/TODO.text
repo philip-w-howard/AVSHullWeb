@@ -1,6 +1,7 @@
 TODO.text
 Bugs:
     glitch in computeFlatArea for heel of 5.
+    Need sanity checks on direct edit point values.
     Need to test this: Undo needs to update timestamps to newer (time of undo)
         exception for undoing back to layout setup?
     Fix centroid computation
@@ -8,11 +9,6 @@ Bugs:
     Saved files don't always load as default in web version.
 Features:
     Important:
-        Direct edit points
-            Can use longPress for this.
-            Need to rotateTo(0,0,0), get locations, then rotate back.
-            Need to validate input
-            Need to update point on OK
         Check layout timestamps on exit. 
             Note panels_screen.timeSaved is final. It can't be updated. Meaning it is useless.
         Ability to set name of saved files

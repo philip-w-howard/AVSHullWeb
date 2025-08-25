@@ -7,7 +7,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-import '../models/hull.dart';
 import '../models/hull_manager.dart';
 import '../models/panel.dart';
 import '../models/bulkhead.dart';

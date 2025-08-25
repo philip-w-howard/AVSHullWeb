@@ -26,6 +26,9 @@ class Point3D {
     z = 0;
   }
 
+  Point3D copy() {
+    return Point3D(x, y, z);
+  }
   Point3D operator -(Point3D operand) {
     return Point3D(x - operand.x, y - operand.y, z - operand.z);
   }
