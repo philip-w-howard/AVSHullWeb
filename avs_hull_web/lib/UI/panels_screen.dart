@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 import '../models/hull.dart';
+import '../models/hull_manager.dart';
 import '../models/panel.dart';
 import '../models/bulkhead.dart';
 import '../models/panel_layout.dart';
@@ -23,13 +24,12 @@ class PanelsScreen extends StatelessWidget {
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
 
-  PanelsScreen(this._hull, {super.key}) {
+  PanelsScreen({super.key}) {
     _createPanels();
 
     _panelsWindow = PanelsWindow(_displayedPanels);
   }
 
-  final Hull _hull;
   final List<Panel> _basePanels = [];
   final PanelLayout _displayedPanels = PanelLayout();
   late final PanelsWindow _panelsWindow;
@@ -120,7 +120,7 @@ class PanelsScreen extends StatelessWidget {
   }
 
   void checkPanels(BuildContext context) {
-    if (_hull.timeUpdated.isAfter(_displayedPanels.timestamp())) {
+    if (HullManager().hull.timeUpdated.isAfter(_displayedPanels.timestamp())) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -156,8 +156,8 @@ class PanelsScreen extends StatelessWidget {
     _displayedPanels.clear();
     _panelNames.clear();
 
-    for (int ii = 0; ii < _hull.mBulkheads.length; ii++) {
-      Bulkhead bulk = _hull.mBulkheads[ii];
+    for (int ii = 0; ii < HullManager().hull.mBulkheads.length; ii++) {
+      Bulkhead bulk = HullManager().hull.mBulkheads[ii];
       if (bulk.mBulkheadType != BulkheadType.bow) {
         Panel panel = Panel.fromBulkhead(bulk);
         panel.name = 'Bulkhead $ii';
@@ -166,8 +166,8 @@ class PanelsScreen extends StatelessWidget {
       }
     }
 
-    for (int ii = 0; ii < _hull.mChines.length ~/ 2; ii++) {
-      Panel panel = Panel.fromChines(_hull.mChines[ii], _hull.mChines[ii + 1]);
+    for (int ii = 0; ii < HullManager().hull.mChines.length ~/ 2; ii++) {
+      Panel panel = Panel.fromChines(HullManager().hull.mChines[ii], HullManager().hull.mChines[ii + 1]);
       panel.name = 'Panel ${ii + 1}';
       _basePanels.add(panel);
       _panelNames.add(panel.name);
@@ -297,7 +297,7 @@ class PanelsScreen extends StatelessWidget {
     const prettyJson = JsonEncoder.withIndent('  ');
     final String prettyStr = prettyJson.convert(toJson());
 
-    await saveFile(prettyStr, _hull.name, 'avshpanels');
+    await saveFile(prettyStr, HullManager().hull.name, 'avshpanels');
 
   }
 }

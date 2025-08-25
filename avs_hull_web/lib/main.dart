@@ -164,7 +164,7 @@ class MainAppState extends State<MainAppWindow>
     _tabController.addListener(_handleTabSelection);
 
     _designScreen = DesignScreen(logger: _hullLog);
-    _panelsScreen = PanelsScreen(HullManager().hull);
+    _panelsScreen = PanelsScreen();
     _waterlineScreen = WaterlineScreen(HullManager().hull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
   }
 

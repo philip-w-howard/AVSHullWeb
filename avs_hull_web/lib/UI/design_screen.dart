@@ -26,10 +26,10 @@ class DesignScreen extends StatelessWidget {
   DesignScreen({super.key, required HullLogger logger})
       : _hullLogger = logger {
     xyz = XYZWidget();
-    _frontWindow = HullWindow(HullManager().hull, HullView.front, _selectFront, null, xyz: xyz,);
-    _sideWindow = HullWindow(HullManager().hull, HullView.side, _selectSide, null, xyz: xyz,);
-    _topWindow = HullWindow(HullManager().hull, HullView.top, _selectTop, null, xyz: xyz,);
-    _editWindow = HullWindow(HullManager().hull, HullView.rotated, null, resetScreen,
+    _frontWindow = HullWindow(HullView.front, _selectFront, null, xyz: xyz,);
+    _sideWindow = HullWindow(HullView.side, _selectSide, null, xyz: xyz,);
+    _topWindow = HullWindow(HullView.top, _selectTop, null, xyz: xyz,);
+    _editWindow = HullWindow(HullView.rotated, null, resetScreen,
         logger: _hullLogger, xyz: xyz,);
     _editWindow.setRotatable();
     _editWindow.setEditable();

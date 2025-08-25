@@ -72,6 +72,7 @@ class PanelsWindow extends StatelessWidget {
   }
 
   void _panUpdate(DragUpdateDetails details) {
+    debugPrint('pan update ${details.delta.dx} ${details.delta.dy}');
     if (_drawDetails.panelIndex >= 0) {
       if (_drawDetails.panelIndex == _drawDetails.panIndex) {
         _panels.moveBy(

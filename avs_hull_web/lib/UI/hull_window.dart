@@ -28,14 +28,10 @@ class HullWindow extends StatelessWidget {
   static const double _nearnessDistance = 20;
   late final XYZWidget xyz;
 
-  HullWindow(Hull hull, HullView view, this._selector, this._updateScreen,
+  HullWindow(HullView view, this._selector, this._updateScreen,
       {super.key, HullLogger? logger, required this.xyz}) {
-    if (hull is RotatedHull) {
-      _myHull = RotatedHull.copy(hull);
-    } else {
-      _myHull = RotatedHull(hullLogger: logger);
-    }
 
+    _myHull = RotatedHull(hullLogger: logger);
     _hullLogger = logger;
     _myHull.setView(view);
     if (view == HullView.rotated) {
