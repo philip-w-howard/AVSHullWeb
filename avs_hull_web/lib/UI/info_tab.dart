@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:avs_hull_web/settings/build_info.dart';
 import '../settings/settings.dart';
 // InfoTab: non-editable program description
 class InfoTab extends StatelessWidget {
@@ -29,8 +28,7 @@ class InfoTab extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Version: $version\n'
-            'Build: $kBuildTimestamp',
+            'Version: $version\n',
             style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ],
