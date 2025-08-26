@@ -165,13 +165,13 @@ class MainAppState extends State<MainAppWindow>
 
     _designScreen = DesignScreen(logger: _hullLog);
     _panelsScreen = PanelsScreen();
-    _waterlineScreen = WaterlineScreen(HullManager().hull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
+    _waterlineScreen = WaterlineScreen(params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
   }
 
   void _waterlineParamsChanged(WaterlineParams params) {
     setState(() {
       _waterlineParams = params;
-      _waterlineScreen = WaterlineScreen(HullManager().hull, params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
+      _waterlineScreen = WaterlineScreen(params: _waterlineParams, onParamsChanged: _waterlineParamsChanged);
     });
   }
   void _handleTabSelection() {

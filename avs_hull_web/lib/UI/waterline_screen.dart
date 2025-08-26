@@ -13,10 +13,9 @@ import '../models/rotated_hull.dart';
 import '../models/waterline_hull.dart';
 
 class WaterlineScreen extends StatefulWidget {
-  final Hull hull;
   final WaterlineParams? params;
   final void Function(WaterlineParams) onParamsChanged;
-  const WaterlineScreen(this.hull, {super.key, this.params, required this.onParamsChanged});
+  const WaterlineScreen({super.key, this.params, required this.onParamsChanged});
 
   @override
   State<WaterlineScreen> createState() => _WaterlineScreenState();
@@ -45,7 +44,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
   @override
   void didUpdateWidget(covariant WaterlineScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.hull != oldWidget.hull || widget.params != oldWidget.params) {
+    if (widget.params != oldWidget.params) {
       _params = widget.params ?? WaterlineParams();
       _createWaterlineHull();
     }

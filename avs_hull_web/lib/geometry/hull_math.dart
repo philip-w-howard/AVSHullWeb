@@ -687,7 +687,6 @@ AreaData computeFlatArea(List<Point3D> boundary, Point3D centerline) {
     }
   }
 
-  debugPrint("Area: $area, Centroid: ($centroidX, $centroidZ)");
   return AreaData(area, centroidX, centroidZ);
 }
 
