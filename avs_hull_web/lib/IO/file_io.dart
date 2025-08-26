@@ -92,7 +92,7 @@ void printLocalStorageKeys() {
   }
 }
 // **********************************************************
-List<String> getHullNames() {
+List<String> getHullNames_removed() {
   List<String> names = [];
   
   for (int i = 0; i < localStorage.length; i++) {
@@ -162,31 +162,5 @@ void writeString(String key, String contents) {
 String? readString(String key) {
   final JSString? jsValue = localStorage.getItem(key);
   return jsValue?.toDart;
-}
-
-// ***********************************************************
-void writeHull(Hull hull) {
-  hull.timeSaved = DateTime.now();
-
-  String jsonString = json.encode(hull.toJson());
-  String key = '$hullPrefix${hull.name}';
-
-  // FIX THIS: check to see if the key already exists?
-  writeString(key, jsonString);
-  recordLastHull(hull.name);
-}
-// ***********************************************************
-Hull? readHull(String name, Hull original) {
-  final key = '$hullPrefix$name';
-  final JSString? jsJson = localStorage.getItem(key);
-  final String? jsonString = jsJson?.toDart;
-
-  if (jsonString != null) {
-    Map<String, dynamic> jsonHull = json.decode(jsonString);
-    original.updateFromJson(jsonHull);
-    return original;
-  }
-
-  return null;
 }
 

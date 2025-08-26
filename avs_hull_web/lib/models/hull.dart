@@ -13,21 +13,6 @@ import '../geometry/spline.dart';
 //import '../geometry/hull_math.dart';
 import '../settings/settings.dart';
 
-class HullParams {
-  String name = unnamedHullName;
-  BulkheadType bow = BulkheadType.bow;
-  double forwardTransomAngle = 115;
-  BulkheadType stern = BulkheadType.transom;
-  double sternTransomAngle = 75;
-  int numBulkheads = 5;
-  int numChines = 5;
-  double length = 96;
-  double width = 40;
-  double height = 10;
-  bool closedTop = false;
-  bool flatBottomed = false;
-}
-
 class Hull {
   String name = unnamedHullName;
   List<Bulkhead> mBulkheads = [];

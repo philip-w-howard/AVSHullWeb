@@ -5,10 +5,10 @@
 // ***************************************************************
 
 import 'package:avs_hull_web/UI/input_helpers.dart';
-import 'package:avs_hull_web/models/hull.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/bulkhead.dart';
+import '../settings/settings.dart';
 
 class NewHullDialog extends StatefulWidget {
   const NewHullDialog(
@@ -18,10 +18,10 @@ class NewHullDialog extends StatefulWidget {
   final HullParams hullParams;
 
   @override
-  ResizeDialogState createState() => ResizeDialogState();
+  NewHullDialogState createState() => NewHullDialogState();
 }
 
-class ResizeDialogState extends State<NewHullDialog> {
+class NewHullDialogState extends State<NewHullDialog> {
   late HullParams _params;
 
   @override

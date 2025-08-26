@@ -26,7 +26,7 @@ class SelectHullDialogState extends State<SelectHullDialog> {
   @override
   void initState() {
     super.initState();
-    _hullNames = getHullNames();
+    _hullNames = []; // getHullNames();
   }
 
   @override

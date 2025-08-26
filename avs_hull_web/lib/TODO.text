@@ -1,5 +1,6 @@
 TODO.text
 Bugs:
+    CreateHull does not start with current hull params
     load from Json does not seem to pick up the hull name.
     glitch in computeFlatArea for heel of 5.
     Need sanity checks on direct edit point values.
@@ -7,11 +8,8 @@ Bugs:
         exception for undoing back to layout setup?
     Fix centroid computation
     Fix righting moment computation
-    Saved files don't always load as default in web version.
 Features:
     Important:
-        Get rid of save-to-local-storage for hulls. Only support Json and XML.
-            Do I need both Json and XML?
         Check layout timestamps on exit. 
             Note panels_screen.timeSaved is final. It can't be updated. Meaning it is useless.
         Ability to set name of saved files

@@ -47,7 +47,6 @@ void setupBeforeUnloadPrompt() {
     if (HullManager().hull.timeSaved.isBefore(HullManager().hull.timeUpdated)) {
       final e = event as BeforeUnloadEvent;
       e.returnValue = 'Are you sure you want to leave?';
-      saveFiles();
     }
   }
 
@@ -56,26 +55,14 @@ void setupBeforeUnloadPrompt() {
 }//*********************************************************
 
 void main() {
-    String hullName = fetchLastHullName();
-    if (hullName != unnamedHullName) {
-      Hull? tempHull = readHull(hullName, HullManager().hull);
-      if (tempHull == null) {
-        HullParams params = HullParams();
-        HullManager().hull.updateFromParams(params);
-      }
-    } else {
-      HullParams params = HullParams();
-      HullManager().hull.updateFromParams(params);
-    }
+    // create a default hull
+    HullParams params = loadHullParams();
+    HullManager().hull.updateFromParams(params);
 
     // Setup the window close event
     setupBeforeUnloadPrompt();
     
     runApp(MainApp());
-}
-
-void saveFiles() {
-  debugPrint('Be sure to save files');
 }
 
 class MainApp extends StatelessWidget {

@@ -67,12 +67,7 @@ class DesignScreen extends StatelessWidget {
                 ),
                 onSelected: (String choice) {
                   // Handle menu item selection
-                  if (choice == 'Load') {
-                    _selectAndLoadFile(context);
-                  } else if (choice == 'Save') {
-                    writeHull(HullManager().hull);
-                  }
-                  else if (choice == 'ExportJSON') {
+                  if (choice == 'ExportJSON') {
                     _selectAndSaveFile();
                   } else if (choice == 'XML') {
                     _selectAndXmlFile();
@@ -84,14 +79,6 @@ class DesignScreen extends StatelessWidget {
                 },
                 itemBuilder: (BuildContext context) {
                   return [
-                    const PopupMenuItem<String>(
-                      value: 'Load',
-                      child: Text('Load'),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'Save',
-                      child: Text('Save'),
-                    ),
                     const PopupMenuItem<String>(
                       value: 'ExportJSON',
                       child: Text('Export to JSON'),
@@ -352,25 +339,6 @@ class DesignScreen extends StatelessWidget {
     );
   }
 
-  void _selectAndLoadFile(BuildContext context) async {
-    String hullName = unnamedHullName;
-
-    bool result = await showDialog(
-      builder: (BuildContext context) {
-        return SelectHullDialog(
-            onSubmit: (chosenHullName) {
-              hullName = chosenHullName;
-            });
-      },
-      context: context,
-    );
-
-    if (result) {
-      readHull(hullName, HullManager().hull);
-      resetScreen();
-    }
-  }
-
   void _selectAndReadFile() async {
     String? contents = await readFile('avsh');
     if (contents != null) {
@@ -396,14 +364,15 @@ class DesignScreen extends StatelessWidget {
   }
 
   void _createHull(BuildContext context) async {
-    HullParams params = HullParams();
+    HullParams params = loadHullParams();
 
     bool result = await showDialog(
       builder: (BuildContext context) {
-        return NewHullDialog(
-            hullParams: params,
-            onSubmit: (newHullParams) {
+            return NewHullDialog(
+              hullParams: params,
+              onSubmit: (newHullParams) {
               params = newHullParams;
+              saveHullParams(params);
             });
       },
       context: context,
