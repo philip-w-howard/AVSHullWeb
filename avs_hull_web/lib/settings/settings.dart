@@ -18,7 +18,7 @@ const layoutSettingsKey = 'LayoutSettings';
 const hullParamsKey = 'HullParams';
 const exportOffsetsParamsKey = 'ExportOffsetsParams';
 const unnamedHullName = 'unnamed';
-const version = '0.5.0';
+const version = '0.5.1';
 
 // ***********************************************************
 // ***********************************************************

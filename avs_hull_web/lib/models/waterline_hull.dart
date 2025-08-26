@@ -9,7 +9,6 @@ import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
 import '../geometry/spline.dart';
 import 'bulkhead.dart';
-import 'hull.dart';
 import 'rotated_hull.dart';
 
 class WaterlineParams {

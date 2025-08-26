@@ -6,7 +6,6 @@
 
 import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:flutter/material.dart';
-import '../models/hull.dart';
 import 'waterline_window.dart';
 import 'waterline_params_editor.dart';
 import '../models/rotated_hull.dart';

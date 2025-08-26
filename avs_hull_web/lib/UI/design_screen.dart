@@ -4,13 +4,11 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/UI/select_hull_dialog.dart';
 import 'package:avs_hull_web/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 import 'dart:convert';
 import 'dart:async';
-import '../models/hull.dart';
 import '../models/hull_manager.dart';
 import '../IO/hull_logger.dart';
 import 'hull_window.dart';

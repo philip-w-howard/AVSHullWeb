@@ -5,11 +5,6 @@ import 'dart:async';
 
 import 'dart:js_interop';
 
-import '../models/hull.dart';
-import '../settings/settings.dart';
-
-const hullPrefix = 'hull.';
-
 // **********************************************************
 @JS('window.localStorage')
 external JSStorage get localStorage;
@@ -90,21 +85,6 @@ void printLocalStorageKeys() {
     final String? key = jsKey?.toDart;
     debugPrint('Key: $key');
   }
-}
-// **********************************************************
-List<String> getHullNames_removed() {
-  List<String> names = [];
-  
-  for (int i = 0; i < localStorage.length; i++) {
-    // Get the key at the current index
-    final JSString? jsKey = localStorage.key(i);
-    final String? key = jsKey?.toDart;
-    if (key != null && key.startsWith(hullPrefix)) {
-      names.add(key.substring(hullPrefix.length));
-    }
-  }
-
-  return names;
 }
 // **********************************************************
 Future<void> saveFile(String contents, String defaultName, String extension) async {

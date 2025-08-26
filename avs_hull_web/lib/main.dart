@@ -13,7 +13,6 @@ import 'models/hull.dart';
 import 'models/hull_manager.dart';
 import 'IO/hull_logger.dart';
 import 'settings/settings.dart';
-import '../IO/file_io.dart';
 import 'UI/info_tab.dart';
 
 //import 'dart:html' as html;

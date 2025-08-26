@@ -7,7 +7,6 @@
 import 'package:avs_hull_web/UI/input_helpers.dart';
 import 'package:avs_hull_web/models/hull_manager.dart';
 import 'package:flutter/material.dart';
-import '../models/hull.dart';
 import '../models/bulkhead.dart';
 import '../models/rotated_hull.dart';
 import 'hull_painter.dart';
