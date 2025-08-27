@@ -125,7 +125,7 @@ class MainAppState extends State<MainAppWindow>
   late PanelsScreen _panelsScreen;
   late WaterlineScreen _waterlineScreen;
   late BuildContext _context;
-  WaterlineParams _waterlineParams = WaterlineParams();
+  WaterlineParams _waterlineParams = loadWaterlineParams();
 
   MainAppState() ;
   

@@ -1,6 +1,6 @@
 // Widget for editing WaterlineParams
 import 'package:flutter/material.dart';
-import '../models/waterline_hull.dart';
+import '../settings/settings.dart';
 
 class WaterlineParamsEditor extends StatefulWidget {
   final WaterlineParams? initialParams;

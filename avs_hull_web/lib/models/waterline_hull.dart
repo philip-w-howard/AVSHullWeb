@@ -8,26 +8,10 @@ import 'package:flutter/material.dart';
 import '../geometry/point_3d.dart';
 import '../geometry/hull_math.dart';
 import '../geometry/spline.dart';
+import '../settings/settings.dart';
 import 'bulkhead.dart';
 import 'rotated_hull.dart';
 
-class WaterlineParams {
-  double heightIncrement = 0.25;  // Height increment for waterlines
-  double lengthIncrement = 0.25;  // Length increment for waterlines
-  double weight = 200;            // Weight of the loaded hull in pounds   
-  double waterDensity = 62.4;     // lb/ft^3
-  double heelAngle = 0;           // Angle of heel in degrees
-  double pitchAngle = 0;          // Angle of pitch in degrees
-  bool showAllWaterlines = false;
-  HullView view = HullView.top;
-
-  // Hull params computed based on WaterlineParams
-  double freeboard = 0;
-  double centroidX = 0;
-  double centroidY = 0;
-  double centroidZ = 0;
-  double rightingMoment = 0;
-}
 
 class WaterlineHull extends RotatedHull {
   final WaterlineParams _params;

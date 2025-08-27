@@ -10,6 +10,7 @@ import 'waterline_window.dart';
 import 'waterline_params_editor.dart';
 import '../models/rotated_hull.dart';
 import '../models/waterline_hull.dart';
+import '../settings/settings.dart';
 
 class WaterlineScreen extends StatefulWidget {
   final WaterlineParams? params;
@@ -30,13 +31,14 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
     setState(() {
       _hull = WaterlineHull(_params);
       _hullWindow = WaterlineWindow(_hull, xyz: xyz);
+      saveWaterlineParams(_params);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _params = widget.params ?? WaterlineParams();
+    _params = widget.params ?? loadWaterlineParams();
     _createWaterlineHull();
   }
 
@@ -44,7 +46,7 @@ class _WaterlineScreenState extends State<WaterlineScreen> {
   void didUpdateWidget(covariant WaterlineScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.params != oldWidget.params) {
-      _params = widget.params ?? WaterlineParams();
+      _params = widget.params ?? loadWaterlineParams();
       _createWaterlineHull();
     }
   }

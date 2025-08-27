@@ -1,7 +1,5 @@
 TODO.text
 Bugs:
-    CreateHull does not start with current hull params
-    load from Json does not seem to pick up the hull name.
     glitch in computeFlatArea for heel of 5.
     Need sanity checks on direct edit point values.
     Need to test this: Undo needs to update timestamps to newer (time of undo)
@@ -15,6 +13,7 @@ Features:
         Ability to set name of saved files
         Undo/Redo for panel layouts
         closed-top 
+    Singletons for all the params? save on program exit?
     
     Save/Export layouts
         Layout menu bar (follow design layout)
@@ -38,9 +37,9 @@ Features:
 
                     save offsets params              done
                     filenames: hull, layout
-                    values for creating a hull (reset on startup?)
+                    values for creating a hull (reset on startup?) done
                     layout config                    done
-                    waterline params
+                    waterline params                 done
 
     Zoom/Pan
         InteractiveViewer supplies this functionality, but it conflicts with

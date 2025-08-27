@@ -9,6 +9,7 @@
 import 'dart:convert';
 import '../IO/file_io.dart';
 import '../models/bulkhead.dart';
+import '../models/rotated_hull.dart';
 
 enum OffsetsPrecision { eigths, sixteenths, thirtysecondths, decimal2Digits, decimal3Digits, decimal4Digits }
 enum SpacingStyle {everyPoint, fixedSpacing}
@@ -17,6 +18,7 @@ enum Origin {lowerLeft, upperLeft, center}
 const layoutSettingsKey = 'LayoutSettings';
 const hullParamsKey = 'HullParams';
 const exportOffsetsParamsKey = 'ExportOffsetsParams';
+const waterlineParamsKey = 'WaterlineParams';
 const unnamedHullName = 'unnamed';
 const version = '0.5.1';
 
@@ -208,4 +210,78 @@ HullParams loadHullParams() {
 
   // If setting not found, create default settings
   return HullParams();
+}
+
+// ***********************************************************
+// ***********************************************************
+class WaterlineParams {
+  double heightIncrement = 0.25;  // Height increment for waterlines
+  double lengthIncrement = 0.25;  // Length increment for waterlines
+  double weight = 200;            // Weight of the loaded hull in pounds   
+  double waterDensity = 62.4;     // lb/ft^3
+  double heelAngle = 0;           // Angle of heel in degrees
+  double pitchAngle = 0;          // Angle of pitch in degrees
+  bool showAllWaterlines = false;
+  HullView view = HullView.top;
+
+  // Hull params computed based on WaterlineParams
+  double freeboard = 0;
+  double centroidX = 0;
+  double centroidY = 0;
+  double centroidZ = 0;
+  double rightingMoment = 0;
+
+  // **************************************************
+  Map<String, dynamic> toJson() {
+    return {
+      'heightIncrement': heightIncrement,
+      'lengthIncrement': lengthIncrement,
+      'weight': weight,
+      'waterDensity': waterDensity,
+      'heelAngle': heelAngle,
+      'pitchAngle': pitchAngle,
+      'showAllWaterlines': showAllWaterlines,
+      'view': view.toString().split('.').last,
+    };
+  }
+
+  void updateFromJson(Map<String, dynamic> json) {
+    HullView hullView;
+
+    if (json['view'] != null) {
+      try {
+        hullView = HullView.values.firstWhere(
+            (type) => type.toString() == 'HullView.${json['view']}');
+        view = hullView;
+      } catch (e) {
+        // If the value from JSON doesn't match any enum, keep the current value
+      }
+    } 
+    heightIncrement = json['heightIncrement'] ?? heightIncrement;
+    lengthIncrement = json['lengthIncrement'] ?? lengthIncrement;
+    weight = json['weight'] ?? weight;
+    waterDensity = json['waterDensity'] ?? waterDensity;
+    heelAngle = json['heelAngle'] ?? heelAngle;
+    pitchAngle = json['pitchAngle'] ?? pitchAngle;
+    showAllWaterlines = json['showAllWaterlines'] ?? showAllWaterlines;
+  }
+}
+// ***********************************************************
+void saveWaterlineParams(WaterlineParams params) {
+  String jsonString = json.encode(params.toJson());
+  writeString(waterlineParamsKey, jsonString);
+}
+
+// ***********************************************************
+WaterlineParams loadWaterlineParams() {
+  String? jsonString = readString(waterlineParamsKey);
+  if (jsonString != null) {
+    Map<String, dynamic> settingsMap = json.decode(jsonString);
+    WaterlineParams params = WaterlineParams();
+    params.updateFromJson(settingsMap);
+    return params;
+  }
+
+  // If setting not found, create default settings
+  return WaterlineParams();
 }
