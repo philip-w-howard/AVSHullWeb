@@ -78,19 +78,19 @@ class PanelsWindow extends StatelessWidget {
 
   void _panStart(DragStartDetails details) {
     _drawDetails.panIndex = _painter.clickInPanel(details.localPosition);
+    debugPrint('pan start: ${_drawDetails.panIndex}');
+    HullManager().logLayout();
   }
 
   void _panUpdate(DragUpdateDetails details) {
     if (_drawDetails.panelIndex >= 0) {
       if (_drawDetails.panelIndex == _drawDetails.panIndex) {
-        HullManager().logLayout();
         HullManager().panelLayout.moveBy(
             _drawDetails.panelIndex,
             details.delta.dx / _painter.scale(),
             details.delta.dy / _painter.scale());
       } else {
         double angle = details.delta.dx / 125;
-        HullManager().logLayout();
         HullManager().panelLayout.rotate(_drawDetails.panelIndex, angle);
       }
       _painter.redraw();
@@ -176,7 +176,7 @@ class PanelsWindow extends StatelessWidget {
     if (HardwareKeyboard.instance.isControlPressed &&
         event.character == 'z') {
       HullManager().popLayout();
-      _painter.redraw();
+      updateLayout();
     }
   }
 }

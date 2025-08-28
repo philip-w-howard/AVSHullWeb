@@ -129,6 +129,7 @@ class PanelsScreen extends StatelessWidget {
               TextButton(
                 child: const Text('OK'),
                 onPressed: () {
+                  HullManager().clearLayoutLog();
                   _createPanels();
                   _panelsWindow.redraw();
                   Navigator.of(context).pop(); // Close the dialog
@@ -204,6 +205,7 @@ class PanelsScreen extends StatelessWidget {
     );
     if (selected != null) {
       int index = _panelNames.indexOf(selected);
+      HullManager().logLayout();
       HullManager().panelLayout.addPanel(Panel.copy(_basePanels[index]));
     }
     _panelsWindow.redraw();
@@ -245,6 +247,7 @@ class PanelsScreen extends StatelessWidget {
       context: context,
     );
     if (result) {
+      HullManager().logLayout();
       saveLayoutSettings(settings);
       _panelsWindow.updateLayout();
       _panelsWindow.redraw();

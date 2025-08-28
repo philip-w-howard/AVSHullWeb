@@ -19,4 +19,8 @@ class HullManager {
     _layoutLogger.popLog();
   }
 
+  void clearLayoutLog() {
+    _layoutLogger.clear();
+  }
+
 }
