@@ -4,7 +4,6 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/models/waterline_hull.dart';
 import 'package:flutter/material.dart';
 import 'UI/design_screen.dart';
 import 'UI/waterline_screen.dart';
@@ -43,7 +42,8 @@ extension BeforeUnloadEventExtension on BeforeUnloadEvent {
 void setupBeforeUnloadPrompt() {
   // Explicitly declare the function type to match JS interop constraints
   void handler(JSAny event) {
-    if (HullManager().hull.timeSaved.isBefore(HullManager().hull.timeUpdated)) {
+    if (HullManager().hull.timeSaved.isBefore(HullManager().hull.timeUpdated) ||
+    HullManager().panelLayout.timeSaved.isBefore(HullManager().panelLayout.timeUpdated)) {
       final e = event as BeforeUnloadEvent;
       e.returnValue = 'Are you sure you want to leave?';
     }

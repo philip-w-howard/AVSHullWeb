@@ -5,6 +5,7 @@
 // ***************************************************************
 
 import 'package:avs_hull_web/geometry/hull_math.dart';
+import 'package:avs_hull_web/models/hull_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 import 'dart:math' as math;
@@ -21,9 +22,7 @@ class PanelPainter extends CustomPainter {
   LayoutSettings _layoutSettings = loadLayoutSettings();
   int _selectedPanel = -1;
 
-  PanelLayout _layout;
-
-  PanelPainter(this._layout);
+  PanelPainter();
 
   void setContext(BuildContext context) {
     _context = context;
@@ -31,10 +30,6 @@ class PanelPainter extends CustomPainter {
 
   void updateLayout() {
     _layoutSettings = loadLayoutSettings();
-  }
-
-  void updatePanelList(PanelLayout layout) {
-    _layout = layout;
   }
 
   @override
@@ -61,8 +56,8 @@ class PanelPainter extends CustomPainter {
           (_layoutSettings.height * _layoutSettings.panelHeight).toDouble()
           );
 
-    for (int index = 0; index < _layout.length(); index++) {
-      Panel panel = _layout.get(index);
+    for (int index = 0; index < HullManager().panelLayout.length(); index++) {
+      Panel panel = HullManager().panelLayout.get(index);
 
       Offset panelMin = Offset.zero;
       Offset panelMax = Offset.zero;
@@ -105,9 +100,9 @@ class PanelPainter extends CustomPainter {
 
     canvas.drawPath(drawPath, paint);
 
-    if (_selectedPanel >= 0 && _selectedPanel < _layout.length()) {
+    if (_selectedPanel >= 0 && _selectedPanel < HullManager().panelLayout.length()) {
       path = Path();
-      path.addPolygon(_layout.get(_selectedPanel).getOffsets(), false);
+      path.addPolygon(HullManager().panelLayout.get(_selectedPanel).getOffsets(), false);
       drawPath = path.transform(xform.storage);
       paint.color = const Color.fromRGBO(255, 0, 0, 1.0);
       canvas.drawPath(drawPath, paint);
@@ -131,9 +126,9 @@ class PanelPainter extends CustomPainter {
   int clickInPanel(Offset click) {
     Offset location = Offset(
         (click.dx - _translateX) / _scale, (click.dy - _translateY) / _scale);
-    for (int ii = 0; ii < _layout.length(); ii++) {
+    for (int ii = 0; ii < HullManager().panelLayout.length(); ii++) {
       final Path path = Path();
-      path.addPolygon(_layout.get(ii).getOffsets(), false);
+      path.addPolygon(HullManager().panelLayout.get(ii).getOffsets(), false);
       if (path.contains(location)) return ii;
     }
     return -1;

@@ -4,6 +4,7 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/models/hull_manager.dart';
 import 'package:flutter/material.dart';
 import 'panel_painter.dart';
 import '../models/panel.dart';
@@ -15,12 +16,12 @@ class PanelsDrawDetails {
 }
 
 class PanelsWindow extends StatelessWidget {
-  PanelsWindow(this._panels, {super.key}) {
-    _painter = PanelPainter(_panels);
+  PanelsWindow({super.key}) {
+    _painter = PanelPainter();
   }
 
   late final PanelPainter _painter;
-  final PanelLayout _panels;
+  final PanelLayout _panels = HullManager().panelLayout;
   final PanelsDrawDetails _drawDetails = PanelsDrawDetails();
 
   @override

@@ -4,17 +4,19 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
+import 'package:avs_hull_web/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'panel.dart';
 import '../geometry/hull_math.dart';
 
 class PanelLayout {
   final List<Panel> _panels = [];
-  DateTime _timeUpdated = DateTime.now();
+  DateTime timeUpdated = DateTime.now();
+  DateTime timeSaved = DateTime.now();
 
   void addPanel(Panel panel) {
     _panels.add(panel);
-    _timeUpdated = DateTime.now();
+    timeUpdated = DateTime.now();
   }
 
   void removePanel(int index) {
@@ -23,7 +25,7 @@ class PanelLayout {
 
   void clear() {
     _panels.clear();
-    _timeUpdated = DateTime.now();
+    timeUpdated = DateTime.now();
   }
 
   // *************************************************************
@@ -32,13 +34,13 @@ class PanelLayout {
   }
 
   DateTime timestamp() {
-    return _timeUpdated;
+    return timeUpdated;
   }
 
   void rotate(int index, double angle) {
     if (index >= 0 && index < _panels.length) {
       _panels[index].mPoints = rotate2D(_panels[index].mPoints, -angle);
-      _timeUpdated = DateTime.now();
+      timeUpdated = DateTime.now();
     }
   }
 
@@ -75,9 +77,14 @@ class PanelLayout {
       }
     }
     if (json['timeUpdated'] != null) {
-      _timeUpdated = DateTime.parse(json['timeUpdated']);
+      timeUpdated = DateTime.parse(json['timeUpdated']);
     } else {
-      _timeUpdated = DateTime.now();
+      timeUpdated = DateTime.now();
+    }
+    if (json['timeSaved'] != null) {
+      timeSaved = DateTime.parse(json['timeSaved']);
+    } else {
+      timeSaved = DateTime.now();
     }
   }
 
@@ -86,9 +93,12 @@ class PanelLayout {
   }
 
   Map<String, dynamic> toJson() {
+    LayoutSettings layoutSettings = loadLayoutSettings();
     return {
       'panels': _panels.map((panel) => panel.toJson()).toList(),
-      'timeUpdated': _timeUpdated.toIso8601String(),
+      'layoutSettings': layoutSettings.toJson(),
+      'timeUpdated': timeUpdated.toIso8601String(),
+      'timeSaved': timeSaved.toIso8601String(),
     };
   }
 

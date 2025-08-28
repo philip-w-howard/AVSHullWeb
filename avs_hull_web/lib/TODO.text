@@ -9,7 +9,8 @@ Bugs:
 Features:
     Important:
         Check layout timestamps on exit. 
-            Note panels_screen.timeSaved is final. It can't be updated. Meaning it is useless.
+            Should PanelLayout be added to HullManager to make it a singleton 
+            available to main() to check on unload?
         Ability to set name of saved files
         Undo/Redo for panel layouts
         closed-top 

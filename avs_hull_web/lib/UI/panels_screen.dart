@@ -26,14 +26,12 @@ class PanelsScreen extends StatelessWidget {
   PanelsScreen({super.key}) {
     _createPanels();
 
-    _panelsWindow = PanelsWindow(_displayedPanels);
+    _panelsWindow = PanelsWindow();
   }
 
   final List<Panel> _basePanels = [];
-  final PanelLayout _displayedPanels = PanelLayout();
   late final PanelsWindow _panelsWindow;
-  final List<String> _panelNames = [];
-  final DateTime _timeSaved = DateTime.now();
+  final List<String> _panelNames = [];    // used to build a selection menu for panels
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +117,7 @@ class PanelsScreen extends StatelessWidget {
   }
 
   void checkPanels(BuildContext context) {
-    if (HullManager().hull.timeUpdated.isAfter(_displayedPanels.timestamp())) {
+    if (HullManager().hull.timeUpdated.isAfter(HullManager().panelLayout.timestamp())) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -152,7 +150,7 @@ class PanelsScreen extends StatelessWidget {
 
   void _createPanels() {
     _basePanels.clear();
-    _displayedPanels.clear();
+    HullManager().panelLayout.clear();
     _panelNames.clear();
 
     for (int ii = 0; ii < HullManager().hull.mBulkheads.length; ii++) {
@@ -181,10 +179,10 @@ class PanelsScreen extends StatelessWidget {
     for (Panel panel in _basePanels) {
       (min, max) = getMinMax2D(panel.getOffsets());
 
-      _displayedPanels.addPanel(Panel.copy(panel));
+      HullManager().panelLayout.addPanel(Panel.copy(panel));
 
       xOffset = -min.dx + 5;
-      _displayedPanels.moveBy(_displayedPanels.length() - 1, xOffset, yOffset);
+      HullManager().panelLayout.moveBy(HullManager().panelLayout.length() - 1, xOffset, yOffset);
       yOffset += max.dy + 5;
     }
   }
@@ -206,7 +204,7 @@ class PanelsScreen extends StatelessWidget {
     );
     if (selected != null) {
       int index = _panelNames.indexOf(selected);
-      _displayedPanels.addPanel(Panel.copy(_basePanels[index]));
+      HullManager().panelLayout.addPanel(Panel.copy(_basePanels[index]));
     }
     _panelsWindow.redraw();
   }
@@ -227,7 +225,7 @@ class PanelsScreen extends StatelessWidget {
       context: context,
     );
     if (result) {
-      exportPanelOffset(_displayedPanels, params, layout);
+      exportPanelOffset(HullManager().panelLayout, params, layout);
       saveExportOffsetsParams(params);
     }
   }
@@ -260,14 +258,8 @@ class PanelsScreen extends StatelessWidget {
       Map<String, dynamic> jsonData = json.decode(contents);
 
       if (jsonData['displayedPanels'] != null) {
-        _displayedPanels.updateFromJson(jsonData['displayedPanels']);
+        HullManager().panelLayout.updateFromJson(jsonData['displayedPanels']);
       }
-
-      // _timeSaved is final, so use a local variable if needed
-      // DateTime loadedTimeSaved = DateTime.now();
-      // if (jsonData['timeSaved'] != null) {
-      //   loadedTimeSaved = DateTime.parse(jsonData['timeSaved']);
-      // }
 
       if (jsonData['panelLayout'] != null) {
         LayoutSettings settings = LayoutSettings.fromJson(jsonData['panelLayout']);
@@ -279,22 +271,11 @@ class PanelsScreen extends StatelessWidget {
     }
   }
   
-  Map<String, dynamic> toJson() {
-    LayoutSettings layout = loadLayoutSettings();
-    return {
-      'displayedPanels': _displayedPanels,
-      'panelLayout': layout,
-      // _displayedPanels.map((panel) => panel.toJson()).toList(),
-      'timeSaved': _timeSaved.toIso8601String(),
-    };
-  }
   // *********************************************************
   void _selectAndSaveFile() async {
-    // _timeSaved is final, so use a local variable if needed
-    // DateTime saveTime = DateTime.now();
-
+    HullManager().panelLayout.timeSaved = DateTime.now();
     const prettyJson = JsonEncoder.withIndent('  ');
-    final String prettyStr = prettyJson.convert(toJson());
+    final String prettyStr = prettyJson.convert(HullManager().panelLayout.toJson());
 
     await saveFile(prettyStr, HullManager().hull.name, 'avshpanels');
 
