@@ -170,7 +170,7 @@ class RotatedHull extends Hull {
     double newY = 0;
     double newZ = 0;
 
-    if (deltaX != 0 || deltaY != 0) hullLogger?.logHull(HullManager().hull);
+    if (deltaX != 0 || deltaY != 0) hullLogger?.logHull();
 
     switch (_mView) {
       case HullView.front:
@@ -201,10 +201,8 @@ class RotatedHull extends Hull {
   }
 
   void popLog() {
-    Hull? previous;
-    previous = hullLogger?.popLog();
+    hullLogger?.popLog();
 
-    if (previous != null) HullManager().hull.updateFromHull(previous);
     _createFromBase();
   }
 }

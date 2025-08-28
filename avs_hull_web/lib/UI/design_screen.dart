@@ -242,7 +242,7 @@ class DesignScreen extends StatelessWidget {
     if (okPressed) {
       int? numChines = int.tryParse(chinesController.text);
       if (numChines != null && numChines > 1 && numChines < 100) {
-        _hullLogger.logHull(HullManager().hull);
+        _hullLogger.logHull();
         HullManager().hull.setNumChines(numChines);
         resetScreen();
       } else {
@@ -250,8 +250,6 @@ class DesignScreen extends StatelessWidget {
       }
     }
   }
-
-
 
   Future _addBulkhead(BuildContext context) async {
     TextEditingController locationController = TextEditingController();
@@ -287,7 +285,7 @@ class DesignScreen extends StatelessWidget {
     if (okPressed) {
       double? location = double.tryParse(locationController.text);
       if (location != null && location > HullManager().hull.minBulkheadPos() && location < HullManager().hull.maxBulkheadPos()) {
-        _hullLogger.logHull(HullManager().hull);
+        _hullLogger.logHull();
         HullManager().hull.insertBulkhead(location);
         resetScreen();
       } else {
@@ -303,7 +301,7 @@ class DesignScreen extends StatelessWidget {
       // If a bulkhead is selected, delete it
       int bulkheadNum = _editWindow.selectedBulkhead();
       if (bulkheadNum > 0 && bulkheadNum < HullManager().hull.numBulkheads() - 1) {
-        _hullLogger.logHull(HullManager().hull);
+        _hullLogger.logHull();
         HullManager().hull.deleteBulkhead(bulkheadNum);
         resetScreen();
       } else {

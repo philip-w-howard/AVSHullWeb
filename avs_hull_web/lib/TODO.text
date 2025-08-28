@@ -8,9 +8,6 @@ Bugs:
     Fix righting moment computation
 Features:
     Important:
-        Check layout timestamps on exit. 
-            Should PanelLayout be added to HullManager to make it a singleton 
-            available to main() to check on unload?
         Ability to set name of saved files
         Undo/Redo for panel layouts
         closed-top 

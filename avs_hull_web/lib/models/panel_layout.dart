@@ -14,6 +14,15 @@ class PanelLayout {
   DateTime timeUpdated = DateTime.now();
   DateTime timeSaved = DateTime.now();
 
+  PanelLayout() ;
+  
+  PanelLayout.copy(PanelLayout other) {
+    for (var panel in other._panels) {
+      _panels.add(Panel.copy(panel));
+    }
+    timeUpdated = other.timeUpdated;
+    timeSaved = other.timeSaved;
+  }
   void addPanel(Panel panel) {
     _panels.add(panel);
     timeUpdated = DateTime.now();
@@ -67,6 +76,15 @@ class PanelLayout {
             -_panels[index].mPoints[ii].dx, _panels[index].mPoints[ii].dy);
       }
     }
+  }
+
+  void updateFromCopy(PanelLayout other) {
+    _panels.clear();
+    for (var panel in other._panels) {
+      _panels.add(Panel.copy(panel));
+    }
+    timeUpdated = other.timeUpdated;
+    timeSaved = other.timeSaved;
   }
 
   void updateFromJson(Map<String, dynamic> json) {

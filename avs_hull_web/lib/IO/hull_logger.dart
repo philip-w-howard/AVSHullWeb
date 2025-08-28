@@ -4,21 +4,19 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 import '../models/hull.dart';
+import '../models/hull_manager.dart';
 
 class HullLogger {
   final List<Hull> _hullLog = [];
 
-  void logHull(Hull snapshot) {
-    _hullLog.add(Hull.copy(snapshot));
+  void logHull() {
+    _hullLog.add(Hull.copy(HullManager().hull));
   }
 
-  Hull? popLog() {
-    if (_hullLog.isEmpty) {
-      return null;
-    } else {
-      Hull result = _hullLog.last;
+  void popLog() {
+    if (_hullLog.isNotEmpty) {
+      HullManager().hull.updateFromHull(_hullLog.last);
       _hullLog.removeLast();
-      return result;
     }
   }
 

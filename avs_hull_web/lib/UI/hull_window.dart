@@ -4,14 +4,14 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/UI/input_helpers.dart';
-import 'package:avs_hull_web/models/hull_manager.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import '../UI/input_helpers.dart';
+import '../models/hull_manager.dart';
 import '../models/bulkhead.dart';
 import '../models/rotated_hull.dart';
 import 'hull_painter.dart';
 import '../IO/hull_logger.dart';
-import 'package:flutter/services.dart';
 
 class HullDrawDetails {
   double? height;

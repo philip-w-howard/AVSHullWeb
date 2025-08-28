@@ -89,6 +89,12 @@ class LayoutSettings {
     this.panelHeight = 48
   });
 
+  LayoutSettings.copy(LayoutSettings other) {
+    width = other.width;
+    height = other.height;
+    panelWidth = other.panelWidth;
+    panelHeight = other.panelHeight;
+  }
   factory LayoutSettings.fromJson(Map<String, dynamic> json) {
     return LayoutSettings(
       width: json['width'],

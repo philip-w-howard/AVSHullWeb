@@ -4,11 +4,11 @@
 // See https://github.com/philip-w-howard/AVSHullWeb for details
 // ***************************************************************
 
-import 'package:avs_hull_web/models/hull_manager.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import '../models/hull_manager.dart';
 import 'panel_painter.dart';
 import '../models/panel.dart';
-import '../models/panel_layout.dart';
 
 class PanelsDrawDetails {
   int panelIndex = -1; // -1 means "none"
@@ -16,40 +16,48 @@ class PanelsDrawDetails {
 }
 
 class PanelsWindow extends StatelessWidget {
+  late final PanelPainter _painter;
+  final PanelsDrawDetails _drawDetails = PanelsDrawDetails();
+  final FocusNode _focusNode = FocusNode();
+
   PanelsWindow({super.key}) {
     _painter = PanelPainter();
   }
 
-  late final PanelPainter _painter;
-  final PanelLayout _panels = HullManager().panelLayout;
-  final PanelsDrawDetails _drawDetails = PanelsDrawDetails();
-
   @override
   Widget build(BuildContext context) {
+    _focusNode.requestFocus();
     _painter.setContext(context);
-    return Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.black, // Border color
-                width: 1.0, // Border width
-              ),
-              color: Colors.yellow,
+    return KeyboardListener(
+        focusNode: _focusNode,
+        onKeyEvent: (KeyEvent event) {
+          _processKeypress(event);
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black, // Border color
+              width: 1.0, // Border width
             ),
-            child: GestureDetector(
-              //onDoubleTap: _selector,
-              onTapDown: _tapDown,
-              onTapUp: _tapUp,
-              onLongPressStart: (LongPressStartDetails details) {
-                _longPress(details, context);
-              },
-              onPanStart: _panStart,
-              onPanUpdate: _panUpdate,
-              onPanEnd: _panEnd,
-              child: CustomPaint(
-                painter: _painter,
-                size: Size.infinite,
-              ),
-            ));
+            color: Colors.yellow,
+          ),
+          child: GestureDetector(
+            //onDoubleTap: _selector,
+            onTapDown: _tapDown,
+            onTapUp: _tapUp,
+            onLongPressStart: (LongPressStartDetails details) {
+              _longPress(details, context);
+            },
+            onPanStart: _panStart,
+            onPanUpdate: _panUpdate,
+            onPanEnd: _panEnd,
+            child: CustomPaint(
+              painter: _painter,
+              size: Size.infinite,
+            ),
+          ),
+        ),
+      );
   }
 
   void _tapDown(TapDownDetails details) {}
@@ -75,37 +83,26 @@ class PanelsWindow extends StatelessWidget {
   void _panUpdate(DragUpdateDetails details) {
     if (_drawDetails.panelIndex >= 0) {
       if (_drawDetails.panelIndex == _drawDetails.panIndex) {
-        _panels.moveBy(
+        HullManager().logLayout();
+        HullManager().panelLayout.moveBy(
             _drawDetails.panelIndex,
             details.delta.dx / _painter.scale(),
             details.delta.dy / _painter.scale());
       } else {
         double angle = details.delta.dx / 125;
-        _panels.rotate(_drawDetails.panelIndex, angle);
+        HullManager().logLayout();
+        HullManager().panelLayout.rotate(_drawDetails.panelIndex, angle);
       }
       _painter.redraw();
     }
   }
 
   void _panEnd(DragEndDetails details) {
-    //   double startX, startY;
-
-    //   if (_myHull.movingHandle) {
-    //     (startX, startY) = _painter.toHullCoords(_drawDetails.dragStart);
-
-    //     _myHull.updateBaseHull(
-    //         _myHull.selectedBulkhead,
-    //         _drawDetails.selectedBulkheadPoint,
-    //         startX - _myHull.movingHandleX,
-    //         startY - _myHull.movingHandleY);
-
-    //     _myHull.movingHandle = false;
-    //     _updateScreen!();
-    //   }
-    // }
+    // all functionality happens in _panUpdate();
   }
 
   void redraw() {
+    debugPrint('redraw panels');
     _painter.redraw();
   }
 
@@ -153,21 +150,33 @@ class PanelsWindow extends StatelessWidget {
       if (value != null) {
         // Handle the selected item
         if (value == 'Veritcal') {
-          _panels.flipVertically(selectedPanel);
+          HullManager().logLayout();
+          HullManager().panelLayout.flipVertically(selectedPanel);
           _painter.redraw();
         } else if (value == 'Horizontal') {
-          _panels.flipHorizontally(selectedPanel);
+          HullManager().logLayout();
+          HullManager().panelLayout.flipHorizontally(selectedPanel);
           _painter.redraw();
         } else if (value == 'Duplicate') {
-          _panels.addPanel(Panel.copy(_panels.get(selectedPanel)));
+          HullManager().logLayout();
+          HullManager().panelLayout.addPanel(Panel.copy(HullManager().panelLayout.get(selectedPanel)));
           _painter.redraw();
         } else if (value == 'Delete') {
-          _panels.removePanel(selectedPanel);
+          HullManager().logLayout();
+          HullManager().panelLayout.removePanel(selectedPanel);
           selectedPanel = -1;
           _painter.selectedPanel(-1);
           _painter.redraw();
         }
       }
     });
+  }
+
+  void _processKeypress(KeyEvent event) {
+    if (HardwareKeyboard.instance.isControlPressed &&
+        event.character == 'z') {
+      HullManager().popLayout();
+      _painter.redraw();
+    }
   }
 }
