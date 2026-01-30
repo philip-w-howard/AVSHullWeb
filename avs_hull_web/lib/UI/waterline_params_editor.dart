@@ -115,6 +115,7 @@ class _WaterlineParamsEditorState extends State<WaterlineParamsEditor> {
         ),
       ],
     );
+  }
   @override
   void dispose() {
     heightIncrementController.dispose();
@@ -125,5 +126,5 @@ class _WaterlineParamsEditorState extends State<WaterlineParamsEditor> {
     pitchAngleController.dispose();
     super.dispose();
   }
-  }
+
 }

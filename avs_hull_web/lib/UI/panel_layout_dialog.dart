@@ -64,7 +64,7 @@ class LayoutDialogState extends State<PanelLayoutDialog> {
               title: const InputDecoration(labelText: 'Panel Height'),
               initValue: _settings.panelHeight.toString(),
               update: (int size) {
-                _settings.panelWidth = size;
+                _settings.panelHeight = size;
               }),
         ],
       )),

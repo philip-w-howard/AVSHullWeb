@@ -10,7 +10,6 @@ import 'dart:convert';
 import '../models/hull_manager.dart';
 import '../models/panel.dart';
 import '../models/bulkhead.dart';
-import '../models/panel_layout.dart';
 import '../settings/settings.dart';
 import 'panels_window.dart';
 import 'export_offsets_dialog.dart';
@@ -260,12 +259,12 @@ class PanelsScreen extends StatelessWidget {
     if (contents != null) {
       Map<String, dynamic> jsonData = json.decode(contents);
 
-      if (jsonData['displayedPanels'] != null) {
-        HullManager().panelLayout.updateFromJson(jsonData['displayedPanels']);
+      if (jsonData['panels'] != null) {
+        HullManager().panelLayout.updateFromJson(jsonData);
       }
 
-      if (jsonData['panelLayout'] != null) {
-        LayoutSettings settings = LayoutSettings.fromJson(jsonData['panelLayout']);
+      if (jsonData['layoutSettings'] != null) {
+        LayoutSettings settings = LayoutSettings.fromJson(jsonData['layoutSettings']);
         saveLayoutSettings(settings);
       }
 

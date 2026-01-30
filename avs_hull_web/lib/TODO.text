@@ -1,5 +1,7 @@
 TODO.text
 Bugs:
+    Layout: Load from JSON does not work
+    Panel layout: changing height changes width instead.
     glitch in computeFlatArea for heel of 5.
     Need sanity checks on direct edit point values.
     Need to test this: Undo needs to update timestamps to newer (time of undo)
@@ -9,8 +11,8 @@ Bugs:
 Features:
     Important:
         Ability to set name of saved files
-        Undo/Redo for panel layouts
         closed-top 
+    Ability to round the bow?
     Singletons for all the params? save on program exit?
     
     Save/Export layouts
