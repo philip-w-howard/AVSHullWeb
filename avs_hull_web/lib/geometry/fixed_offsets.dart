@@ -92,22 +92,22 @@ String formatPoint(Offset point, ExportOffsetsParams params, LayoutSettings layo
     switch (params.precision)
     {
         case OffsetsPrecision.eigths:
-            result = '${fraction(point.dx, 8)} ${fraction(point.dy, 8)}';
+            result = '${fraction(point.dx, 8)}, ${fraction(point.dy, 8)}';
             break;
         case OffsetsPrecision.sixteenths:
-            result = '${fraction(point.dx, 16)} ${fraction(point.dy, 16)}';
+            result = '${fraction(point.dx, 16)}, ${fraction(point.dy, 16)}';
             break;
         case OffsetsPrecision.thirtysecondths:
-            result = '${fraction(point.dx, 32)} ${fraction(point.dy, 32)}';
+            result = '${fraction(point.dx, 32)}, ${fraction(point.dy, 32)}';
             break;
         case OffsetsPrecision.decimal2Digits:
-            result = '${decimal(point.dx, 2)} ${decimal(point.dy, 2)}';
+            result = '${decimal(point.dx, 2)}, ${decimal(point.dy, 2)}';
             break;
         case OffsetsPrecision.decimal3Digits:
-            result = '${decimal(point.dx, 3)} ${decimal(point.dy, 3)}';
+            result = '${decimal(point.dx, 3)}, ${decimal(point.dy, 3)}';
             break;
         case OffsetsPrecision.decimal4Digits:
-            result = '${decimal(point.dx, 4)} ${decimal(point.dy, 4)}';
+            result = '${decimal(point.dx, 4)}, ${decimal(point.dy, 4)}';
             break;
       }
 
