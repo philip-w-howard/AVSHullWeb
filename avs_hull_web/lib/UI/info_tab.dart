@@ -17,17 +17,31 @@ class InfoTab extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'AVS Hull is a program for designing hard-chine boat hulls suitable for stitch-and-glue construction. '
-            'It is my hope that DIY boat builders will find this program useful in creating and building their own designs.\n'
-            '\n'
-            'The program can compute the panel shapes required to build the hull. It can output the panel layouts as a table of offsets that you can use to mark your plywood sheets for cutting.\n'
-            '\n'
-            'You can also compute rudimentary hydrostatic properties such as the waterline for various loads and heeling and pitch angles. The program also computes righting moments to help you determine the hull\'s stability. '
-            'ALL OF THESE COMPUTATIONS SHOULD BE CONSIDERED ESTIMATES ONLY. '
-            'The reliability and suitability of any hull designed using this program is the responsibility of the designer and builder.\n'
-            '\n'
-            'If you have any questions, suggestions, or want to report a bug, please contact me at avshull.questions@gmail.com\n'
+          SelectableText.rich(
+            TextSpan(
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+              children: [
+                const TextSpan(
+                  text: 'AVS Hull is a program for designing hard-chine boat hulls suitable for stitch-and-glue construction. '
+                  'It is my hope that DIY boat builders will find this program useful in creating and building their own designs.\n'
+                  '\n'
+                  'The program can compute the panel shapes required to build the hull. It can output the panel layouts as a table of offsets that you can use to mark your plywood sheets for cutting.\n'
+                  '\n'
+                  'You can also compute rudimentary hydrostatic properties such as the waterline for various loads and heeling and pitch angles. The program also computes righting moments to help you determine the hull\'s stability. '
+                  'ALL OF THESE COMPUTATIONS SHOULD BE CONSIDERED ESTIMATES ONLY. '
+                  'The reliability and suitability of any hull designed using this program is the responsibility of the designer and builder.\n'
+                  '\n'
+                  'If you have any questions, suggestions, or want to report a bug, please contact me at ',
+                ),
+                const TextSpan(
+                  text: 'avshull.questions@gmail.com',
+                  style: TextStyle(color: Colors.blue),
+                ),
+                const TextSpan(
+                  text: '\n',
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(

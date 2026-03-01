@@ -31,7 +31,7 @@ class Panel {
   }
 
   // *******************************
-  Panel.fromBulkhead(Bulkhead bulk) {
+  Panel.fromBulkhead(Bulkhead bulk, {bool center = true}) {
     double scaleFactor = 1;
 
     if (bulk.mBulkheadType == BulkheadType.transom) {
@@ -45,7 +45,12 @@ class Panel {
     }
 
     mPoints.add(Offset(bulk.mPoints[0].x, bulk.mPoints[0].y / scaleFactor));
-    _center(Offset.zero);
+    if (center) {
+      _center(Offset.zero);
+    } else {
+      Offset min = getMin2D(mPoints);
+      _center(Offset(-min.dx, -min.dy));
+    }
   }
 
   // *******************************

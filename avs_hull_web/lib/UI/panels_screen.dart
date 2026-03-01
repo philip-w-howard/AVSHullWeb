@@ -63,6 +63,10 @@ class PanelsScreen extends StatelessWidget {
                         value: 'Offsets',
                         child: Text('Export to Offsets'),
                       ),
+                      const PopupMenuItem<String>(
+                        value: 'Bulkheads',
+                        child: Text('Export Bulkheads'),
+                      ),
                     ];
                   },
                   onSelected: (String choice) {
@@ -73,6 +77,8 @@ class PanelsScreen extends StatelessWidget {
                       _selectAndSaveFile();
                     } else if (choice == 'Offsets') {
                       _exportToOffsets(context);
+                    } else if (choice == 'Bulkheads') {
+                      _exportBulkheads(context);
                     }
                   },
                 ),
@@ -228,6 +234,31 @@ class PanelsScreen extends StatelessWidget {
     if (result) {
       exportPanelOffset(HullManager().panelLayout, params, layout);
       saveExportOffsetsParams(params);
+    }
+  }
+
+  // *********************************************************
+  void _exportBulkheads(BuildContext context) async {
+    ExportOffsetsParams params = loadExportOffsetsParams();
+    params.spacingStyle = SpacingStyle.everyPoint;  // bulkheads are always exported with fixed spacing
+    params.origin = Origin.upperLeft;               // upperLeft correctly sets the Y zero.
+    LayoutSettings layout = loadLayoutSettings();
+
+    bool result = await showDialog(
+      builder: (BuildContext context) {
+        return ExportOffsetsDialog(
+            offsetParams: params,
+            onSubmit: (newHullParams) {
+              params = newHullParams;
+            });
+      },
+      context: context,
+    );
+    if (result) {
+      params.spacingStyle = SpacingStyle.everyPoint;  // bulkheads are always exported with fixed spacing
+      params.origin = Origin.upperLeft;               // upperLeft correctly sets the Y zero.
+      exportBulkheads(HullManager().hull, params, layout);
+      //saveExportOffsetsParams(params);
     }
   }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/hull.dart';
+import '../models/bulkhead.dart';
 import '../models/panel.dart';
 import '../models/panel_layout.dart';
 import 'file_io.dart';
@@ -13,6 +15,22 @@ bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params, LayoutSet
   }
   
   saveFile(output, 'offsets', 'txt');
+
+  return false;
+}
+
+bool exportBulkheads(Hull hull, ExportOffsetsParams params, LayoutSettings layout) {
+  String output = '';
+
+  for (int index = 0; index < hull.mBulkheads.length; index++) {
+    if (hull.mBulkheads[index].mBulkheadType != BulkheadType.bow) {
+      Panel panel = Panel.fromBulkhead(hull.mBulkheads[index], center: false);
+      panel.name = 'Bulkhead ${index+1} Z:${hull.mBulkheads[index].mPoints[0].z}';
+      output += _offsetString(panel, params, layout);
+    }
+  }
+  
+  saveFile(output, 'bulkheads', 'txt');
 
   return false;
 }
@@ -39,3 +57,4 @@ String _offsetString(Panel panel, ExportOffsetsParams params, LayoutSettings lay
 
   return output;
 }
+ 
