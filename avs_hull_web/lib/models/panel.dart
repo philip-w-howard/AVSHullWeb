@@ -48,8 +48,10 @@ class Panel {
     if (center) {
       _center(Offset.zero);
     } else {
+      mPoints.removeLast();     // eliminate the point that closes the object
+      _rotate(math.pi);
       Offset min = getMin2D(mPoints);
-      _center(Offset(-min.dx, -min.dy));
+      _center(Offset(0, -min.dy));
     }
   }
 

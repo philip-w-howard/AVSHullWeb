@@ -176,6 +176,25 @@ class Hull {
     return minSize;
   }
 
+  Point3D max() {
+    Point3D minPoint, maxPoint;
+    Point3D maxSize =
+        Point3D(double.negativeInfinity, double.negativeInfinity, double.negativeInfinity);
+
+    for (Bulkhead bulkhead in mBulkheads) {
+      (minPoint, maxPoint) = getMinMax(bulkhead.mPoints);
+      maxSize = max3D(maxSize, maxPoint);
+    }
+    // Check all chine points (if any)
+    for (Spline spline in mChines) {
+      List<Point3D> points = spline.getPoints();
+      (minPoint, maxPoint) = getMinMax(points);
+      maxSize = max3D(maxSize, maxPoint);
+    }
+
+    return maxSize;
+  }
+  
   Point3D size() {
     Point3D min = Point3D(double.infinity, double.infinity, double.infinity);
     Point3D max = Point3D(double.negativeInfinity, double.negativeInfinity, double.negativeInfinity);

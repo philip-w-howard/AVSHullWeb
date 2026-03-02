@@ -6,6 +6,7 @@ import '../models/panel_layout.dart';
 import 'file_io.dart';
 import '../settings/settings.dart';
 import '../geometry/fixed_offsets.dart';
+import '../geometry/point_3d.dart';
 
 bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params, LayoutSettings layout) {
   String output = '';
@@ -22,10 +23,14 @@ bool exportPanelOffset(PanelLayout panels, ExportOffsetsParams params, LayoutSet
 bool exportBulkheads(Hull hull, ExportOffsetsParams params, LayoutSettings layout) {
   String output = '';
 
+  Point3D max = hull.max();
+
   for (int index = 0; index < hull.mBulkheads.length; index++) {
     if (hull.mBulkheads[index].mBulkheadType != BulkheadType.bow) {
       Panel panel = Panel.fromBulkhead(hull.mBulkheads[index], center: false);
-      panel.name = 'Bulkhead ${index+1} Z:${hull.mBulkheads[index].mPoints[0].z}';
+
+      panel.name = 'Bulkhead ${index+1} Z:${hull.mBulkheads[index].mPoints[0].z}' +
+        ' Y:${max.y - hull.mBulkheads[index].mPoints[0].y}';
       output += _offsetString(panel, params, layout);
     }
   }
@@ -49,8 +54,8 @@ String _offsetString(Panel panel, ExportOffsetsParams params, LayoutSettings lay
     offsets = panel.getOffsets();
   }
 
-  for (Offset offset in offsets) {
-    output += '${formatPoint(offset, params, layout)}\n';
+  for (int i = 0; i < offsets.length - 1; i++) {
+    output += '${formatPoint(offsets[i], params, layout)}\n';
   }
 
   output += '\n';

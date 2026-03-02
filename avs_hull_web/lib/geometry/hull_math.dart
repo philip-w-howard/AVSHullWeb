@@ -459,11 +459,23 @@ Offset getMin2D(List<Offset> points) {
   double minY = double.maxFinite;
 
   for (Offset point in points) {
-    if (point.dx < minX) minX = point.dx;
-    if (point.dy < minY) minY = point.dy;
+    minX = math.min(minX, point.dx);
+    minY = math.min(minY, point.dy);
   }
 
   return Offset(minX, minY);
+}
+
+Offset getMax2D(List<Offset> points) {
+  double maxX = double.negativeInfinity;
+  double maxY = double.negativeInfinity;
+
+  for (Offset point in points) {
+    maxX = math.max(maxX, point.dx);
+    maxY = math.max(maxY, point.dy);
+  }
+
+  return Offset(maxX, maxY);
 }
 
 Point3D min3D(Point3D p1, Point3D p2) {
