@@ -78,12 +78,12 @@ class DesignScreen extends StatelessWidget {
                 itemBuilder: (BuildContext context) {
                   return [
                     const PopupMenuItem<String>(
-                      value: 'ExportJSON',
-                      child: Text('Export to JSON'),
+                      value: 'ImportJSON',
+                      child: Text('Open'),
                     ),
                     const PopupMenuItem<String>(
-                      value: 'ImportJSON',
-                      child: Text('Import from JSON'),
+                      value: 'ExportJSON',
+                      child: Text('Save'),
                     ),
                     const PopupMenuItem<String>(
                       value: 'XML',
@@ -340,6 +340,10 @@ class DesignScreen extends StatelessWidget {
     if (contents != null) {
       Map<String, dynamic> jsonData = json.decode(contents);
       HullManager().hull.updateFromJson(jsonData);
+      
+      // Mark the layout as obsolete.
+      HullManager().panelLayout.timeUpdated = HullManager().hull.timeUpdated.subtract(Duration(seconds:30));
+
       resetScreen();
     }
   }

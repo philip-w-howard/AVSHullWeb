@@ -29,8 +29,11 @@ bool exportBulkheads(Hull hull, ExportOffsetsParams params, LayoutSettings layou
     if (hull.mBulkheads[index].mBulkheadType != BulkheadType.bow) {
       Panel panel = Panel.fromBulkhead(hull.mBulkheads[index], center: false);
 
-      panel.name = 'Bulkhead ${index+1} Z:${hull.mBulkheads[index].mPoints[0].z}' +
-        ' Y:${max.y - hull.mBulkheads[index].mPoints[0].y}';
+      double yPos = max.y - hull.mBulkheads[index].mPoints[0].y;
+      double zPos = hull.mBulkheads[index].mPoints[0].z;
+      Offset details = Offset(zPos, yPos);
+      String label = '${formatPoint(details, params, layout)}\n';
+      panel.name = 'Bulkhead ${index+1} $label';
       output += _offsetString(panel, params, layout);
     }
   }
@@ -54,8 +57,8 @@ String _offsetString(Panel panel, ExportOffsetsParams params, LayoutSettings lay
     offsets = panel.getOffsets();
   }
 
-  for (int i = 0; i < offsets.length - 1; i++) {
-    output += '${formatPoint(offsets[i], params, layout)}\n';
+  for (Offset offset in offsets) {
+    output += '${formatPoint(offset, params, layout)}\n';
   }
 
   output += '\n';

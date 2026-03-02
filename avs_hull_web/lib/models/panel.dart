@@ -44,11 +44,13 @@ class Panel {
       mPoints.add(Offset(point.x, point.y / scaleFactor));
     }
 
+    // close the shape by adding the first point to the end
     mPoints.add(Offset(bulk.mPoints[0].x, bulk.mPoints[0].y / scaleFactor));
+
     if (center) {
       _center(Offset.zero);
     } else {
-      mPoints.removeLast();     // eliminate the point that closes the object
+      mPoints.removeLast(); // remove duplicate point 
       _rotate(math.pi);
       Offset min = getMin2D(mPoints);
       _center(Offset(0, -min.dy));

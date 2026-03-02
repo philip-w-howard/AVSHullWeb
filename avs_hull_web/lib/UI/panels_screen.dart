@@ -53,11 +53,11 @@ class PanelsScreen extends StatelessWidget {
                     return [
                       const PopupMenuItem<String>(
                         value: 'Open',
-                        child: Text('Load from Json'),
+                        child: Text('Open'),
                       ),
                       const PopupMenuItem<String>(
                         value: 'Save',
-                        child: Text('Save to Json'),
+                        child: Text('Save'),
                       ),
                       const PopupMenuItem<String>(
                         value: 'Offsets',
