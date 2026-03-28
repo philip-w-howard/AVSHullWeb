@@ -20,7 +20,7 @@ const hullParamsKey = 'HullParams';
 const exportOffsetsParamsKey = 'ExportOffsetsParams';
 const waterlineParamsKey = 'WaterlineParams';
 const unnamedHullName = 'unnamed';
-const version = '0.5.6';
+const version = '0.5.7';
 
 // ***********************************************************
 // ***********************************************************

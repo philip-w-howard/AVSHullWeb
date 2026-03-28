@@ -63,6 +63,12 @@ class PanelPainter extends CustomPainter {
 
       (panelMin, panelMax) = getMinMax2D(panel.getOffsets());
 
+      if (!panelMin.dx.isFinite || !panelMin.dy.isFinite ||
+          !panelMax.dx.isFinite || !panelMax.dy.isFinite) {
+        debugPrint('paint: skipping invalid panel at index $index');
+        continue;
+      }
+
       if (panelMin.dx < screenMin.dx) {
         screenMin = Offset(panelMin.dx, screenMin.dy);
       }

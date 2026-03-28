@@ -1,6 +1,9 @@
 TODO.text
+    change color scheme
 Bugs:
-    Loading a hull does not clear the layout
+    FlorencePram leaves layout screen blank
+    roll scrolling does not seem to work
+    When creating hulls, the y-coordinates do not start at zero.
     Export Bulkheads
         different params screen:
             output format (same as panels)

@@ -172,6 +172,10 @@ class PanelsScreen extends StatelessWidget {
     for (int ii = 0; ii < HullManager().hull.mChines.length ~/ 2; ii++) {
       Panel panel = Panel.fromChines(HullManager().hull.mChines[ii], HullManager().hull.mChines[ii + 1]);
       panel.name = 'Panel ${ii + 1}';
+      if (panel.mPoints.any((p) => !p.dx.isFinite || !p.dy.isFinite)) {
+        debugPrint('_createPanels: skipping ${panel.name} — invalid points');
+        continue;
+      }
       _basePanels.add(panel);
       _panelNames.add(panel.name);
     }

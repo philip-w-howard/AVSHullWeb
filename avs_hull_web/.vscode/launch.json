@@ -8,18 +8,20 @@
             "name": "avs_hull_web",
             "request": "launch",
             "type": "dart",
-            "args": ["run", "--debug", "-d", "chrome"],
+            "deviceId": "chrome"
         },
         {
             "name": "avs_hull_web (profile mode)",
             "request": "launch",
             "type": "dart",
+            "deviceId": "chrome",
             "flutterMode": "profile"
         },
         {
             "name": "avs_hull_web (release mode)",
             "request": "launch",
             "type": "dart",
+            "deviceId": "chrome",
             "flutterMode": "release"
         }
     ]

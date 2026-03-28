@@ -46,12 +46,22 @@ class InfoTab extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () {
-              html.AnchorElement(href: 'AVS Hull Users Manual.pdf')
-                ..setAttribute('download', 'AVS Hull Users Manual.pdf')
+              html.AnchorElement(href: 'AVSHullUsersManual.pdf')
+                ..setAttribute('download', 'AVSHullUsersManual.pdf')
                 ..click();
             },
             icon: const Icon(Icons.download),
             label: const Text('Download Users Manual (PDF)'),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () {
+              html.AnchorElement(href: 'AVSHullPrivacyPolicy.pdf')
+                ..setAttribute('download', 'AVSHullPrivacyPolicy.pdf')
+                ..click();
+            },
+            icon: const Icon(Icons.download),
+            label: const Text('Download Privacy Policy (PDF)'),
           ),
           const SizedBox(height: 32),
           const Text(

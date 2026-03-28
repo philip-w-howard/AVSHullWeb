@@ -6,15 +6,17 @@
     "configurations": [
         {
             "name": "avs_hull_web",
+            "cwd": "avs_hull_web",
             "request": "launch",
             "type": "dart",
-            "args": ["run", "--debug", "-d", "chrome"],
+            "deviceId": "chrome"
         },
         {
             "name": "avs_hull_web (profile mode)",
             "cwd": "avs_hull_web",
             "request": "launch",
             "type": "dart",
+            "deviceId": "chrome",
             "flutterMode": "profile"
         },
         {
@@ -22,6 +24,7 @@
             "cwd": "avs_hull_web",
             "request": "launch",
             "type": "dart",
+            "deviceId": "chrome",
             "flutterMode": "release"
         }
     ]

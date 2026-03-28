@@ -133,22 +133,50 @@ class Panel {
     }
 
     for (int ii = 1; ii < lastPoint; ii++) {
-      mPoints.add(_computePointAngle(
+      Offset edge1Point = _computePointAngle(
           chine1[ii],
           chine1[ii + 1],
           chine2[ii],
           mPoints[mPoints.length - 1],
           edge2[edge2.length - 1],
-          mPoints[mPoints.length - 2]));
+          mPoints[mPoints.length - 2]);
+      if (!edge1Point.dx.isFinite || !edge1Point.dy.isFinite) {
+        debugPrint('_panelize edge1: NaN at index $ii\n'
+            '  chine1[$ii]=${chine1[ii]}\n'
+            '  chine1[${ii+1}]=${chine1[ii+1]}\n'
+            '  chine2[$ii]=${chine2[ii]}\n'
+            '  mPoints last=${mPoints[mPoints.length - 1]}\n'
+            '  edge2 last=${edge2[edge2.length - 1]}\n'
+            '  mPoints second last=${mPoints[mPoints.length - 2]}');
+        _listPoints('mPoints', mPoints);
+        _listPoints('edge2', edge2);
+        debugPrint('_panelize: dumping chine1 and chine2, then exiting _panelize');
+        for (int jj = 0; jj < chine1.length; jj++) {
+          debugPrint('  chine1[$jj]=${chine1[jj]}');
+        }
+        debugPrint('---');
+        for (int jj = 0; jj < chine2.length; jj++) {
+          debugPrint('  chine2[$jj]=${chine2[jj]}');
+        }
+        return;
+      }
+      mPoints.add(edge1Point);
 
       // advance edge2 by one point
-      edge2.add(_computePointAngle(
+      Offset edge2Point = _computePointAngle(
           chine2[ii],
           chine2[ii + 1],
           chine1[ii + 1],
           edge2[edge2.length - 1],
           mPoints[mPoints.length - 1],
-          edge2[edge2.length - 2]));
+          edge2[edge2.length - 2]);
+      if (!edge2Point.dx.isFinite || !edge2Point.dy.isFinite) {
+        debugPrint('_panelize edge2: NaN at index $ii'
+            '  chine2[$ii]=${chine2[ii]}'
+            '  chine2[${ii+1}]=${chine2[ii+1]}'
+            '  chine1[${ii+1}]=${chine1[ii+1]}');
+      }
+      edge2.add(edge2Point);
     }
 
     if (pointyStern) {
@@ -170,6 +198,17 @@ class Panel {
   }
 
   // *******************************
+  int _listPoints(String msg, List<Offset> points) {
+    int count = 0;
+    debugPrint('$msg:');
+    for (Offset point in points) {
+      debugPrint('  $count: $point');
+      count++;
+    }
+    return count;
+  }
+  // *******************************
+  // Find intersection of two circles. Favor the intersection with the larger X value
   Offset _computePointDx(
       Point3D p1, Point3D p2, Point3D p3, Offset p4, Offset p5) {
     double r1 = (p1 - p2).length();
@@ -178,7 +217,10 @@ class Panel {
     Offset intersection1 = Offset.zero;
     Offset intersection2 = Offset.zero;
     (intersection1, intersection2) = intersection(p4, r1, p5, r2);
-
+    if (!intersection1.dx.isFinite || !intersection1.dy.isFinite
+      || !intersection2.dx.isFinite || !intersection2.dy.isFinite) {
+      debugPrint('_computePointDx: intersection is NaN');
+    }
     if (intersection1.dx >= intersection2.dx) {
       return intersection1;
     } else {
@@ -187,6 +229,7 @@ class Panel {
   }
 
   // *******************************
+  // Find the intersection of two circles. Favor the one with the smaller angle
   Offset _computePointAngle(
       Point3D p1, Point3D p2, Point3D p3, Offset p4, Offset p5, Offset p6) {
     double r1 = (p1 - p2).length();
@@ -195,6 +238,19 @@ class Panel {
     Offset intersection1 = Offset.zero;
     Offset intersection2 = Offset.zero;
     (intersection1, intersection2) = intersection(p4, r1, p5, r2);
+    
+    if (!intersection1.dx.isFinite || !intersection1.dy.isFinite
+      || !intersection2.dx.isFinite || !intersection2.dy.isFinite) {
+      debugPrint('_computePointAngle: intersection is NaN');
+      debugPrint(
+            '  p1=$p1}\n'
+            '  p2=$p2\n'
+            '  p3=$p3\n'
+            '  p4=$p4\n'
+            '  p5=$p5\n'
+            '  r1=$r1\n'
+            '  r2=$r2\n');
+    }
 
     Offset v_2 = p4 - p6;
     Offset v_2a = intersection1 - p4;

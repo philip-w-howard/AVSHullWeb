@@ -9,6 +9,8 @@ import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 import 'point_3d.dart';
 
+const double _minDeltaX = 0.01;
+
 // ********************************************************************
 List<List<double>> matrixMultiply(List<List<double>> a, List<List<double>> b) {
   int rows1 = a.length;
@@ -246,11 +248,13 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
 }
 
 // *****************************************************************************
+// Compute the intersection of two circles defined by (p1, r1) and (p2, r2)
 (Offset, Offset) intersection(Offset p1, double r1, Offset p2, double r2) {
   Offset intersection1 = Offset.infinite;
   Offset intersection2 = Offset.infinite;
 
-  if (p1.dx != p2.dx) {
+  double deltaX = (p2.dx - p1.dx).abs();
+  if (deltaX > _minDeltaX) {
     //double A = (r1 * r1 - r2 * r2 - p1.X * p1.X + p2.X * p2.X - p1.Y * p1.Y + p2.Y * p2.Y) / (2 * p2.X - 2 * p1.X);
     double A = (r1 * r1 -
             r2 * r2 -
@@ -269,6 +273,9 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
     (y1, y2) = quadradicSolution(a, b, c);
 
     if (y1.isNaN || y2.isNaN) {
+      double d = math.sqrt((p2.dx - p1.dx) * (p2.dx - p1.dx) + (p2.dy - p1.dy) * (p2.dy - p1.dy));
+      String reason = d > r1 + r2 ? 'circles too far apart (d=$d, r1+r2=${r1+r2})' : 'one circle inside the other (d=$d, |r1-r2|=${(r1-r2).abs()})';
+      debugPrint('intersection (x-branch): no solution — p1=$p1 r1=$r1  p2=$p2 r2=$r2  $reason');
       return (
         const Offset(double.nan, double.nan),
         const Offset(double.nan, double.nan)
@@ -293,6 +300,9 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
 
     (x1, x2) = quadradicSolution(a, b, c);
     if (x1.isNaN || x2.isNaN) {
+      double d = math.sqrt((p2.dx - p1.dx) * (p2.dx - p1.dx) + (p2.dy - p1.dy) * (p2.dy - p1.dy));
+      String reason = d > r1 + r2 ? 'circles too far apart (d=$d, r1+r2=${r1+r2})' : 'one circle inside the other (d=$d, |r1-r2|=${(r1-r2).abs()})';
+      debugPrint('intersection (y-branch): no solution — p1=$p1 r1=$r1  p2=$p2 r2=$r2  $reason');
       return (
         const Offset(double.nan, double.nan),
         const Offset(double.nan, double.nan)
@@ -300,7 +310,7 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
     }
 
     intersection1 = Offset(x1, A + B * x1);
-    intersection2 = Offset(x2, A + b * x2);
+    intersection2 = Offset(x2, A + B * x2);
   }
 
   return (intersection1, intersection2);
@@ -398,6 +408,7 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
   double x2 = double.nan;
   double base = (b * b) - (4 * a * c);
   if (base < 0) {
+    debugPrint("Quadradic formula has no solution: a=$a, b=$b, c=$c");
     return (double.nan, double.nan);
   }
 
@@ -521,19 +532,15 @@ double angleBetween(Offset vector1, Offset vector2) {
 }
 
 //***********************************************************
-Offset computeSpacingPoint(Offset p1, Offset p2, int fixedOffset)
-{
+Offset computeSpacingPoint(Offset p1, Offset p2, int fixedOffset) {
   // Handle vertical points
   if (p1.dx == p2.dx) return p1;
 
   double x = 0;
   // negative points may not work
-  if (p1.dx.abs() > p2.dx.abs())
-  {
+  if (p1.dx.abs() > p2.dx.abs()) {
     x = p1.dx;
-  }
-  else
-  {
+  } else {
     x = p2.dx;
   }
 
@@ -543,62 +550,56 @@ Offset computeSpacingPoint(Offset p1, Offset p2, int fixedOffset)
   double offset = interestX - p1.dx;
   double interestY = p1.dy;
 
-  if (offset != 0)
-  {
+  if (offset != 0) {
     double deltaY = p2.dy - p1.dy;
-    interestY = p1.dy + deltaY * offset /deltaX;
+    interestY = p1.dy + deltaY * offset / deltaX;
   }
 
   return Offset(interestX, interestY);
 }
 
 //***********************************************************
-double computeMinAngle(Offset p1, Offset p2, Offset p3)
-{
-    double run1, run2, rise1, rise2;
-    double angle1, angle2;
+double computeMinAngle(Offset p1, Offset p2, Offset p3) {
+  double run1, run2, rise1, rise2;
+  double angle1, angle2;
 
-    run1 = p1.dx - p2.dx;
-    run2 = p3.dx - p2.dx;
-    rise1 = p1.dy - p2.dy;
-    rise2 = p3.dy - p2.dy;
+  run1 = p1.dx - p2.dx;
+  run2 = p3.dx - p2.dx;
+  rise1 = p1.dy - p2.dy;
+  rise2 = p3.dy - p2.dy;
 
-    angle1 = math.atan2(rise1, run1);
-    angle2 = math.atan2(rise2, run2);
-    double rightAngle = angle2 - angle1;
-    if (rightAngle < 0) rightAngle += 2 * math.pi;
-    double leftAngle = 2 * math.pi - rightAngle;
+  angle1 = math.atan2(rise1, run1);
+  angle2 = math.atan2(rise2, run2);
+  double rightAngle = angle2 - angle1;
+  if (rightAngle < 0) rightAngle += 2 * math.pi;
+  double leftAngle = 2 * math.pi - rightAngle;
 
-    return math.min(rightAngle, leftAngle);
-}
-//***********************************************************
-bool isKnee(Offset p1, Offset p2, Offset p3, double angleInDegrees)
-{
-    double angle = math.pi - angleInDegrees * math.pi / 180.0;
-
-    if (angle > computeMinAngle(p1, p2, p3))
-    {
-      return true;
-    } 
-    else 
-    {
-      return false;
-    }
+  return math.min(rightAngle, leftAngle);
 }
 
 //***********************************************************
-bool spansX(Offset p1, Offset p2, int fixedOffset)
-{
-    double x1 = p1.dx.abs();
-    double x2 = p2.dx.abs();
+bool isKnee(Offset p1, Offset p2, Offset p3, double angleInDegrees) {
+  double angle = math.pi - angleInDegrees * math.pi / 180.0;
 
-    if (x1 ~/ fixedOffset != x2 ~/ fixedOffset) return true;
-
+  if (angle > computeMinAngle(p1, p2, p3)) {
+    return true;
+  } else {
     return false;
+  }
 }
+
 //***********************************************************
-Point3D? interpolateToZ(List<Point3D> points, double Z)
-{
+bool spansX(Offset p1, Offset p2, int fixedOffset) {
+  double x1 = p1.dx.abs();
+  double x2 = p2.dx.abs();
+
+  if (x1 ~/ fixedOffset != x2 ~/ fixedOffset) return true;
+
+  return false;
+}
+
+//***********************************************************
+Point3D? interpolateToZ(List<Point3D> points, double Z) {
   if (points.isEmpty) return null;
 
   // Find the two points that bracket the Z value
@@ -623,15 +624,15 @@ Point3D? interpolateToZ(List<Point3D> points, double Z)
 }
 
 //***********************************************************
-Point3D interpolateBetween(Point3D prevPoint, Point3D currPoint, double height)
-{
+Point3D interpolateBetween(
+    Point3D prevPoint, Point3D currPoint, double height) {
   if (prevPoint.y == currPoint.y) {
     // If both points are at the same height, return the average
     return Point3D(
       (prevPoint.x + currPoint.x) / 2,
       height,
       (prevPoint.z + currPoint.z) / 2,
-   );
+    );
   }
 
   double ratio = (height - prevPoint.y) / (currPoint.y - prevPoint.y);
@@ -648,9 +649,10 @@ class AreaData {
   double centroidZ = 0;
 
   AreaData(this.area, this.centroidX, this.centroidZ);
-} 
+}
+
 // Compute the area and centroid of a shape.
-// Assumptions: 
+// Assumptions:
 //      1) The shape is "flat" meaning the Y coordinate of each point is the same
 //      2) The shape is symetric on Z meaining that point[ii].Z == point[count-ii-1].Z
 // These assumptions are met for waterlines computed on a hull with no heel.
@@ -680,14 +682,17 @@ AreaData computeFlatArea(List<Point3D> boundary, Point3D centerline) {
       }
 
       double width =
-          ((left.x - right.x).abs() + (lastLeft.x - lastRight.x).abs())/2;
+          ((left.x - right.x).abs() + (lastLeft.x - lastRight.x).abs()) / 2;
       double length = (left.z - lastLeft.z).abs();
-    
+
       area += width * length;
-      centroidX += (((left.x + right.x + lastLeft.x + lastRight.x) / 4) - centerline.x) *
-          width * length; // Approx: need to do the triangle thing for the ends
+      centroidX +=
+          (((left.x + right.x + lastLeft.x + lastRight.x) / 4) - centerline.x) *
+              width *
+              length; // Approx: need to do the triangle thing for the ends
       centroidZ += ((left.z + right.z + lastLeft.z + lastRight.z) / 4) *
-          width * length; // Approx: Need to do the triangle thing for the ends
+          width *
+          length; // Approx: Need to do the triangle thing for the ends
 
       lastLeft = left;
       lastRight = right;
@@ -701,4 +706,3 @@ AreaData computeFlatArea(List<Point3D> boundary, Point3D centerline) {
 
   return AreaData(area, centroidX, centroidZ);
 }
-
