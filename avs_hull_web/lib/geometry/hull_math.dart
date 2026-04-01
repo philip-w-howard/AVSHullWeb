@@ -9,8 +9,6 @@ import 'package:flutter/rendering.dart';
 import 'dart:math' as math;
 import 'point_3d.dart';
 
-const double _minDeltaX = 0.01;
-
 // ********************************************************************
 List<List<double>> matrixMultiply(List<List<double>> a, List<List<double>> b) {
   int rows1 = a.length;
@@ -254,7 +252,8 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
   Offset intersection2 = Offset.infinite;
 
   double deltaX = (p2.dx - p1.dx).abs();
-  if (deltaX > _minDeltaX) {
+  double deltaY = (p2.dy - p1.dy).abs();
+  if (deltaX > deltaY) {
     //double A = (r1 * r1 - r2 * r2 - p1.X * p1.X + p2.X * p2.X - p1.Y * p1.Y + p2.Y * p2.Y) / (2 * p2.X - 2 * p1.X);
     double A = (r1 * r1 -
             r2 * r2 -
