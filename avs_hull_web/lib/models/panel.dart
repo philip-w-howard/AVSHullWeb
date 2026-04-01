@@ -11,6 +11,15 @@ import '../geometry/hull_math.dart';
 import '../geometry/spline.dart';
 import 'bulkhead.dart';
 
+class PanelizationException implements Exception {
+  final String message;
+
+  PanelizationException(this.message);
+
+  @override
+  String toString() => 'PanelizationException: $message';
+}
+
 class Panel {
   static const double _minEdgeLength = 0.25;
 
@@ -141,24 +150,9 @@ class Panel {
           edge2[edge2.length - 1],
           mPoints[mPoints.length - 2]);
       if (!edge1Point.dx.isFinite || !edge1Point.dy.isFinite) {
-        debugPrint('_panelize edge1: NaN at index $ii\n'
-            '  chine1[$ii]=${chine1[ii]}\n'
-            '  chine1[${ii+1}]=${chine1[ii+1]}\n'
-            '  chine2[$ii]=${chine2[ii]}\n'
-            '  mPoints last=${mPoints[mPoints.length - 1]}\n'
-            '  edge2 last=${edge2[edge2.length - 1]}\n'
-            '  mPoints second last=${mPoints[mPoints.length - 2]}');
-        _listPoints('mPoints', mPoints);
-        _listPoints('edge2', edge2);
-        debugPrint('_panelize: dumping chine1 and chine2, then exiting _panelize');
-        for (int jj = 0; jj < chine1.length; jj++) {
-          debugPrint('  chine1[$jj]=${chine1[jj]}');
-        }
-        debugPrint('---');
-        for (int jj = 0; jj < chine2.length; jj++) {
-          debugPrint('  chine2[$jj]=${chine2[jj]}');
-        }
-        return;
+        throw PanelizationException(
+            'Panelization failed while computing edge1 at index $ii. '
+            'Try adjusting chine control points near this region.');
       }
       mPoints.add(edge1Point);
 
@@ -171,10 +165,9 @@ class Panel {
           mPoints[mPoints.length - 1],
           edge2[edge2.length - 2]);
       if (!edge2Point.dx.isFinite || !edge2Point.dy.isFinite) {
-        debugPrint('_panelize edge2: NaN at index $ii'
-            '  chine2[$ii]=${chine2[ii]}'
-            '  chine2[${ii+1}]=${chine2[ii+1]}'
-            '  chine1[${ii+1}]=${chine1[ii+1]}');
+        throw PanelizationException(
+            'Panelization failed while computing edge2 at index $ii. '
+            'Try adjusting chine control points near this region.');
       }
       edge2.add(edge2Point);
     }
@@ -198,16 +191,6 @@ class Panel {
   }
 
   // *******************************
-  int _listPoints(String msg, List<Offset> points) {
-    int count = 0;
-    debugPrint('$msg:');
-    for (Offset point in points) {
-      debugPrint('  $count: $point');
-      count++;
-    }
-    return count;
-  }
-  // *******************************
   // Find intersection of two circles. Favor the intersection with the larger X value
   Offset _computePointDx(
       Point3D p1, Point3D p2, Point3D p3, Offset p4, Offset p5) {
@@ -219,7 +202,9 @@ class Panel {
     (intersection1, intersection2) = intersection(p4, r1, p5, r2);
     if (!intersection1.dx.isFinite || !intersection1.dy.isFinite
       || !intersection2.dx.isFinite || !intersection2.dy.isFinite) {
-      debugPrint('_computePointDx: intersection is NaN');
+      throw PanelizationException(
+            'Panelization failed '
+            'Try adjusting chine control points near this region.');
     }
     if (intersection1.dx >= intersection2.dx) {
       return intersection1;
@@ -241,15 +226,9 @@ class Panel {
     
     if (!intersection1.dx.isFinite || !intersection1.dy.isFinite
       || !intersection2.dx.isFinite || !intersection2.dy.isFinite) {
-      debugPrint('_computePointAngle: intersection is NaN');
-      debugPrint(
-            '  p1=$p1}\n'
-            '  p2=$p2\n'
-            '  p3=$p3\n'
-            '  p4=$p4\n'
-            '  p5=$p5\n'
-            '  r1=$r1\n'
-            '  r2=$r2\n');
+      throw PanelizationException(
+        'Panelization failed while '
+        'Try adjusting chine control points near this region.');
     }
 
     Offset v_2 = p4 - p6;

@@ -35,6 +35,7 @@ class PanelsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       body: Column(children: [
         Container(
             color: Colors.white,
@@ -158,6 +159,7 @@ class PanelsScreen extends StatelessWidget {
     _basePanels.clear();
     HullManager().panelLayout.clear();
     _panelNames.clear();
+    final List<String> panelizationFailures = [];
 
     for (int ii = 0; ii < HullManager().hull.mBulkheads.length; ii++) {
       Bulkhead bulk = HullManager().hull.mBulkheads[ii];
@@ -170,14 +172,25 @@ class PanelsScreen extends StatelessWidget {
     }
 
     for (int ii = 0; ii < HullManager().hull.mChines.length ~/ 2; ii++) {
-      Panel panel = Panel.fromChines(HullManager().hull.mChines[ii], HullManager().hull.mChines[ii + 1]);
-      panel.name = 'Panel ${ii + 1}';
-      if (panel.mPoints.any((p) => !p.dx.isFinite || !p.dy.isFinite)) {
-        debugPrint('_createPanels: skipping ${panel.name} — invalid points');
-        continue;
+      final String panelName = 'Panel ${ii + 1}';
+      try {
+        Panel panel = Panel.fromChines(HullManager().hull.mChines[ii], HullManager().hull.mChines[ii + 1]);
+        panel.name = panelName;
+        if (panel.mPoints.any((p) => !p.dx.isFinite || !p.dy.isFinite)) {
+          debugPrint('_createPanels: skipping $panelName - invalid points');
+          panelizationFailures.add(panelName);
+          continue;
+        }
+        _basePanels.add(panel);
+        _panelNames.add(panel.name);
+      } on PanelizationException catch (ex) {
+        debugPrint('_createPanels: skipping $panelName - $ex');
+        panelizationFailures.add(panelName);
       }
-      _basePanels.add(panel);
-      _panelNames.add(panel.name);
+    }
+
+    if (panelizationFailures.isNotEmpty) {
+      _showPanelizationErrorDialog(panelizationFailures);
     }
 
     double xOffset = 0;
@@ -195,6 +208,35 @@ class PanelsScreen extends StatelessWidget {
       HullManager().panelLayout.moveBy(HullManager().panelLayout.length() - 1, xOffset, yOffset);
       yOffset += max.dy + 5;
     }
+  }
+
+  void _showPanelizationErrorDialog(List<String> failedPanels) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final BuildContext? ctx = scaffoldKey.currentContext;
+      if (ctx == null || !ctx.mounted) {
+        return;
+      }
+
+      showDialog(
+        context: ctx,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Panelization Warning'),
+            content: Text(
+              'Could not generate one or more panels:\n\n'
+              '${failedPanels.join('\n')}\n\n'
+              'Adjust chine geometry and try again.',
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   void _showItemSelectionDialog(BuildContext context) async {

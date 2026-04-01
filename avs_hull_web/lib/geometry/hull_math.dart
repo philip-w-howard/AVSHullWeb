@@ -254,7 +254,6 @@ bool isNearLine(double line1x, double line1y, double line2x, double line2y,
   double deltaX = (p2.dx - p1.dx).abs();
   double deltaY = (p2.dy - p1.dy).abs();
   if (deltaX > deltaY) {
-    //double A = (r1 * r1 - r2 * r2 - p1.X * p1.X + p2.X * p2.X - p1.Y * p1.Y + p2.Y * p2.Y) / (2 * p2.X - 2 * p1.X);
     double A = (r1 * r1 -
             r2 * r2 -
             p1.dx * p1.dx +
