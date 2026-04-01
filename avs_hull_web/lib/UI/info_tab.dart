@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 import '../settings/settings.dart';
 // InfoTab: non-editable program description
 class InfoTab extends StatelessWidget {
   const InfoTab({super.key});
+
+  void _openPdf(BuildContext context, String path) {
+    final web.HTMLElement? body = web.document.body;
+    if (body == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open $path')),
+      );
+      return;
+    }
+
+    final web.HTMLAnchorElement anchor = web.HTMLAnchorElement()
+      ..href = path
+      ..download = path
+      ..style.display = 'none';
+    body.append(anchor);
+    anchor.click();
+    anchor.remove();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +64,7 @@ class InfoTab extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () {
-              html.AnchorElement(href: 'AVSHullUsersManual.pdf')
-                ..setAttribute('download', 'AVSHullUsersManual.pdf')
-                ..click();
+              _openPdf(context, 'AVSHullUsersManual.pdf');
             },
             icon: const Icon(Icons.download),
             label: const Text('Download Users Manual (PDF)'),
@@ -56,9 +72,7 @@ class InfoTab extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () {
-              html.AnchorElement(href: 'AVSHullPrivacyPolicy.pdf')
-                ..setAttribute('download', 'AVSHullPrivacyPolicy.pdf')
-                ..click();
+              _openPdf(context, 'AVSHullPrivacyPolicy.pdf');
             },
             icon: const Icon(Icons.download),
             label: const Text('Download Privacy Policy (PDF)'),
